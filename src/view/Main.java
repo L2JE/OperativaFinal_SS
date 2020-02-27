@@ -6,7 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class SchedulerApp extends Application {
+public class Main extends Application {
 
     public static void main(String[] args) {
         launch(args);
@@ -17,7 +17,7 @@ public class SchedulerApp extends Application {
 
         // just load fxml file and display it in the stage:
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("scheduler.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("homeWindow.fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
