@@ -5,13 +5,11 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-
-<SplitPane dividerPositions="0.5" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="100.0" prefHeight="454.0" prefWidth="714.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+<SplitPane dividerPositions="0.5" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="100.0" prefHeight="454.0" prefWidth="714.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.CtrlrHomeWindow">
    <items>
       <GridPane>
         <columnConstraints>
@@ -49,22 +47,22 @@
         <tabs>
             <Tab text="Rango Horario">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                  <fx:include source="addRangTab.fxml"/>
               </content>
             </Tab>
           <Tab text="Aula">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                <fx:include source="addClassroomTab.fxml"/>
             </content>
           </Tab>
           <Tab text="Carrera">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                <fx:include source="addCareerTab.fxml"/>
             </content>
           </Tab>
             <Tab text="Materia">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="472.0" prefWidth="322.0" />
+                  <fx:include source="addSubjTab.fxml"/>
               </content>
             </Tab>
         </tabs>

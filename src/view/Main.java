@@ -20,6 +20,7 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("homeWindow.fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root);
+        primaryStage.setTitle("SchedulerSoft FACULTAD DE CS. HUMANAS");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
