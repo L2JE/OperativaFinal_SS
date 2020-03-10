@@ -1,15 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ButtonBar?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.CtrlrHomeWindow">
-   <children>
-      <ButtonBar layoutX="200.0" layoutY="200.0" prefHeight="40.0" prefWidth="200.0">
-        <buttons>
-          <Button mnemonicParsing="false" text="Button" />
-        </buttons>
-      </ButtonBar>
-   </children>
-</AnchorPane>
+<SplitPane dividerPositions="0.5" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="100.0" prefHeight="454.0" prefWidth="714.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.CtrlrHomeWindow">
+   <items>
+      <GridPane>
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" />
+          <ColumnConstraints hgrow="SOMETIMES" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
+          <RowConstraints valignment="BOTTOM" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <TitledPane animated="false" collapsible="false" text="Materias">
+               <content>
+                  <ListView fx:id="viewSubjects" maxHeight="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" />
+               </content>
+            </TitledPane>
+            <TitledPane animated="false" collapsible="false" text="Rangos Horarios" GridPane.columnIndex="1">
+               <content>
+                  <ListView fx:id="viewRanges" prefHeight="200.0" prefWidth="200.0" />
+               </content>
+            </TitledPane>
+            <TitledPane animated="false" collapsible="false" text="Carreras" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <content>
+                  <ListView fx:id="viewCareers" prefHeight="200.0" prefWidth="200.0" />
+               </content>
+            </TitledPane>
+            <TitledPane animated="false" collapsible="false" text="Aulas" GridPane.rowIndex="1">
+               <content>
+                  <ListView fx:id="viewClassrooms" prefHeight="200.0" prefWidth="200.0" />
+               </content>
+            </TitledPane>
+         </children>
+      </GridPane>
+      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+            <Tab text="Rango Horario">
+              <content>
+                  <fx:include source="addRangTab.fxml"/>
+              </content>
+            </Tab>
+          <Tab text="Aula">
+            <content>
+                <fx:include source="addClassroomTab.fxml"/>
+            </content>
+          </Tab>
+          <Tab text="Carrera">
+            <content>
+                <fx:include source="addCareerTab.fxml"/>
+            </content>
+          </Tab>
+            <Tab text="Materia">
+              <content>
+                  <fx:include source="addSubjTab.fxml"/>
+              </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </items>
+</SplitPane>
