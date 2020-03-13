@@ -1,7 +1,6 @@
 package view;
 
 import javafx.scene.control.ListView;
-import controller.io.FileCtrlr;
 
 public class CtrlrHomeWindow {
 
