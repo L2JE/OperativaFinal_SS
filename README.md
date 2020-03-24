@@ -1,4 +1,4 @@
-# ObjetosFinal_NND
+# OperativaFinal_SS
 Proyecto final para la cátedra "Investigacion Operativa"
 
 ## Proyecto
