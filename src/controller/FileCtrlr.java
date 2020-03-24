@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class FileCtrlr {
-    public static short importCSV(String path, ArrayList<String> data){ //cada String contiene elementos separados por comas
+    public static boolean importCSV(String path, ArrayList<String> data){ //cada String contiene elementos separados por comas
         try{
             FileReader iFile = new FileReader(path);
             BufferedReader bLine = new BufferedReader(iFile);
@@ -18,37 +18,40 @@ public class FileCtrlr {
             }
 
             iFile.close();
-            return 1;
+            return true;
         }catch (IOException e){
-            return -1;
+            e.printStackTrace();
+            return false;
         }
 
         
     }
     
-    public static short exportCSV(String path, ArrayList<String> content){
+    public static boolean exportCSV(String path, ArrayList<String> content){
         try{
             FileWriter oFile = new FileWriter(path);
 
             //PROCESO DE ESCRITURA EN CSV
 
             oFile.close();
-            return 1;
+            return true;
         }catch (IOException e){
-            return -1;
+            e.printStackTrace();
+            return false;
         }
     }
     
-    public static short exportXLS(String path, ArrayList<String> content){
+    public static boolean exportXLS(String path, ArrayList<String> content){
         try{
             FileWriter oFile = new FileWriter(path);
 
             //PROCESO DE ESCRITURA EN EXCEL EMBELLECIDO
 
             oFile.close();
-            return 1;
+            return true;
         }catch (IOException e){
-            return -1;
+            e.printStackTrace();
+            return false;
         }
     }
 }
