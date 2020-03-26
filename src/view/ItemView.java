@@ -36,6 +36,11 @@ public class ItemView extends ListCell<String> {
             ListView<String> cont = (ListView<String>) this.getParent();
             cont.getItems().remove(index);
         });
+
+        /** setStyle("style1;" + ... + "styleN;") estilos formato javafx CSS
+        infoB.setStyle();
+        delB.setStyle();
+        **/
     }
 
     @Override
