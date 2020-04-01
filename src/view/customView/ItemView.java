@@ -49,11 +49,13 @@ public class ItemView extends ListCell<String> {
         // Format name
         if (item == null || empty)
         {
+            setGraphic(null);
         }
         else
         {
             label.setText(item);
+            setGraphic(hBox);
         }
-        setGraphic(hBox);
+
     }
 }
