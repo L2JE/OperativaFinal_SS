@@ -18,5 +18,17 @@ public class CtrlrHomeWindow {
     public CtrlrHomeWindow(){
 
     }
+    private ArrayList<String> createList()
+    {
+        ArrayList<String> elems = new ArrayList<String>();
+
+        elems.add("Donna" + "Duncan");
+        elems.add("Layne" + "Estes");
+        elems.add("John" + "Jacobs");
+        elems.add("Mason" + "Boyd");
+        elems.add("Harry" + "Eastwood");
+
+        return elems;
+    }
 
 }
