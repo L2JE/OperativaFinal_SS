@@ -30,8 +30,6 @@ public class ItemView extends ListCell<String> {
         delB.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.out.println(getIndex() + " : " + event);
-
                 ListView<String> cont = getListView();
                 cont.getItems().remove(getIndex());
                 cont.refresh();
@@ -53,7 +51,7 @@ public class ItemView extends ListCell<String> {
         }
         else
         {
-            label.setText(item);
+            label.setText(index + ". " + item);
             setGraphic(hBox);
         }
 

@@ -23,7 +23,7 @@
          <children>
             <TitledPane animated="false" collapsible="false" text="Materias">
                <content>
-                  <ListView fx:id="viewSubjects" maxHeight="1.7976931348623157E308" onMouseClicked="#click" prefHeight="200.0" prefWidth="200.0" />
+                  <ListView fx:id="viewSubjects" maxHeight="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" />
                </content>
             </TitledPane>
             <TitledPane animated="false" collapsible="false" text="Rangos Horarios" GridPane.columnIndex="1">

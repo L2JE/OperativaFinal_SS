@@ -19,12 +19,21 @@ public class CtrlrHomeWindow {
 
     public void initialize(){
         viewSubjects.setCellFactory(new ItemViewFactory());
-
+        //runTestCustomItems();
     }
 
 /** TEST:
  *  CLICK EN LISTA "MATERIAS" AGREGAR 5 ELEMENTOS
  **/
+    private void runTestCustomItems(){
+        viewSubjects.setOnMouseClicked(event -> {
+            System.out.println("Nro Elementos Antes: " + viewSubjects.getItems().size());
+            viewSubjects.getItems().addAll(createList());
+            System.out.println("Nro Elementos Despues: " + viewSubjects.getItems().size());
+            System.out.println("=====================================");
+        });
+    }
+
     private ArrayList<String> createList()
     {
         ArrayList<String> elems = new ArrayList<String>();
@@ -36,11 +45,5 @@ public class CtrlrHomeWindow {
         elems.add("Harry" + "Eastwood");
 
         return elems;
-    }
-
-    public void click(MouseEvent mouseEvent) {
-        ListView p = (ListView) mouseEvent.getSource();
-        System.out.println("Evento: " + mouseEvent);
-        this.viewSubjects.getItems().addAll(createList());
     }
 }
