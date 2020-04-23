@@ -2,10 +2,7 @@ package view.customView;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -19,13 +16,18 @@ public class ItemView extends ListCell<String> {
     HBox hBox = new HBox();
     Label label = new Label("vacio");
     Pane p = new Pane();
-    Button infoB = new Button("(i)");
-    Button delB = new Button("(-)");
+    Button infoB = new Button();
+    Button delB = new Button();
 
     public ItemView(){
         hBox.setSpacing(5.0);
         hBox.getChildren().addAll(label, p, infoB,  delB);
         HBox.setHgrow(p, Priority.ALWAYS);
+
+        infoB.getStylesheets().add(this.getClass().getResource("../stylesheets/info-button.css").toExternalForm());
+        infoB.setTooltip(new Tooltip("Info"));
+        delB.getStylesheets().add(this.getClass().getResource("../stylesheets/del-button.css").toExternalForm());
+        delB.setTooltip(new Tooltip("Borrar"));
 
         delB.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -42,8 +44,6 @@ public class ItemView extends ListCell<String> {
     {
         super.updateItem(item, empty);
 
-        int index = this.getIndex();
-
         // Format name
         if (item == null || empty)
         {
@@ -51,7 +51,7 @@ public class ItemView extends ListCell<String> {
         }
         else
         {
-            label.setText(index + ". " + item);
+            label.setText(item);
             setGraphic(hBox);
         }
 

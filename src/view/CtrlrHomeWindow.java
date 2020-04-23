@@ -19,7 +19,7 @@ public class CtrlrHomeWindow {
 
     public void initialize(){
         viewSubjects.setCellFactory(new ItemViewFactory());
-        //runTestCustomItems();
+        runTestCustomItems();
     }
 
 /** TEST:
@@ -38,11 +38,11 @@ public class CtrlrHomeWindow {
     {
         ArrayList<String> elems = new ArrayList<String>();
 
-        elems.add("Donna" + "Duncan");
-        elems.add("Layne" + "Estes");
-        elems.add("John" + "Jacobs");
-        elems.add("Mason" + "Boyd");
-        elems.add("Harry" + "Eastwood");
+        elems.add("Introduccion a la jodita");
+        elems.add("Feminismo II");
+        elems.add("Aborto Legal I");
+        elems.add("Org. de Manifestaciones");
+        elems.add("Turismo ahre");
 
         return elems;
     }
