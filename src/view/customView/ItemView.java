@@ -16,20 +16,20 @@ public class ItemView extends ListCell<String> {
     HBox hBox = new HBox();
     Label label = new Label("vacio");
     Pane p = new Pane();
-    Button infoB = new Button();
-    Button delB = new Button();
+    Button infoButton = new Button();
+    Button deleteButton = new Button();
 
     public ItemView(){
         hBox.setSpacing(5.0);
-        hBox.getChildren().addAll(label, p, infoB,  delB);
+        hBox.getChildren().addAll(label, p, infoButton, deleteButton);
         HBox.setHgrow(p, Priority.ALWAYS);
 
-        infoB.getStylesheets().add(this.getClass().getResource("../stylesheets/info-button.css").toExternalForm());
-        infoB.setTooltip(new Tooltip("Info"));
-        delB.getStylesheets().add(this.getClass().getResource("../stylesheets/del-button.css").toExternalForm());
-        delB.setTooltip(new Tooltip("Borrar"));
+        infoButton.getStylesheets().add(this.getClass().getResource("../../content/stylesheets/infoButton.css").toExternalForm());
+        infoButton.setTooltip(new Tooltip("Info"));
+        deleteButton.getStylesheets().add(this.getClass().getResource("../../content/stylesheets/deleteButton.css").toExternalForm());
+        deleteButton.setTooltip(new Tooltip("Borrar"));
 
-        delB.setOnAction(new EventHandler<ActionEvent>() {
+        deleteButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 ListView<String> cont = getListView();

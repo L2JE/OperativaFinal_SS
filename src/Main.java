@@ -1,12 +1,9 @@
-package view;
-
+import controller.FileCntlr;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import controller.FileCtrlr;
 
 import java.util.ArrayList;
 
@@ -21,23 +18,30 @@ public class Main extends Application {
 
         // just load fxml file and display it in the stage:
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("homeWindow.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("view/homeWindow.fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root);
-        primaryStage.setTitle("SchedulerSoft FACULTAD DE CS. HUMANAS");
+        primaryStage.setTitle("SchedulerSoft FACULTAD DE CS. HUMANAS - UNICEN");
         primaryStage.setScene(scene);
         primaryStage.show();
 
         //runTestImportCSV();
+        //testPersistence();
 
     }
 
     public void runTestImportCSV(){
         ArrayList<String> elementos = new ArrayList<String>();
-        FileCtrlr.importCSV("D:\\Users\\leo_c\\Desktop\\TP_Opertativa\\Datos\\materias.txt", elementos);
+        FileCntlr.importCSV("D:\\Users\\leo_c\\Desktop\\TP_Opertativa\\Datos\\materias.txt", elementos);
 
         for(String s : elementos){
             System.out.println(s);
         }
+    }
+
+    public void testPersistence(){
+        //no testear SAVE hasta que este conectado con el front
+        //FileCntlr.save();
+        FileCntlr.load();
     }
 }
