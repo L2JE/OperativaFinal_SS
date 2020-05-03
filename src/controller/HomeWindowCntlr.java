@@ -1,4 +1,4 @@
-package view;
+package controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,7 +10,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import view.customView.*;
 
-public class CtrlrHomeWindow {
+public class HomeWindowCntlr {
 
     public ListView viewSubjects;
     public ListView viewRanges;

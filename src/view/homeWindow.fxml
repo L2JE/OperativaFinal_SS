@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<SplitPane dividerPositions="0.5" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="100.0" prefHeight="456.0" prefWidth="741.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.CtrlrHomeWindow">
+<SplitPane dividerPositions="0.5" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="100.0" prefHeight="456.0" prefWidth="741.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.HomeWindowCntlr">
    <items>
       <GridPane>
         <columnConstraints>
@@ -47,7 +47,7 @@
         <tabs>
             <Tab text="Rango Horario">
               <content>
-                  <fx:include source="addRangTab.fxml" />
+                  <fx:include source="addRangeTab.fxml" />
               </content>
             </Tab>
           <Tab text="Aula">
@@ -62,7 +62,7 @@
           </Tab>
             <Tab text="Materia">
               <content>
-                  <fx:include source="addSubjTab.fxml" />
+                  <fx:include source="addCourseTab.fxml" />
               </content>
             </Tab>
         </tabs>
