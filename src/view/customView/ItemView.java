@@ -6,13 +6,13 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
-
+import model.Showable;
 /**
  * PARA GENERALIZAR EXTENDER DE LISTCELL<Object> o LISTCELL<MiClase>
  * SOLO FUNCIONA CON LISTVIEW<String>
  *
  */
-public class ItemView extends ListCell<String> {
+public class ItemView extends ListCell<Showable> {
     HBox hBox = new HBox();
     Label label = new Label("vacio");
     Pane p = new Pane();
@@ -29,18 +29,15 @@ public class ItemView extends ListCell<String> {
         deleteButton.getStylesheets().add(this.getClass().getResource("../../content/stylesheets/deleteButton.css").toExternalForm());
         deleteButton.setTooltip(new Tooltip("Borrar"));
 
-        deleteButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                ListView<String> cont = getListView();
-                cont.getItems().remove(getIndex());
-                cont.refresh();
-            }
+        deleteButton.setOnAction(event -> {
+            ListView<Showable> cont = getListView();
+            cont.getItems().remove(getIndex());
+            cont.refresh();
         });
     }
 
     @Override
-    public void updateItem(String item, boolean empty)
+    public void updateItem(Showable item, boolean empty)
     {
         super.updateItem(item, empty);
 
@@ -51,7 +48,7 @@ public class ItemView extends ListCell<String> {
         }
         else
         {
-            label.setText(item);
+            label.setText(item.toString());
             setGraphic(hBox);
         }
 

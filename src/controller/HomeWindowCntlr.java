@@ -8,6 +8,9 @@ import javafx.scene.input.MouseEvent;
 
 import java.awt.*;
 import java.util.ArrayList;
+
+import model.Course;
+import model.Showable;
 import view.customView.*;
 
 public class HomeWindowCntlr {
@@ -34,15 +37,15 @@ public class HomeWindowCntlr {
         });
     }
 
-    private ArrayList<String> createList()
+    private ArrayList<Showable> createList()
     {
-        ArrayList<String> elems = new ArrayList<String>();
+        ArrayList<Showable> elems = new ArrayList<Showable>();
 
-        elems.add("Introduccion a la jodita");
-        elems.add("Feminismo II");
-        elems.add("Aborto Legal I");
-        elems.add("Org. de Manifestaciones");
-        elems.add("Turismo ahre");
+        elems.add(new Course("Introduccion a la jodita", "C1"));
+        elems.add(new Course("Feminismo II", "C2"));
+        elems.add(new Course("Aborto Legal I", "C1"));
+        elems.add(new Course("Org. de Manifestaciones", "C3"));
+        elems.add(new Course("Turismo ahre", "C1"));
 
         return elems;
     }

@@ -4,10 +4,11 @@ package view.customView;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.util.Callback;
+import model.Showable;
 
-public class ItemViewFactory implements Callback<ListView<String>, ListCell<String>> {
+public class ItemViewFactory implements Callback<ListView<Showable>, ListCell<Showable>> {
     @Override
-    public ListCell<String> call(ListView<String> listview){
+    public ListCell<Showable> call(ListView<Showable> listView){
         return new ItemView();
     }
 }
