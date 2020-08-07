@@ -2,8 +2,11 @@ package controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.MouseEvent;
 
 import java.awt.*;
@@ -19,10 +22,18 @@ public class HomeWindowCntlr {
     public ListView viewRanges;
     public ListView viewCareers;
     public ListView viewClassrooms;
+    public ComboBox<String> comboProfesor;
 
     public void initialize(){
         viewSubjects.setCellFactory(new ItemViewFactory());
         runTestCustomItems();
+        comboProfesor.getItems().addAll(
+                "Luis Hernandez",
+                "Julio Profe",
+                "Jose Servantes",
+                "Pedro Fernandez"
+
+        );
     }
 
 /** TEST:
@@ -48,5 +59,9 @@ public class HomeWindowCntlr {
         elems.add(new Course("Turismo ahre", "C1"));
 
         return elems;
+    }
+
+    public void addItem(ActionEvent actionEvent) {
+        comboProfesor.getItems().add(comboProfesor.getValue());
     }
 }
