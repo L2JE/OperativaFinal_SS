@@ -27,13 +27,6 @@ public class HomeWindowCntlr {
     public void initialize(){
         viewSubjects.setCellFactory(new ItemViewFactory());
         runTestCustomItems();
-        comboProfesor.getItems().addAll(
-                "Luis Hernandez",
-                "Julio Profe",
-                "Jose Servantes",
-                "Pedro Fernandez"
-
-        );
     }
 
 /** TEST:
@@ -61,7 +54,4 @@ public class HomeWindowCntlr {
         return elems;
     }
 
-    public void addItem(ActionEvent actionEvent) {
-        comboProfesor.getItems().add(comboProfesor.getValue());
-    }
 }

@@ -3,6 +3,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.SplitPane;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -19,12 +20,17 @@ public class Main extends Application {
         // just load fxml file and display it in the stage:
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("view/homeWindow.fxml"));
-        Parent root = loader.load();
-        Scene scene = new Scene(root);
+        Parent homeWindow = loader.load();
+        Scene scene = new Scene(homeWindow);
         primaryStage.setTitle("SchedulerSoft FACULTAD DE CS. HUMANAS - UNICEN");
-        primaryStage.setScene(scene);
+
+        homeWindow.prefWidth(700);
+        homeWindow.prefHeight(408);
+        ((SplitPane)homeWindow).setDividerPosition(0,0.5074);
         primaryStage.setMinHeight(400);
-        primaryStage.setMinWidth(350);
+        primaryStage.setMinWidth(600);
+
+        primaryStage.setScene(scene);
         primaryStage.show();
 
         //runTestImportCSV();
