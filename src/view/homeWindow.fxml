@@ -21,7 +21,7 @@
 
 <SplitPane dividerPositions="0.5073891625615764" minHeight="150.0" minWidth="350.0" orientation="VERTICAL" prefHeight="408.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.HomeWindowCntlr">
    <items>
-      <TabPane prefHeight="200.0" prefWidth="378.0" tabClosingPolicy="UNAVAILABLE">
+      <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="378.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab text="Carrera">
                <content>

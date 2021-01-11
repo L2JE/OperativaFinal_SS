@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TabPane;
 import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.MouseEvent;
 
@@ -23,13 +24,22 @@ public class HomeWindowCntlr {
     public ListView viewCareers;
     public ListView viewClassrooms;
     public ComboBox<String> comboProfesor;
+    public TabPane tabPane;
 
     public void initialize(){
+        initTabsView();
+
         viewSubjects.setCellFactory(new ItemViewFactory());
         runTestCustomItems();
     }
 
-/** TEST:
+    private void initTabsView() {
+        /**
+         * Agrega un boton al lado derecho de
+         */
+    }
+
+    /** TEST:
  *  CLICK EN LISTA "MATERIAS" AGREGAR 5 ELEMENTOS
  **/
     private void runTestCustomItems(){
