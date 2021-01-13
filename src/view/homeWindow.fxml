@@ -50,9 +50,9 @@
                                     <HBox alignment="CENTER" layoutX="20.0" layoutY="31.0" minHeight="-Infinity" prefHeight="86.0" prefWidth="319.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="0.0">
                                        <children>
                                           <Label text="De" />
-                                          <ComboBox fx:id="hInicCarrera" prefHeight="25.0" prefWidth="92.0" promptText="H. Inicio" />
+                                          <ComboBox fx:id="startTimeCBCareer" prefHeight="25.0" prefWidth="92.0" promptText="H. Inicio" />
                                           <Label text="a" />
-                                          <ComboBox fx:id="hFinCarrera" prefWidth="92.0" promptText="H. Fin" />
+                                          <ComboBox fx:id="endTimeCBCareer" prefWidth="92.0" promptText="H. Fin" />
                                        </children>
                                     </HBox>
                                  </children>

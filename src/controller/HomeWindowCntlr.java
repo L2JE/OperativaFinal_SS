@@ -17,9 +17,13 @@ public class HomeWindowCntlr {
     public ListView viewCareers;
     public ListView viewClassrooms;
     public ComboBox yearsCBCareer;
-    public ComboBox hInicCarrera;
-    public ComboBox hFinCarrera;
+    public ComboBox startTimeCBCareer;
+    public ComboBox endTimeCBCareer;
     public TextField nameFieldCareer;
+
+    private final int minTime = 8;
+    private final int maxTime = 22;
+    private final int bandDuration = 4;
 
     public void initialize(){
         initCarrera();
@@ -30,11 +34,11 @@ public class HomeWindowCntlr {
 
     private void initCarrera(){
         yearsCBCareer.setVisibleRowCount(3);
-        hInicCarrera.setVisibleRowCount(3);
-        hFinCarrera.setVisibleRowCount(3);
+        startTimeCBCareer.setVisibleRowCount(3);
+        endTimeCBCareer.setVisibleRowCount(3);
         fillChoiceBox(yearsCBCareer, 1, 8, 'i');
-        fillChoiceBox(hInicCarrera, 8, 21, 't');
-        fillChoiceBox(hFinCarrera, 8, 22, 't');
+        fillChoiceBox(startTimeCBCareer, this.minTime, this.maxTime - bandDuration, 't');
+        fillChoiceBox(endTimeCBCareer, this.minTime, this.maxTime, 't');
     }
 
     private void fillChoiceBox(ComboBox cb, int min, int max, char format){
@@ -57,16 +61,36 @@ public class HomeWindowCntlr {
     public void addCarreraPressed(ActionEvent actionEvent) {
         int id = 0;
         int duration = -1;
+        String careerName = "";
+        int chosenStartTime = -1;
+        int chosenEndTime = -1;
 
-        /*String careerName = nameFieldCareer.getText();
-        int chosenStartTime = (int)hInicCarrera.getValue();
-        int chosenEndTime = (int)hFinCarrera.getValue();
-*/
         ///validate duration
-        if(yearsCBCareer.getSelectionModel().getSelectedItem() != null)
-            System.out.println((int)yearsCBCareer.getSelectionModel().getSelectedItem());
+        if(yearsCBCareer.getValue() != null)
+            duration = Integer.parseInt((String) yearsCBCareer.getValue());
 
-  //      CareerDTO newCareer = new CareerDTO(id, careerName, duration, chosenStartTime, chosenEndTime);
+        ///Validate careerName
+        if(nameFieldCareer.getText() != null)
+            careerName = nameFieldCareer.getText();
+
+        ///Validate Band
+        if(startTimeCBCareer.getValue() != null){
+            String tmp = ((String)startTimeCBCareer.getValue());
+            chosenStartTime = Integer.parseInt(tmp.substring(0,tmp.indexOf(":")));
+        }
+
+        if(endTimeCBCareer.getValue() != null){
+            String tmp = ((String)endTimeCBCareer.getValue());
+            chosenEndTime = Integer.parseInt(tmp.substring(0,tmp.indexOf(":")));
+        }
+
+        CareerDTO c = DataValidator.careerValidator(yearsCBCareer, nameFieldCareer, startTimeCBCareer, endTimeCBCareer);
+        System.out.println("Chosen Name: " + careerName);
+        System.out.println("Chosen Years: " + duration);
+        System.out.println("Chosen StartTime: " + chosenStartTime);
+        System.out.println("Chosen endTime: " + chosenEndTime);
+
+        CareerDTO newCareer = new CareerDTO(id, careerName, duration, chosenStartTime, chosenEndTime);
         System.out.println("Carrera Agregada!");
     }
 /** TEST:
