@@ -2,9 +2,9 @@ package data_access;
 
 public class CareerCompDTO {
     private String idSubject;
-    private String idCareer;
+    private int idCareer;
 
-    public CareerCompDTO(String idSubject, String idCareer) {
+    public CareerCompDTO(String idSubject, int idCareer) {
         this.idSubject = idSubject;
         this.idCareer = idCareer;
     }
@@ -17,11 +17,11 @@ public class CareerCompDTO {
         this.idSubject = idSubject;
     }
 
-    public String getIdCareer() {
+    public int getIdCareer() {
         return idCareer;
     }
 
-    public void setIdCareer(String idCareer) {
+    public void setIdCareer(int idCareer) {
         this.idCareer = idCareer;
     }
 }
