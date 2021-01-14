@@ -1,10 +1,11 @@
 package controller;
 
-import data_access.CareerCompDAO;
-import data_access.CareerCompDTO;
-import data_access.CareerDTO;
+import data_access.*;
+import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+
+import java.util.ArrayList;
 
 /**
  * TODO: initialize careerAccess object!
@@ -54,11 +55,48 @@ public class UIDataValidator {
             return null;
         */
 
-        CareerDTO validCareer = new CareerDTO(id, careerName, duration, chosenStartTime, chosenEndTime);
-
-
-        return validCareer;
+        return new CareerDTO(id, careerName, duration, chosenStartTime, chosenEndTime);
     }
+
+    public static ClassroomDTO roomValidator(ComboBox<String> pabCBRoom, ComboBox<String> roomCBRoom) {
+        int id = 0;
+        String location = pabCBRoom.getValue();
+        String room = roomCBRoom.getValue();
+
+        if((location.length() < 4)||(room.length() < 4))
+            return null;
+
+        return new ClassroomDTO(id, location, room);
+    }
+
+    public static ArrayList<String> locationValidator(ComboBox<String> pabCBRoom){
+        String enteredText = pabCBRoom.getValue();
+
+        if((enteredText != null) && (enteredText.length() > 3)){
+
+        ArrayList<String> availableRooms = new ArrayList<>();
+        /*
+        ClassroomDAO classroomDAO = null;
+        ArrayList<ClassroomDTO> roomsOnPab = classroomDAO.getRoomsOnLocation(enteredText);
+        if(roomsOnPab != null) {
+            for (ClassroomDTO dto : roomsOnPab)
+                availableRooms.add(dto.getRoomName());
+        }else{
+            classroomDAO.setLocation(enteredText);
+            pabCBRoom.getItems().add(enteredText);
+        }
+*/
+            availableRooms.add("1");
+            availableRooms.add("2");
+            availableRooms.add("3");
+            availableRooms.add("4");
+
+            return availableRooms;
+
+        }
+        return null;
+    }
+
     /*
     public void initCareerDAO(){
         if(careerAccess==null)

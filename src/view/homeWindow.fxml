@@ -90,7 +90,7 @@
                      <children>
                         <HBox alignment="CENTER_RIGHT" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
                            <children>
-                              <Button mnemonicParsing="false" text="Agregar" />
+                              <Button mnemonicParsing="false" onAction="#addAulaPressed" text="Agregar" />
                               <Button mnemonicParsing="false" text="Modificar" />
                            </children>
                            <padding>
@@ -111,8 +111,8 @@
                                        <children>
                                           <HBox alignment="CENTER_RIGHT" layoutX="108.0" layoutY="80.0" spacing="15.0" AnchorPane.leftAnchor="108.0">
                                              <children>
-                                                <ComboBox editable="true" prefWidth="161.0" promptText="Pabellon" />
-                                                <ComboBox editable="true" promptText="Aula" />
+                                                <ComboBox fx:id="pabCBRoom" editable="true" onKeyReleased="#pabEnterPressedCheck" prefWidth="161.0" promptText="Pabellon" />
+                                                <ComboBox fx:id="roomCBRoom" editable="true" onKeyReleased="#roomEnterPressedCheck" promptText="Aula" />
                                              </children>
                                              <padding>
                                                 <Insets right="15.0" />

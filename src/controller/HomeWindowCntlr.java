@@ -1,11 +1,16 @@
 package controller;
 
-import data_access.CareerDTO;
+import data_access.ClassroomDAO;
+import data_access.ClassroomDTO;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 
 import java.util.ArrayList;
+import java.util.Observable;
 
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import model.Course;
 import model.Showable;
 import view.customView.*;
@@ -21,18 +26,34 @@ public class HomeWindowCntlr {
     public ComboBox endTimeCBCareer;
     public TextField nameFieldCareer;
 
+    public ComboBox<String> pabCBRoom;
+    public ComboBox<String> roomCBRoom;
+
     private final int minTime = 8;
     private final int maxTime = 22;
     private final int bandDuration = 4;
 
     public void initialize(){
-        initCarrera();
+        initCareer();
+        initClassroom();
         viewSubjects.setCellFactory(new ItemViewFactory());
         viewCareers.setCellFactory(new ItemViewFactory());
+        viewClassrooms.setCellFactory(new ItemViewFactory());
         runTestCustomItems();
     }
 
-    private void initCarrera(){
+    private void initClassroom() {
+        /**
+         * TODO: Llenar con datos previamente almacenados
+         ClassroomDAO classroomDAO = new ClassroomDAOImp();
+         pabCBRoom.getItems().addAll(classroomDAO.getAllLocations());
+          */
+    }
+
+    private void initCareer(){
+        /**
+         * TODO: Llenar con datos previamente almacenados
+         */
         yearsCBCareer.setVisibleRowCount(3);
         startTimeCBCareer.setVisibleRowCount(3);
         endTimeCBCareer.setVisibleRowCount(3);
@@ -72,6 +93,37 @@ public class HomeWindowCntlr {
         }else
             System.out.println("Datos Invalidos: No es posible agregar la carrera por un error en los datos ingresados.");
     }
+
+    public void addAulaPressed(ActionEvent actionEvent) {
+        /*
+        Showable newRoom = UIDataValidator.roomValidator(pabCBRoom, roomCBRoom);
+        if(newRoom != null){
+            viewClassrooms.getItems().add(newRoom);
+        }else
+            System.out.println("Datos Invalidos: No es posible agregar el aula por un error en los datos ingresados.");
+    */
+    }
+
+    public void pabEnterPressedCheck(KeyEvent keyEvent) {
+        if(keyEvent.getCode() == KeyCode.ENTER){
+            /**
+             * TODO: necesita inicializar con una implementacion de ClassroomDAO
+             */
+
+            roomCBRoom.getItems().clear();
+            ArrayList<String> roomsOnPab = UIDataValidator.locationValidator(pabCBRoom);
+            if(roomsOnPab != null){
+
+                roomCBRoom.getItems().addAll(roomsOnPab);
+                System.out.println(pabCBRoom.getValue());
+            }else
+                System.out.println("Dato Invalido: Error de tipeo");
+        }
+    }
+
+    public void roomEnterPressedCheck(KeyEvent keyEvent) {
+    }
+
 /** TEST:
  *  CLICK EN LISTA "MATERIAS" AGREGAR 5 ELEMENTOS
  **/
