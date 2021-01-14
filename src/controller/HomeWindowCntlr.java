@@ -12,10 +12,10 @@ import view.customView.*;
 
 public class HomeWindowCntlr {
 
-    public ListView viewSubjects;
-    public ListView viewRanges;
-    public ListView viewCareers;
-    public ListView viewClassrooms;
+    public ListView<Showable> viewSubjects;
+    public ListView<Showable> viewRanges;
+    public ListView<Showable> viewCareers;
+    public ListView<Showable> viewClassrooms;
     public ComboBox yearsCBCareer;
     public ComboBox startTimeCBCareer;
     public ComboBox endTimeCBCareer;
@@ -55,43 +55,22 @@ public class HomeWindowCntlr {
         for(int i = 0; min <= max; i++, min++)
             values[i] = min + separator;
 
-        cb.getItems().addAll(values);
+        cb.getItems().addAll((Object[])values);
     }
 
     public void addCarreraPressed(ActionEvent actionEvent) {
-        int id = 0;
-        int duration = -1;
-        String careerName = "";
-        int chosenStartTime = -1;
-        int chosenEndTime = -1;
 
-        ///validate duration
-        if(yearsCBCareer.getValue() != null)
-            duration = Integer.parseInt((String) yearsCBCareer.getValue());
+        Showable newCareer = UIDataValidator.careerValidator(yearsCBCareer, nameFieldCareer, startTimeCBCareer, endTimeCBCareer);
 
-        ///Validate careerName
-        if(nameFieldCareer.getText() != null)
-            careerName = nameFieldCareer.getText();
+        if(newCareer != null){
+            /**
+             * TODO: Verificar si la carrera ya existe
+             */
 
-        ///Validate Band
-        if(startTimeCBCareer.getValue() != null){
-            String tmp = ((String)startTimeCBCareer.getValue());
-            chosenStartTime = Integer.parseInt(tmp.substring(0,tmp.indexOf(":")));
-        }
-
-        if(endTimeCBCareer.getValue() != null){
-            String tmp = ((String)endTimeCBCareer.getValue());
-            chosenEndTime = Integer.parseInt(tmp.substring(0,tmp.indexOf(":")));
-        }
-
-        CareerDTO c = DataValidator.careerValidator(yearsCBCareer, nameFieldCareer, startTimeCBCareer, endTimeCBCareer);
-        System.out.println("Chosen Name: " + careerName);
-        System.out.println("Chosen Years: " + duration);
-        System.out.println("Chosen StartTime: " + chosenStartTime);
-        System.out.println("Chosen endTime: " + chosenEndTime);
-
-        CareerDTO newCareer = new CareerDTO(id, careerName, duration, chosenStartTime, chosenEndTime);
-        System.out.println("Carrera Agregada!");
+            viewCareers.getItems().add(newCareer);
+            System.out.println("Carrera Agregada!");
+        }else
+            System.out.println("Datos Invalidos: No es posible agregar la carrera por un error en los datos ingresados.");
     }
 /** TEST:
  *  CLICK EN LISTA "MATERIAS" AGREGAR 5 ELEMENTOS
