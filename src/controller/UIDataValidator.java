@@ -1,10 +1,11 @@
 package controller;
 
-import data_access.CareerCompDAO;
-import data_access.CareerCompDTO;
-import data_access.CareerDTO;
+import data_access.*;
+import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+
+import java.util.ArrayList;
 
 /**
  * TODO: initialize careerAccess object!
@@ -54,11 +55,51 @@ public class UIDataValidator {
             return null;
         */
 
-        CareerDTO validCareer = new CareerDTO(id, careerName, duration, chosenStartTime, chosenEndTime);
-
-
-        return validCareer;
+        return new CareerDTO(id, careerName, duration, chosenStartTime, chosenEndTime);
     }
+
+    public static ClassroomDTO roomValidator(ComboBox<String> pabCBRoom, ComboBox<String> roomCBRoom) {
+        int id = 0;
+        String location = pabCBRoom.getValue();
+        String room = roomCBRoom.getValue();
+
+        if((location.length() < 4)||(room.length() < 1))
+            return null;
+
+        ClassroomDTO addedClassroom = new ClassroomDTO(id, location, room);
+        /*
+        ClassroomDAO classroomDAO = null;
+        if(classroomDAO.getRoomByName(location+room) == null)// Si el aula no existe se agrega
+            classroomDAO.setClassroom(addedClassroom);
+         */
+
+
+        return addedClassroom;
+    }
+
+    public static ArrayList<String> locationValidator(ComboBox<String> pabCBRoom){
+        String enteredText = pabCBRoom.getValue();
+
+        if((enteredText != null) && (enteredText.length() > 3)){
+
+        ArrayList<String> availableRooms = new ArrayList<>();
+        /*
+        ClassroomDAO classroomDAO = null;
+        ArrayList<ClassroomDTO> roomsOnPab = classroomDAO.getRoomsOnLocation(enteredText);
+        if(roomsOnPab != null) { //Si el pabellon existe obtenemos las aulas
+            for (ClassroomDTO dto : roomsOnPab)
+                availableRooms.add(dto.getRoomName());
+        }else{ //Si el pabellon no existe agregamos el nuevo pab a la vista y al modelo
+            classroomDAO.setLocation(enteredText);
+            pabCBRoom.getItems().add(enteredText);
+        }
+*/
+        return availableRooms;
+
+        }
+        return null;
+    }
+
     /*
     public void initCareerDAO(){
         if(careerAccess==null)
