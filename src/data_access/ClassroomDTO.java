@@ -5,6 +5,14 @@ import model.Showable;
 public class ClassroomDTO implements Showable {
     private int idRoom;
     private String pabName;
+    private String roomName;
+
+
+    public ClassroomDTO(int idRoom, String pabName, String roomName) {
+        this.idRoom = idRoom;
+        this.pabName = pabName;
+        this.roomName = roomName;
+    }
 
     public int getIdRoom() {
         return idRoom;
@@ -30,13 +38,6 @@ public class ClassroomDTO implements Showable {
         this.roomName = roomName;
     }
 
-    private String roomName;
-
-    public ClassroomDTO(int idRoom, String pabName, String roomName) {
-        this.idRoom = idRoom;
-        this.pabName = pabName;
-        this.roomName = roomName;
-    }
 
 
     @Override

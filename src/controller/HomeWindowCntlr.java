@@ -2,15 +2,19 @@ package controller;
 
 import data_access.ClassroomDAO;
 import data_access.ClassroomDTO;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Observable;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import model.Course;
 import model.Showable;
 import view.customView.*;
@@ -48,6 +52,14 @@ public class HomeWindowCntlr {
          ClassroomDAO classroomDAO = new ClassroomDAOImp();
          pabCBRoom.getItems().addAll(classroomDAO.getAllLocations());
           */
+
+        pabCBRoom.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                selectedPabChangedAula();
+            }
+        });
+
     }
 
     private void initCareer(){
@@ -95,33 +107,29 @@ public class HomeWindowCntlr {
     }
 
     public void addAulaPressed(ActionEvent actionEvent) {
-        /*
+
         Showable newRoom = UIDataValidator.roomValidator(pabCBRoom, roomCBRoom);
         if(newRoom != null){
             viewClassrooms.getItems().add(newRoom);
         }else
             System.out.println("Datos Invalidos: No es posible agregar el aula por un error en los datos ingresados.");
-    */
+
     }
 
-    public void pabEnterPressedCheck(KeyEvent keyEvent) {
-        if(keyEvent.getCode() == KeyCode.ENTER){
-            /**
-             * TODO: necesita inicializar con una implementacion de ClassroomDAO
-             */
+    public void selectedPabChangedAula() {
+        /**
+         * TODO: necesita inicializar con una implementacion de ClassroomDAO
+         */
 
-            roomCBRoom.getItems().clear();
-            ArrayList<String> roomsOnPab = UIDataValidator.locationValidator(pabCBRoom);
-            if(roomsOnPab != null){
+        roomCBRoom.getItems().clear();
+        ArrayList<String> roomsOnPab = UIDataValidator.locationValidator(pabCBRoom);
+        if(roomsOnPab != null){
 
-                roomCBRoom.getItems().addAll(roomsOnPab);
-                System.out.println(pabCBRoom.getValue());
-            }else
-                System.out.println("Dato Invalido: Error de tipeo");
-        }
-    }
+            roomCBRoom.getItems().addAll(roomsOnPab);
+            System.out.println(pabCBRoom.getValue());
+        }else
+            System.out.println("Dato Invalido: Error de tipeo");
 
-    public void roomEnterPressedCheck(KeyEvent keyEvent) {
     }
 
 /** TEST:
