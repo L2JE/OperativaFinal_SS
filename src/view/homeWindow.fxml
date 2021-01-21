@@ -174,14 +174,14 @@
                                                 <HBox alignment="CENTER" spacing="8.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                                    <children>
                                                       <TextField prefHeight="25.0" prefWidth="226.0" />
-                                                      <ComboBox maxHeight="25.0" maxWidth="45.0" minHeight="25.0" minWidth="45.0" prefHeight="25.0" prefWidth="45.0" visibleRowCount="3" />
+                                                      <ComboBox disable="true" maxHeight="25.0" maxWidth="45.0" minHeight="25.0" minWidth="45.0" prefHeight="25.0" prefWidth="45.0" visibleRowCount="3" />
                                                       <ComboBox maxHeight="25.0" maxWidth="45.0" minHeight="25.0" minWidth="45.0" prefHeight="25.0" prefWidth="45.0" visibleRowCount="3" />
                                                    </children>
                                                 </HBox>
                                              </children>
                                           </AnchorPane>
-                                          <Button mnemonicParsing="false" text="Agregar una Carrera" />
-                                          <Button mnemonicParsing="false" text="Fijar una Clase" />
+                                          <Button fx:id="addCareerMateriaButton" mnemonicParsing="false" onAction="#addCareerMateria" text="Agregar una Carrera" />
+                                          <Button fx:id="fixClassMateriaButton" mnemonicParsing="false" onAction="#fixLessonMateria" text="Fijar una Clase" />
                                        </children>
                                     </VBox>
                                  </children>
