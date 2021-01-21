@@ -9,7 +9,5 @@ public interface ClassroomDAO {
     public abstract ArrayList<String> getAllLocations();
     public abstract ArrayList<ClassroomDTO> getAll();
 
-    public abstract void setLocation(String location);
     public abstract void setClassroom(ClassroomDTO classroom);
-    public abstract void setClassroomList(ArrayList<ClassroomDTO> classroom);
 }
