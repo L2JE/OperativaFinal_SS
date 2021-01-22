@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class CareerCompDAOImpl implements CareerCompDAO{
-    private ArrayList<CareerCompDTO> cache = new ArrayList<>()
+    private ArrayList<CareerCompDTO> cache = new ArrayList<>();
     private static CareerCompDAOImpl instance;
 
 
-    private CareerCompDAO(){
+    private CareerCompDAOImpl(){
 
     }
 
@@ -30,6 +30,16 @@ public class CareerCompDAOImpl implements CareerCompDAO{
             return result;
 
         return null;
+    }
+
+    @Override
+    public ArrayList<CareerCompDTO> getAll() {
+        ArrayList<CareerCompDTO> result = new ArrayList<>();
+
+        for(CareerCompDTO dto : cache)
+            result.add(dto);
+
+        return result;
     }
 
     @Override
