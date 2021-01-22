@@ -1,5 +1,7 @@
 package data_access;
 
+import data_transfer.ClassroomDTO;
+
 import java.util.ArrayList;
 
 public class ClassroomDAOImpl implements ClassroomDAO {

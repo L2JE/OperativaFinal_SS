@@ -1,5 +1,7 @@
 package data_access;
 
+import data_transfer.CareerCompDTO;
+
 import java.util.ArrayList;
 
 public interface CareerCompDAO {

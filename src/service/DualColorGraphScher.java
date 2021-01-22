@@ -1,7 +1,7 @@
-package controller;
+package service;
 
-import data_access.LectureDTO;
-import data_access.OccupationDTO;
+import data_transfer.LectureDTO;
+import data_transfer.OccupationDTO;
 
 import java.util.ArrayList;
 
