@@ -6,8 +6,12 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Observable;
@@ -15,6 +19,8 @@ import java.util.Observable;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import model.Course;
 import model.Showable;
 import view.customView.*;
@@ -36,6 +42,8 @@ public class HomeWindowCntlr {
     private final int minTime = 8;
     private final int maxTime = 22;
     private final int bandDuration = 4;
+    public Button addCareerMateriaButton;
+    public Button fixClassMateriaButton;
 
     public void initialize(){
         initCareer();
@@ -157,4 +165,21 @@ public class HomeWindowCntlr {
         return elems;
     }
 
+    public void addCareerMateria(ActionEvent actionEvent) throws IOException {
+        try{
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            AnchorPane root = loader.load(getClass().getResource("view/materiaAddCareer.fxml").openStream());
+
+            stage.setScene(new Scene(root));
+            stage.setTitle("2nd Window");
+            stage.showAndWait();
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void fixLessonMateria(ActionEvent actionEvent) {
+    }
 }

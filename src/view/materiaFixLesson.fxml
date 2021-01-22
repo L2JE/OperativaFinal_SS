@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="113.0" maxWidth="428.0" minHeight="113.0" minWidth="428.0" prefHeight="113.0" prefWidth="428.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.MateriaFixLesson">
+   <children>
+      <VBox AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="3.0">
+         <children>
+            <AnchorPane>
+               <children>
+                  <Text layoutX="41.0" layoutY="105.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pabellon" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="3.0" />
+                  <Text layoutX="162.0" layoutY="105.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Aula" AnchorPane.bottomAnchor="3.0" />
+                  <Text layoutX="319.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" text="H.Inic." AnchorPane.bottomAnchor="3.0" />
+                  <Text layoutX="369.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Duracion" AnchorPane.bottomAnchor="3.0" />
+               </children>
+            </AnchorPane>
+            <HBox spacing="8.0">
+               <children>
+                  <ComboBox fx:id="pabellonButton" prefWidth="161.0" />
+                  <ComboBox prefWidth="150.0" />
+                  <ComboBox maxWidth="45.0" minWidth="45.0" prefWidth="45.0" />
+                  <ComboBox maxWidth="45.0" minWidth="45.0" prefWidth="45.0" />
+               </children>
+            </HBox>
+         </children>
+         <padding>
+            <Insets left="3.0" />
+         </padding>
+      </VBox>
+      <HBox alignment="BOTTOM_RIGHT" spacing="8.0" AnchorPane.bottomAnchor="3.0" AnchorPane.rightAnchor="3.0">
+         <children>
+            <Button mnemonicParsing="false" text="Button" />
+            <Button mnemonicParsing="false" text="Button" />
+         </children>
+         <padding>
+            <Insets bottom="3.0" right="3.0" />
+         </padding>
+      </HBox>
+   </children>
+</AnchorPane>
