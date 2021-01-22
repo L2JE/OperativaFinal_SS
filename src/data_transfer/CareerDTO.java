@@ -1,6 +1,6 @@
-package data_access;
+package data_transfer;
 
-import model.Showable;
+import service.Showable;
 
 public class CareerDTO implements Showable {
     private int idCareer;

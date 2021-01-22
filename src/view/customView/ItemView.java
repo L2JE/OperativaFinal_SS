@@ -1,12 +1,10 @@
 package view.customView;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
-import model.Showable;
+import service.Showable;
 /**
  * PARA GENERALIZAR EXTENDER DE LISTCELL<Object> o LISTCELL<MiClase>
  * SOLO FUNCIONA CON LISTVIEW<String>

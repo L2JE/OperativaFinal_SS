@@ -1,7 +1,8 @@
 package data_access;
 
+import data_transfer.CareerCompDTO;
+
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 public class CareerCompDAOImpl implements CareerCompDAO{
     private ArrayList<CareerCompDTO> cache = new ArrayList<>();

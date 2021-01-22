@@ -1,4 +1,4 @@
-package data_access;
+package data_transfer;
 
 public class CareerCompDTO {
     private String idSubject;

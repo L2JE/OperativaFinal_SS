@@ -1,6 +1,8 @@
-package controller;
+package service;
 
 import data_access.*;
+import data_transfer.CareerDTO;
+import data_transfer.ClassroomDTO;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 

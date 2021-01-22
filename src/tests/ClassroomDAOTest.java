@@ -2,7 +2,7 @@ package tests;
 
 import data_access.ClassroomDAO;
 import data_access.ClassroomDAOImpl;
-import data_access.ClassroomDTO;
+import data_transfer.ClassroomDTO;
 
 import java.util.ArrayList;
 

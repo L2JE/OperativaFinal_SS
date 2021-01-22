@@ -2,7 +2,7 @@ package tests;
 
 import data_access.CareerCompDAO;
 import data_access.CareerCompDAOImpl;
-import data_access.CareerCompDTO;
+import data_transfer.CareerCompDTO;
 
 import java.util.ArrayList;
 

@@ -1,6 +1,6 @@
-package data_access;
+package data_transfer;
 
-import model.Showable;
+import service.Showable;
 
 public class ClassroomDTO implements Showable {
     private int idRoom;

@@ -1,6 +1,4 @@
-package controller;
-
-import model.PersistenceFile;
+package data_access;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -55,6 +53,7 @@ public class FileCntlr {
     }
 
     public static boolean save(){
+        /*
         PersistenceFile writeFile = new PersistenceFile();
         try {
             //save in root directory to test later with .jar deployment
@@ -74,6 +73,8 @@ public class FileCntlr {
             System.out.println("Error initializing stream");
             return false;
         }
+
+         */
         return true;
     }
 
@@ -83,7 +84,8 @@ public class FileCntlr {
             ObjectInputStream oi = new ObjectInputStream(fi);
 
             // Read objects
-            PersistenceFile readFile = (PersistenceFile) oi.readObject();
+            //PersistenceFile readFile = (PersistenceFile)
+            oi.readObject();
 
             oi.close();
             fi.close();

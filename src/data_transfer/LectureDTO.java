@@ -1,6 +1,8 @@
-package data_access;
+package data_transfer;
 
-public class LectureDTO {
+import service.Showable;
+
+public class LectureDTO implements Showable {
     private int idLecture;
     private String idSubject;
     private String teacher;
@@ -33,5 +35,11 @@ public class LectureDTO {
 
     public void setTeacher(String teacher) {
         this.teacher = teacher;
+    }
+
+
+    @Override
+    public String toString() {
+        return idLecture + ", " + idSubject +", "+ teacher;
     }
 }

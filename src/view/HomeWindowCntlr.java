@@ -1,28 +1,20 @@
-package controller;
+package view;
 
-import data_access.ClassroomDAO;
-import data_access.ClassroomDTO;
+import data_transfer.LectureDTO;
+import service.UIDataValidator;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Observable;
 
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import model.Course;
-import model.Showable;
+import service.Showable;
 import view.customView.*;
 
 public class HomeWindowCntlr {
@@ -156,11 +148,11 @@ public class HomeWindowCntlr {
     {
         ArrayList<Showable> elems = new ArrayList<Showable>();
 
-        elems.add(new Course("Introduccion a la jodita", "C1"));
-        elems.add(new Course("Feminismo II", "C2"));
-        elems.add(new Course("Aborto Legal I", "C1"));
-        elems.add(new Course("Org. de Manifestaciones", "C3"));
-        elems.add(new Course("Turismo ahre", "C1"));
+        elems.add(new LectureDTO(1,"Introduccion a la Jodita C1", "Tinelli"));
+        elems.add(new LectureDTO(2,"Feminismo II", "Basile"));
+        elems.add(new LectureDTO(3,"Aborto Legal I C2", "Vidella"));
+        elems.add(new LectureDTO(4,"Org. de Manifestaciones C1", "Kirchner"));
+        elems.add(new LectureDTO(5,"Turismo Ahre C1", "Pacuolo"));
 
         return elems;
     }
