@@ -1,6 +1,7 @@
 package view;
 
 import data_transfer.LectureDTO;
+import javafx.scene.Parent;
 import service.UIDataValidator;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -9,7 +10,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javafx.scene.layout.AnchorPane;
@@ -161,11 +164,14 @@ public class HomeWindowCntlr {
         try{
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader();
-            AnchorPane root = loader.load(getClass().getResource("view/materiaAddCareer.fxml").openStream());
 
+            loader.setLocation(new File("src\\view\\materiaAddCareer.fxml").toURI().toURL());
+
+            Parent root = loader.load();
             stage.setScene(new Scene(root));
             stage.setTitle("2nd Window");
             stage.showAndWait();
+
 
         }catch(Exception e){
             e.printStackTrace();
