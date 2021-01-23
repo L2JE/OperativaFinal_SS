@@ -12,10 +12,8 @@ import javafx.scene.control.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import service.Showable;
 import view.customView.*;
@@ -161,23 +159,32 @@ public class HomeWindowCntlr {
     }
 
     public void addCareerMateria(ActionEvent actionEvent) throws IOException {
+        callWaitNewStageFill("src\\view\\materiaAddCareer.fxml", "Nueva carrera cursante");
+    }
+
+    public void fixLessonMateria(ActionEvent actionEvent) {
+        callWaitNewStageFill("src\\view\\materiaFixLesson.fxml", "Fijar una clase");
+    }
+
+    private void callWaitNewStageFill(String path, String stageTitle){
         try{
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader();
 
-            loader.setLocation(new File("src\\view\\materiaAddCareer.fxml").toURI().toURL());
+            loader.setLocation(new File(path).toURI().toURL());
 
             Parent root = loader.load();
+            SendableFilling filling = loader.getController();
+            filling.setFillingReceiver(this);
+
             stage.setScene(new Scene(root));
-            stage.setTitle("2nd Window");
+            stage.setTitle(stageTitle);
             stage.showAndWait();
 
 
         }catch(Exception e){
             e.printStackTrace();
         }
-    }
 
-    public void fixLessonMateria(ActionEvent actionEvent) {
     }
 }
