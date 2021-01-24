@@ -1,6 +1,9 @@
 package view;
 
 import data_transfer.LectureDTO;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.stage.Modality;
 import service.UIDataValidator;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -9,15 +12,20 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import service.Showable;
+import sun.applet.Main;
 import view.customView.*;
 
+import static sun.applet.Main.*;
+
 public class HomeWindowCntlr {
+
+    private Stage homeStage;
 
     public ListView<Showable> viewSubjects;
     public ListView<Showable> viewRanges;
@@ -158,13 +166,28 @@ public class HomeWindowCntlr {
     }
 
     public void addCareerMateria(ActionEvent actionEvent) throws IOException {
+        callWaitNewStageFill("materiaAddCareer.fxml", "Nueva carrera cursante");
+    }
+
+    public void fixLessonMateria(ActionEvent actionEvent) {
+        callWaitNewStageFill("materiaFixLesson.fxml", "Fijar una clase");
+    }
+
+    private void callWaitNewStageFill(String path, String stageTitle){
         try{
             Stage stage = new Stage();
-            FXMLLoader loader = new FXMLLoader();
-            AnchorPane root = loader.load(getClass().getResource("view/materiaAddCareer.fxml").openStream());
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
+
+            Parent root = loader.load();
+            SendableFilling filling = loader.getController();
+            filling.setFillingReceiver(this);
+
+            stage.initOwner(this.homeStage);
+            stage.initModality(Modality.WINDOW_MODAL);
 
             stage.setScene(new Scene(root));
-            stage.setTitle("2nd Window");
+            stage.setResizable(false);
+            stage.setTitle(stageTitle);
             stage.showAndWait();
 
         }catch(Exception e){
@@ -172,6 +195,8 @@ public class HomeWindowCntlr {
         }
     }
 
-    public void fixLessonMateria(ActionEvent actionEvent) {
+    public void setHomeStage(Stage homeStage){
+        this.homeStage = homeStage;
+
     }
 }

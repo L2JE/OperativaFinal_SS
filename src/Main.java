@@ -5,6 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.stage.Stage;
+import view.HomeWindowCntlr;
 
 import java.util.ArrayList;
 
@@ -19,8 +20,12 @@ public class Main extends Application {
 
         // just load fxml file and display it in the stage:
 
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("view/homeWindow.fxml"));
         Parent homeWindow = loader.load();
+        HomeWindowCntlr homeController = loader.getController();
+        homeController.setHomeStage(primaryStage);
+
         Scene scene = new Scene(homeWindow);
         primaryStage.setTitle("SchedulerSoft FACULTAD DE CS. HUMANAS - UNICEN");
 
