@@ -33,10 +33,10 @@
             <Insets left="3.0" />
          </padding>
       </VBox>
-      <HBox alignment="BOTTOM_RIGHT" spacing="8.0" AnchorPane.bottomAnchor="3.0" AnchorPane.rightAnchor="3.0">
+      <HBox alignment="BOTTOM_RIGHT" spacing="8.0" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0">
          <children>
-            <Button mnemonicParsing="false" text="Button" />
-            <Button mnemonicParsing="false" text="Button" />
+            <Button mnemonicParsing="false" text="Agregar" />
+            <Button mnemonicParsing="false" text="Cancelar" />
          </children>
          <padding>
             <Insets bottom="3.0" right="3.0" />
