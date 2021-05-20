@@ -3,13 +3,20 @@ package data_transfer;
 import service.Showable;
 
 public class CareerDTO implements Showable {
-    private int idCareer;
+    private int idCareer = -1;
     private String name;
     private int years;
     private int preferredStart;
     private int preferredEnd;
 
     public CareerDTO(String name, int years, int preferredStart, int preferredEnd) {
+        this.name = name;
+        this.years = years;
+        this.preferredStart = preferredStart;
+        this.preferredEnd = preferredEnd;
+    }
+    public CareerDTO(int idCareer, String name, int years, int preferredStart, int preferredEnd) {
+        this.idCareer = idCareer;
         this.name = name;
         this.years = years;
         this.preferredStart = preferredStart;
@@ -56,5 +63,12 @@ public class CareerDTO implements Showable {
     @Override
     public String toString() {
         return name +" ("+ years + "años)";
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        CareerDTO copy = new CareerDTO(idCareer, name, years, preferredStart, preferredEnd);
+
+        return copy;
     }
 }

@@ -24,4 +24,9 @@ public class CareerCompDTO {
     public void setIdCareer(int idCareer) {
         this.idCareer = idCareer;
     }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return new CareerCompDTO(idSubject, idCareer);
+    }
 }

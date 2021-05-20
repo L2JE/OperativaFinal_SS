@@ -24,12 +24,19 @@ public class CareerCompDAOImpl implements CareerCompDAO{
 
     @Override
     public ArrayList<CareerCompDTO> getSubjects(int idCareer) {
+        /**
+         * idCareer is supposed to be already in the storage
+         */
+
         ArrayList<CareerCompDTO> result = new ArrayList<>();
-
         for(CareerCompDTO dto : compositionCache)
-            if(dto.getIdCareer() == idCareer)
-                result.add(dto);
-
+            if(dto.getIdCareer() == idCareer) {
+                try {
+                    result.add((CareerCompDTO) dto.clone());
+                } catch (CloneNotSupportedException e) {
+                    e.printStackTrace();
+                }
+            }
         if(result.size() > 0)
             return result;
 
@@ -38,12 +45,7 @@ public class CareerCompDAOImpl implements CareerCompDAO{
 
     @Override
     public ArrayList<CareerCompDTO> getAll() {
-        ArrayList<CareerCompDTO> result = new ArrayList<>();
-
-        for(CareerCompDTO dto : compositionCache)
-            result.add(dto);
-
-        return result;
+        return (ArrayList<CareerCompDTO>)compositionCache.clone();
     }
 
     @Override
@@ -59,6 +61,43 @@ public class CareerCompDAOImpl implements CareerCompDAO{
 
     @Override
     public CareerDTO getCareerByName(String careerName) {
+        for(CareerDTO dto : careerCache)
+            if(dto.getName().equals(careerName)) {
+                try {
+                    return (CareerDTO) dto.clone();
+                } catch (CloneNotSupportedException e) {
+                    e.printStackTrace();
+                }
+            }
         return null;
+    }
+
+    @Override
+    public CareerDTO getCareerById(int id) {
+        if(id > -1)
+            try {
+                return (CareerDTO) careerCache.get(id).clone();
+            } catch (IndexOutOfBoundsException e){
+                return null;
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
+        return null;
+    }
+
+    @Override
+    public CareerDTO createCareer(CareerDTO career) throws CloneNotSupportedException {
+        //Ver de guardar una copia en lugar del original
+        for(CareerDTO dto : careerCache)
+            if(dto.getIdCareer() == career.getIdCareer())
+                return null;
+
+        CareerDTO copy = (CareerDTO) career.clone();
+        careerCache.add(copy);
+        int id = careerCache.indexOf(copy);
+
+        copy.setIdCareer(id);
+        career.setIdCareer(id);
+        return career;
     }
 }

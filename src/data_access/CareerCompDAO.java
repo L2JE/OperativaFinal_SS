@@ -12,5 +12,6 @@ public interface CareerCompDAO {
     public abstract void setComposition(CareerCompDTO composition);
 
     public abstract CareerDTO getCareerByName(String careerName);
-
+    public abstract CareerDTO getCareerById(int id);
+    public abstract CareerDTO createCareer(CareerDTO career) throws CloneNotSupportedException;
 }
