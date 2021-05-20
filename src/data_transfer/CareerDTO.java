@@ -9,8 +9,7 @@ public class CareerDTO implements Showable {
     private int preferredStart;
     private int preferredEnd;
 
-    public CareerDTO(int idCareer, String name, int years, int preferredStart, int preferredEnd) {
-        this.idCareer = idCareer;
+    public CareerDTO(String name, int years, int preferredStart, int preferredEnd) {
         this.name = name;
         this.years = years;
         this.preferredStart = preferredStart;
