@@ -19,12 +19,7 @@ public class CareerCompDAOTest {
         CareerCompDAO dao = CareerCompDAOImpl.getInstance();
         CareerDTO insertedDTO = null;
 
-        try {
-            insertedDTO = dao.createCareer(dto);
-        } catch (CloneNotSupportedException e) {
-            System.err.println("NO SOPORTADO EL CLONE");
-            e.printStackTrace();
-        }
+        insertedDTO = dao.createCareer(dto);
 
         System.out.println("Antiguo: "+ dto + " id: " + dto.getIdCareer() + ", inic: " +
                 dto.getPreferredStart() + ", fin: " + dto.getPreferredEnd());
@@ -45,12 +40,8 @@ public class CareerCompDAOTest {
         else System.out.println("El objeto no existe xq no fue insertado");
 
         CareerDTO createdDTO = null;
-        try {
-            createdDTO = dao.createCareer(new CareerDTO("Ingenieria Civil", 5, 0, 5));
-            System.out.println(createdDTO);
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        createdDTO = dao.createCareer(new CareerDTO("Ingenieria Civil", 5, 0, 5));
+        System.out.println("id: "+createdDTO.getIdCareer()+"Carrera: "+ createdDTO);
 
         result = dao.getCareerById(0);
 
@@ -59,6 +50,10 @@ public class CareerCompDAOTest {
 
         if ((createdDTO != null) && (result == createdDTO))
             System.err.println("NO DEVUELVE UNA COPIA");
+        else
+            System.out.println("DEVUELVE UNA COPIA");
+
+        System.out.println("Por nombre" + dao.getCareerByName("Ingenieria Civil") + "id: "+ dao.getCareerByName("Ingenieria Civil").getIdCareer());
 
     }
 

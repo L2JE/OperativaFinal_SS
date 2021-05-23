@@ -4,6 +4,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import service.Showable;
 /**
  * PARA GENERALIZAR EXTENDER DE LISTCELL<Object> o LISTCELL<MiClase>
@@ -28,9 +29,10 @@ public class ItemView extends ListCell<Showable> {
         deleteButton.setTooltip(new Tooltip("Borrar"));
 
         deleteButton.setOnAction(event -> {
-            ListView<Showable> cont = getListView();
-            cont.getItems().remove(getIndex());
-            cont.refresh();
+            ListView<Showable> container = getListView();
+            container.getItems().remove(getIndex());
+            container.refresh();
+            //NO PUEDO ELIMINAR DESDE ACA XQ NO SE CUAL DTO ES
         });
     }
 
@@ -44,8 +46,7 @@ public class ItemView extends ListCell<Showable> {
         {
             setGraphic(null);
         }
-        else
-        {
+        else {
             label.setText(item.toString());
             setGraphic(hBox);
         }

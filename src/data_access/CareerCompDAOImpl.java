@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class CareerCompDAOImpl implements CareerCompDAO{
     private ArrayList<CareerCompDTO> compositionCache = new ArrayList<>();
     private ArrayList<CareerDTO> careerCache = new ArrayList<>();
+    private int lastCareerId = -1;
 
     private static CareerCompDAOImpl instance;
 
@@ -75,29 +76,73 @@ public class CareerCompDAOImpl implements CareerCompDAO{
     @Override
     public CareerDTO getCareerById(int id) {
         if(id > -1)
-            try {
-                return (CareerDTO) careerCache.get(id).clone();
-            } catch (IndexOutOfBoundsException e){
+            for(CareerDTO dto : careerCache)
+                if(dto.getIdCareer() == id) {
+                    try {
+                        return (CareerDTO) dto.clone();
+                    } catch (CloneNotSupportedException e) {
+                        e.printStackTrace();
+                    }
+                }
+        return null;
+    }
+
+    @Override
+    public CareerDTO createCareer(CareerDTO career) {
+        //Ver de guardar una copia en lugar del original
+        for(CareerDTO dto : careerCache)
+            if(dto.getIdCareer() == career.getIdCareer())
                 return null;
-            } catch (CloneNotSupportedException e) {
-                e.printStackTrace();
+        CareerDTO copy;
+        try{
+
+            copy = (CareerDTO) career.clone();
+            careerCache.add(copy);
+            int id = this.lastCareerId + 1;
+            copy.setIdCareer(id);
+            career.setIdCareer(id);
+            this.lastCareerId = id;
+
+            return career;
+
+        }catch (CloneNotSupportedException e){
+            System.err.println("No se puede Clonar"); //deberia hacer un log
+            e.printStackTrace();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+
+    }
+
+    @Override
+    public CareerDTO deleteCareer(int idCareer) {
+        int cacheSize = careerCache.size();
+        for(int careerIndex = 0; careerIndex<cacheSize ; careerIndex++)
+            if(careerCache.get(careerIndex).getIdCareer() == idCareer){
+                CareerDTO removed = careerCache.remove(careerIndex);
+
+                for(int compIndex = 0; compIndex<compositionCache.size(); compIndex++){
+                    if(compositionCache.get(compIndex).getIdCareer() == idCareer)
+                        compositionCache.remove(compIndex);
+                }
+
+                return removed;
             }
         return null;
     }
 
     @Override
-    public CareerDTO createCareer(CareerDTO career) throws CloneNotSupportedException {
-        //Ver de guardar una copia en lugar del original
-        for(CareerDTO dto : careerCache)
-            if(dto.getIdCareer() == career.getIdCareer())
-                return null;
+    public String toString() {
+        String salida = "Lista de Carreras";
+        for(CareerDTO c : careerCache)
+            salida += "\n " + c.getIdCareer()+". "+c.getName();
 
-        CareerDTO copy = (CareerDTO) career.clone();
-        careerCache.add(copy);
-        int id = careerCache.indexOf(copy);
+        salida += "\nLista de Materias por Carrera";
+        for(CareerCompDTO c : compositionCache)
+            salida += "\n Carrera:" + c.getIdCareer()+", Materia: "+c.getIdSubject();
 
-        copy.setIdCareer(id);
-        career.setIdCareer(id);
-        return career;
+
+        return salida;
     }
 }
