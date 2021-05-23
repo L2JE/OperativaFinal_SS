@@ -1,7 +1,13 @@
 package view;
 
+import data_access.CareerCompDAOImpl;
+import data_access.ClassroomDAO;
+import data_access.ClassroomDAOImpl;
+import data_transfer.CareerCompDTO;
+import data_transfer.CareerDTO;
 import data_transfer.LectureDTO;
-import javafx.scene.Node;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.scene.Parent;
 import javafx.stage.Modality;
 import service.UIDataValidator;
@@ -12,16 +18,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import javafx.stage.Stage;
 import service.Showable;
-import sun.applet.Main;
 import view.customView.*;
-
-import static sun.applet.Main.*;
 
 public class HomeWindowCntlr {
 
@@ -80,6 +82,34 @@ public class HomeWindowCntlr {
         fillChoiceBox(yearsCBCareer, 1, 8, 'i');
         fillChoiceBox(startTimeCBCareer, this.minTime, this.maxTime - bandDuration, 't');
         fillChoiceBox(endTimeCBCareer, this.minTime, this.maxTime, 't');
+
+        /**
+         * Agregar un listener: cuando se borra un valor de la vista, este se saca de la bd
+         * ItemView.getItem() returns Showable
+         * Cuando borro un itemView le pido a la lista que llame a un listener para avisar que se elimino
+         */
+        ObservableList<Showable> items = viewCareers.getItems();
+        items.addListener(new ListChangeListener<Showable>() {
+            @Override
+            public void onChanged(Change<? extends Showable> c) {
+                while (c.next()){
+                    if(c.wasRemoved()){
+                        //c.getRemoved().get(0);
+
+                        CareerDTO dto = (CareerDTO) c.getRemoved().get(0);
+                        CareerCompDAOImpl.getInstance().deleteCareer(dto.getIdCareer());
+                        /*
+                        for(Showable item : c.getRemoved()){
+                            CareerDTO dto = (CareerDTO) item;
+                            CareerCompDAOImpl.getInstance().deleteCareer(dto.getIdCareer());
+                        }*/
+                    }
+
+                    System.out.println("ESTADO DE PERCISTENCIA\n"+CareerCompDAOImpl.getInstance().toString()+"\nFIN ESTADO DE PERCISTENCIA");
+
+                }
+            }
+        });
     }
 
     private void fillChoiceBox(ComboBox cb, int min, int max, char format){
@@ -104,9 +134,8 @@ public class HomeWindowCntlr {
         Showable newCareer = UIDataValidator.careerValidator(yearsCBCareer, nameFieldCareer, startTimeCBCareer, endTimeCBCareer);
 
         if(newCareer != null){
-            /**
-             * TODO: Verificar si la carrera ya existe
-             */
+
+            CareerCompDAOImpl.getInstance().createCareer((CareerDTO)newCareer);
 
             viewCareers.getItems().add(newCareer);
             System.out.println("Carrera Agregada!");

@@ -13,9 +13,8 @@ import java.util.ArrayList;
  */
 
 public class UIDataValidator {
-    private static CareerCompDAO careerAccess;
     public static CareerDTO careerValidator(ComboBox yearsCBCareer, TextField nameFieldCareer, ComboBox startTimeCBCareer, ComboBox endTimeCBCareer) {
-        int id = 0;
+
         int duration = -1;
         String careerName = "";
         int chosenStartTime = -1;
@@ -50,13 +49,12 @@ public class UIDataValidator {
 
         if(chosenEndTime <= chosenStartTime)
             return null;
-        /*
-        Verifica que la carrera no existe
-        if(careerAccess.getSubjects(id) != null)
-            return null;
-        */
 
-        return new CareerDTO(id, careerName, duration, chosenStartTime, chosenEndTime);
+        //Verifica que la carrera no existe
+        if(CareerCompDAOImpl.getInstance().getCareerByName(careerName) != null)
+            return null;
+
+        return new CareerDTO(careerName, duration, chosenStartTime, chosenEndTime);
     }
 
     public static ClassroomDTO roomValidator(ComboBox<String> pabCBRoom, ComboBox<String> roomCBRoom) {
