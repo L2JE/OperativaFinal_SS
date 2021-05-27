@@ -69,7 +69,6 @@ public class HomeWindowCntlr {
                 selectedPabChangedAula();
             }
         });
-
     }
 
     private void initCareer(){
