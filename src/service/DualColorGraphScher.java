@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * TODO: clase que lleva logica de negocio de la aplicacion!!!!!!!
  */
-public class DualColorGraphScher implements ScheduleStrategy{
+public class DualColorGraphScher extends ScheduleStrategy{
     private ArrayList<LectureDTO> lectures;
     private ArrayList<OccupationDTO> roomsOccupation;
 

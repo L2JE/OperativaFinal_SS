@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import view.obserbableLogic.ObservableProgressProperty;
+import view.observableLogic.ObservableProgressProperty;
 
 import java.util.concurrent.TimeUnit;
 
