@@ -1,24 +1,42 @@
 package tests;
 
 import javafx.application.Application;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.Slider;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import view.obserbableLogic.ObservableProgressProperty;
+
+import java.util.concurrent.TimeUnit;
 
 public class ProgressForGraphTest extends Application {
-    private DoubleProperty progress = new SimpleDoubleProperty(0.0);
+    public class ObservableClass extends ObservableProgressProperty {
+        final int numOfIterations;
+
+        public ObservableClass(int numOfIterations){
+            System.out.println("AsyncImpl constructor");
+            this.numOfIterations = numOfIterations;
+
+            this.setIncrement((double)1/numOfIterations);//extra Line on regular constructor
+        }
+
+        public void startObservableProcess() {
+            System.out.println("::INICIO DEL PROCESO::");
+            for(int i = 0; i<numOfIterations; i++){
+                //System.out.println("Iteracion nro: "+ i);
+                try {
+                    TimeUnit.MILLISECONDS.sleep(500);
+                } catch (InterruptedException e) {
+                    System.err.println("Error en Observable Process");
+                    e.printStackTrace();
+                }
+
+                this.updateProgress();//extra Line on regular method
+            }
+        }
+    }
 
     public static void main(String[] args){
         launch(args);
@@ -42,16 +60,16 @@ public class ProgressForGraphTest extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage){
         ProgressBar progressBar = setTestWindow(primaryStage);
-        progress.addListener((observable, oldValue, newValue) -> progressBar.setProgress((double) newValue));
-        progress.addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 
-            }
-        });
 
+        ObservableClass os = new ObservableClass(100);
+        os.addListener((observable, oldValue, newValue) -> progressBar.setProgress((Double) newValue));
+
+        //This is what the Adapter will do
+        Thread t = new Thread(os::startObservableProcess);
+        t.start();
     }
 
 }
