@@ -1,4 +1,4 @@
-package view.obserbableLogic;
+package view.observableLogic;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;

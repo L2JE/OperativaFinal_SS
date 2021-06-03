@@ -1,5 +1,7 @@
 package service;
 
-public interface ScheduleStrategy {
+import view.observableLogic.ObservableProgressProperty;
+
+public abstract class ScheduleStrategy extends ObservableProgressProperty {
     public abstract void execute();
 }
