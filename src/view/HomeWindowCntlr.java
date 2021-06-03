@@ -38,9 +38,6 @@ public class HomeWindowCntlr {
     public ComboBox endTimeCBCareer;
     public TextField nameFieldCareer;
 
-    public ComboBox<String> pabCBRoom;
-    public ComboBox<String> roomCBRoom;
-
     private final int minTime = 8;
     private final int maxTime = 22;
     private final int bandDuration = 4;
@@ -63,12 +60,6 @@ public class HomeWindowCntlr {
          pabCBRoom.getItems().addAll(classroomDAO.getAllLocations());
           */
 
-        pabCBRoom.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                selectedPabChangedAula();
-            }
-        });
     }
 
     private void initCareer(){
@@ -140,32 +131,6 @@ public class HomeWindowCntlr {
             System.out.println("Carrera Agregada!");
         }else
             System.out.println("Datos Invalidos: No es posible agregar la carrera por un error en los datos ingresados.");
-    }
-
-    public void addAulaPressed(ActionEvent actionEvent) {
-
-        Showable newRoom = UIDataValidator.roomValidator(pabCBRoom, roomCBRoom);
-        if(newRoom != null){
-            viewClassrooms.getItems().add(newRoom);
-        }else
-            System.out.println("Datos Invalidos: No es posible agregar el aula por un error en los datos ingresados.");
-
-    }
-
-    public void selectedPabChangedAula() {
-        /**
-         * TODO: necesita inicializar con una implementacion de ClassroomDAO
-         */
-
-        roomCBRoom.getItems().clear();
-        ArrayList<String> roomsOnPab = UIDataValidator.locationValidator(pabCBRoom);
-        if(roomsOnPab != null){
-
-            roomCBRoom.getItems().addAll(roomsOnPab);
-            System.out.println(pabCBRoom.getValue());
-        }else
-            System.out.println("Dato Invalido: Error de tipeo");
-
     }
 
 /** TEST:
