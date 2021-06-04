@@ -3,10 +3,13 @@ package data_access;
 import data_transfer.ClassroomDTO;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ClassroomDAOImpl implements ClassroomDAO {
-    ArrayList<String> cachePabs = new ArrayList<>();
-    ArrayList<ClassroomDTO> cacheRooms = new ArrayList<>();
+    private final ArrayList<String> cachePabs = new ArrayList<>();
+    private final ArrayList<ClassroomDTO> cacheRooms = new ArrayList<>();
+    private int lastClassroomId = -1;
 
     static ClassroomDAOImpl instance;
 
@@ -36,9 +39,11 @@ public class ClassroomDAOImpl implements ClassroomDAO {
     }
 
     @Override
-    public ClassroomDTO getRoomByName(String roomFullName) {
+    public ClassroomDTO getRoomByName(String pabName, String roomName) {
+
         for (ClassroomDTO dto : cacheRooms)
-            if (dto.getRoomName().equals(roomFullName)) {
+            if (dto.getPabName().equals(pabName) &&
+                dto.getRoomName().equals(roomName)) {
                 try {
                     return (ClassroomDTO) dto.clone();
                 } catch (CloneNotSupportedException e) {
@@ -59,33 +64,25 @@ public class ClassroomDAOImpl implements ClassroomDAO {
                     dtos.add((ClassroomDTO) dto.clone());
                 } catch (CloneNotSupportedException e) {
                     e.printStackTrace();
-                }finally {
-                    dtos.clear();
                 }
             }
 
-        if (dtos.size() > 0)
-            return dtos;
-
-        return null;
-
+        return dtos;
     }
 
     @Override
-    public ArrayList<String> getAllPabs() {
-        ArrayList<String> pabs = new ArrayList<>();
-        for (ClassroomDTO dto : cacheRooms){
-            String pabName = dto.getPabName();
-            if (!pabs.contains(pabName))
-                pabs.add(pabName);
+    public ArrayList<ClassroomDTO> getAllRooms() {
+        return (ArrayList<ClassroomDTO>) this.cacheRooms.clone();
+    }
+
+    @Override
+    public ArrayList<ClassroomDTO> getAllPabs() {
+        ArrayList<ClassroomDTO> pabs = new ArrayList<>();
+        for (String pab : cachePabs) {
+            pabs.add(new ClassroomDTO(pab, null));
         }
 
         return pabs;
-    }
-
-    @Override
-    public ArrayList<ClassroomDTO> getAll() {
-        return (ArrayList<ClassroomDTO>) cacheRooms.clone();
     }
 
     @Override
@@ -98,12 +95,16 @@ public class ClassroomDAOImpl implements ClassroomDAO {
                 dto.getRoomName().equals(classroom.getRoomName()))
                 return null;
 
+        this.lastClassroomId++;
+        classroom.setIdRoom(lastClassroomId);
         try {
             cacheRooms.add((ClassroomDTO) classroom.clone());
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
-        return null;
+
+
+        return classroom;
     }
 
     @Override
@@ -131,22 +132,37 @@ public class ClassroomDAOImpl implements ClassroomDAO {
 
     @Override
     public ClassroomDTO deletePab(String pabName) {
+        int pabIndex = cachePabs.indexOf(pabName);
+        if(pabIndex < 0)
+            return null;
 
+        ClassroomDTO removed = new ClassroomDTO(cachePabs.get(pabIndex), null);
+        cachePabs.remove(pabIndex);
+
+        for (int roomIndex = cacheRooms.size() - 1; roomIndex > -1 ; roomIndex--)
+            if(cacheRooms.get(roomIndex).getPabName().equals(pabName))
+                cacheRooms.remove(roomIndex);
+
+        return removed;
     }
 
     @Override
     public ClassroomDTO getPabByName(String pabName) {
-        for (String pab : cachePabs)
-            if(pab.equals(pabName))
-                return new ClassroomDTO(pabName, null);
+        if(cachePabs.contains(pabName))
+            return new ClassroomDTO(pabName, null);
         return null;
     }
 
     @Override
     public String toString() {
-        String salida = "Lista de Aulas";
-        for(ClassroomDTO c : cacheRooms)
+        String salida = "Lista de Pabellones";
+        for(String pab : cachePabs) {
+            salida += "\n "+ pab;
+        }
+        salida += "\n:::::::::::::::::::::::::::::\nLista de Aulas";
+        for(ClassroomDTO c : cacheRooms) {
             salida += "\n (id: " + c.getIdRoom()+"), "+ c.getPabName()+". "+c.getRoomName();
+        }
 
         return salida;
     }

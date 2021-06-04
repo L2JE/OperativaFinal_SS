@@ -57,23 +57,18 @@ public class UIDataValidator {
         return new CareerDTO(careerName, duration, chosenStartTime, chosenEndTime);
     }
 
-    public static ClassroomDTO roomValidator(ComboBox<String> pabCBRoom, ComboBox<String> roomCBRoom) {
-        int id = 0;
-        String location = pabCBRoom.getValue();
-        String room = roomCBRoom.getValue();
+    public static ClassroomDTO roomValidator(TextField newRoomField, Showable selectedPab) {
+        String desiredRoomName = newRoomField.getText();
 
-        if((location.length() < 4)||(room.length() < 1))
+        if(newRoomField.equals("") || selectedPab == null)
             return null;
 
-        ClassroomDTO addedClassroom = new ClassroomDTO(id, location, room);
-        /*
-        ClassroomDAO classroomDAO = null;
-        if(classroomDAO.getRoomByName(location+room) == null)// Si el aula no existe se agrega
-            classroomDAO.setClassroom(addedClassroom);
-         */
+        String pabName = ((ClassroomDTO)selectedPab).getPabName();
 
+        if(ClassroomDAOImpl.getInstance().getRoomByName(pabName,desiredRoomName) != null)
+            return null;
 
-        return addedClassroom;
+        return new ClassroomDTO(pabName, desiredRoomName);
     }
 
     public static ClassroomDTO pabValidator(TextField pab){
@@ -87,7 +82,7 @@ public class UIDataValidator {
         if (dao.getPabByName(desiredPabName) != null)
             return null;
 
-        return dao.createPab(desiredPabName);
+        return new ClassroomDTO(desiredPabName, null);
 
     }
 

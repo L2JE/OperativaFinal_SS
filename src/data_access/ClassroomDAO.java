@@ -6,10 +6,11 @@ import java.util.ArrayList;
 
 public interface ClassroomDAO {
     public abstract ClassroomDTO getRoomById(int idRoom);
-    public abstract ClassroomDTO getRoomByName(String roomFullName);
+    public abstract ClassroomDTO getRoomByName(String pabName, String roomName);
     public abstract ArrayList<ClassroomDTO> getRoomsOnPab(String location);
-    public abstract ArrayList<String> getAllPabs();
-    public abstract ArrayList<ClassroomDTO> getAll();
+
+    public abstract ArrayList<ClassroomDTO> getAllRooms();
+    public abstract ArrayList<ClassroomDTO> getAllPabs();
 
     public abstract ClassroomDTO createClassroom(ClassroomDTO classroom);
     public ClassroomDTO deleteClassroom(int idRoom);

@@ -1,9 +1,7 @@
 package view;
 
 import data_access.CareerCompDAOImpl;
-import data_access.ClassroomDAO;
 import data_access.ClassroomDAOImpl;
-import data_transfer.CareerCompDTO;
 import data_transfer.CareerDTO;
 import data_transfer.ClassroomDTO;
 import data_transfer.LectureDTO;
@@ -12,6 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.stage.Modality;
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import service.UIDataValidator;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -34,7 +33,7 @@ public class HomeWindowCntlr {
     public ListView<Showable> viewSubjects;
     public ListView<Showable> viewRanges;
     public ListView<Showable> viewCareers;
-    public ListView<Showable> viewClassrooms;
+    public ListView<Showable> viewAllClassrooms;
     public ComboBox yearsCBCareer;
     public ComboBox startTimeCBCareer;
     public ComboBox endTimeCBCareer;
@@ -43,7 +42,7 @@ public class HomeWindowCntlr {
     @FXML
     private ListView<Showable> viewPabs;
     @FXML
-    private ListView<Showable> viewRooms;
+    private ListView<Showable> viewRoomsForPab;
     @FXML
     private TextField newPabField;
     @FXML
@@ -61,7 +60,7 @@ public class HomeWindowCntlr {
         initClassroom();
         viewSubjects.setCellFactory(new ItemViewFactory());
         viewCareers.setCellFactory(new ItemViewFactory());
-        viewClassrooms.setCellFactory(new ItemViewFactory());
+        viewAllClassrooms.setCellFactory(new ItemViewFactory());
         runTestCustomItems();
     }
 
@@ -75,38 +74,58 @@ public class HomeWindowCntlr {
         viewPabs.setCellFactory(new ItemViewFactory());
 
         ObservableList<Showable> items = viewPabs.getItems();
+
+        viewPabs.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Showable>() {
+            @Override
+            public void changed(ObservableValue<? extends Showable> observable, Showable oldValue, Showable newValue) {
+                System.out.println("Se ha seleccionado el item: "+ oldValue + "newValue: "+newValue);
+                ArrayList<ClassroomDTO> rooms = ClassroomDAOImpl.getInstance().getRoomsOnPab(((ClassroomDTO)newValue).getPabName());
+
+                ObservableList<Showable> itemsRoomsForPab = viewRoomsForPab.getItems();
+                itemsRoomsForPab.clear();
+                if(rooms != null)
+                    itemsRoomsForPab.addAll(rooms);
+
+                System.gc();
+            }
+        });
+
+
         items.addListener(new ListChangeListener<Showable>() {
             @Override
             public void onChanged(Change<? extends Showable> c) {
                 while (c.next()){
                     if(c.wasRemoved()){
-                        //c.getRemoved().get(0);
 
                         ClassroomDTO dto = (ClassroomDTO) c.getRemoved().get(0);
-                        ClassroomDAOImpl.getInstance().deleteClassroom(dto.getIdRoom());
-                        /* cambiar por Clasroom
-                        for(Showable item : c.getRemoved()){
-                            ClassroomDTO dto = (ClassroomDTO) item;
-                            ClassroomDAOImpl.getInstance().deleteClassroom(dto.getIdRoom());
-                        }*/
+                        ClassroomDAOImpl dao = ClassroomDAOImpl.getInstance();
+
+                        //Pab is removed from system
+                        dao.deletePab(dto.getPabName());
+
+                        //Pab is removed from views and viewAllClassrooms get refresh
+                        ObservableList<Showable> itemsRoomsForPab = viewRoomsForPab.getItems();
+                        itemsRoomsForPab.clear();
+                        viewAllClassrooms.getItems().clear();
+                        viewAllClassrooms.getItems().addAll(dao.getAllRooms());
+
+                        Showable selected = viewPabs.getSelectionModel().getSelectedItem();
+                        if(selected != null) {
+                            itemsRoomsForPab.addAll(dao.getRoomsOnPab(((ClassroomDTO) selected).getPabName()));
+                        }
+
+
+                        System.out.println("Pabellon Borrado y lista principal limpia");
+
+                        System.gc();
+
                     }
 
-                    System.out.println("ESTADO DE PERCISTENCIA\n"+CareerCompDAOImpl.getInstance().toString()+"\nFIN ESTADO DE PERCISTENCIA");
+                    System.out.println("ESTADO DE PERCISTENCIA\n"+ClassroomDAOImpl.getInstance().toString()+"\nFIN ESTADO DE PERCISTENCIA");
 
                 }
             }
         });
-
-        ArrayList<Showable> pabs = new ArrayList<>();
-        pabs.add(new ClassroomDTO(1,"Exactas","Aula 5"));
-        pabs.add(new ClassroomDTO(1,"Exactas","Aula 3"));
-        pabs.add(new ClassroomDTO(1,"Exactas","Aula 2"));
-        pabs.add(new ClassroomDTO(1,"Exactas","Aula 1"));
-
-        viewPabs.getItems().addAll(pabs);
-
-
-
 
     }
 
@@ -142,9 +161,7 @@ public class HomeWindowCntlr {
                             CareerCompDAOImpl.getInstance().deleteCareer(dto.getIdCareer());
                         }*/
                     }
-
                     System.out.println("ESTADO DE PERCISTENCIA\n"+CareerCompDAOImpl.getInstance().toString()+"\nFIN ESTADO DE PERCISTENCIA");
-
                 }
             }
         });
@@ -242,9 +259,27 @@ public class HomeWindowCntlr {
     }
 
     public void addPab(ActionEvent actionEvent) {
+        Showable newPab = UIDataValidator.pabValidator(newPabField);
+        if(newPab != null){
 
+            ClassroomDAOImpl.getInstance().createPab(((ClassroomDTO)newPab).getPabName());
+
+            viewPabs.getItems().add(newPab);
+            System.out.println("Pabellon Agregado!");
+        }else
+            System.out.println("Datos Invalidos: No es posible agregar el Pabellon por un error en los datos ingresados.");
     }
 
     public void addRoom(ActionEvent actionEvent) {
+        Showable newRoom = UIDataValidator.roomValidator(newRoomField,viewPabs.getSelectionModel().getSelectedItem());
+        if(newRoom != null){
+
+            ClassroomDAOImpl.getInstance().createClassroom((ClassroomDTO)newRoom);
+
+            viewRoomsForPab.getItems().add(newRoom);
+            viewAllClassrooms.getItems().add(newRoom);
+            System.out.println("Aula Agregada!");
+        }else
+            System.out.println("Datos Invalidos: No es posible agregar el Aula por un error en los datos ingresados.");
     }
 }
