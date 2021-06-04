@@ -3,10 +3,14 @@ package data_transfer;
 import service.Showable;
 
 public class ClassroomDTO implements Showable {
-    private int idRoom;
+    private int idRoom = -1;
     private String pabName;
     private String roomName;
 
+    public ClassroomDTO(String pabName, String roomName) {
+        this.pabName = pabName;
+        this.roomName = roomName;
+    }
 
     public ClassroomDTO(int idRoom, String pabName, String roomName) {
         this.idRoom = idRoom;
@@ -38,10 +42,19 @@ public class ClassroomDTO implements Showable {
         this.roomName = roomName;
     }
 
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        ClassroomDTO copy = new ClassroomDTO(idRoom,pabName,roomName);
+
+        return copy;
+    }
+
 
 
     @Override
     public String toString() {
+        if (roomName == null)
+            return pabName;
         return "Pabellon: " + pabName + " Aula: "+ roomName;
     }
 }

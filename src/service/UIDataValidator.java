@@ -76,27 +76,19 @@ public class UIDataValidator {
         return addedClassroom;
     }
 
-    public static ArrayList<String> locationValidator(ComboBox<String> pabCBRoom){
-        String enteredText = pabCBRoom.getValue();
+    public static ClassroomDTO pabValidator(TextField pab){
+        String desiredPabName = pab.getText();
+        if(desiredPabName.equals(""))
+            return null;
+        desiredPabName = desiredPabName.substring(0,1).toUpperCase() +
+                         desiredPabName.substring(1);
 
-        if((enteredText != null) && (enteredText.length() > 3)){
+        ClassroomDAOImpl dao = ClassroomDAOImpl.getInstance();
+        if (dao.getPabByName(desiredPabName) != null)
+            return null;
 
-        ArrayList<String> availableRooms = new ArrayList<>();
-        /*
-        ClassroomDAO classroomDAO = null;
-        ArrayList<ClassroomDTO> roomsOnPab = classroomDAO.getRoomsOnLocation(enteredText);
-        if(roomsOnPab != null) { //Si el pabellon existe obtenemos las aulas
-            for (ClassroomDTO dto : roomsOnPab)
-                availableRooms.add(dto.getRoomName());
-        }else{ //Si el pabellon no existe agregamos el nuevo pab a la vista y al modelo
-            classroomDAO.setLocation(enteredText);
-            pabCBRoom.getItems().add(enteredText);
-        }
-*/
-        return availableRooms;
+        return dao.createPab(desiredPabName);
 
-        }
-        return null;
     }
 
     /*

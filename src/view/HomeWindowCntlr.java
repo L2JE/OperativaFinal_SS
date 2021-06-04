@@ -5,9 +5,11 @@ import data_access.ClassroomDAO;
 import data_access.ClassroomDAOImpl;
 import data_transfer.CareerCompDTO;
 import data_transfer.CareerDTO;
+import data_transfer.ClassroomDTO;
 import data_transfer.LectureDTO;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.stage.Modality;
 import service.UIDataValidator;
@@ -38,6 +40,16 @@ public class HomeWindowCntlr {
     public ComboBox endTimeCBCareer;
     public TextField nameFieldCareer;
 
+    @FXML
+    private ListView<Showable> viewPabs;
+    @FXML
+    private ListView<Showable> viewRooms;
+    @FXML
+    private TextField newPabField;
+    @FXML
+    private TextField newRoomField;
+
+
     private final int minTime = 8;
     private final int maxTime = 22;
     private final int bandDuration = 4;
@@ -59,6 +71,42 @@ public class HomeWindowCntlr {
          ClassroomDAO classroomDAO = new ClassroomDAOImp();
          pabCBRoom.getItems().addAll(classroomDAO.getAllLocations());
           */
+
+        viewPabs.setCellFactory(new ItemViewFactory());
+
+        ObservableList<Showable> items = viewPabs.getItems();
+        items.addListener(new ListChangeListener<Showable>() {
+            @Override
+            public void onChanged(Change<? extends Showable> c) {
+                while (c.next()){
+                    if(c.wasRemoved()){
+                        //c.getRemoved().get(0);
+
+                        ClassroomDTO dto = (ClassroomDTO) c.getRemoved().get(0);
+                        ClassroomDAOImpl.getInstance().deleteClassroom(dto.getIdRoom());
+                        /* cambiar por Clasroom
+                        for(Showable item : c.getRemoved()){
+                            ClassroomDTO dto = (ClassroomDTO) item;
+                            ClassroomDAOImpl.getInstance().deleteClassroom(dto.getIdRoom());
+                        }*/
+                    }
+
+                    System.out.println("ESTADO DE PERCISTENCIA\n"+CareerCompDAOImpl.getInstance().toString()+"\nFIN ESTADO DE PERCISTENCIA");
+
+                }
+            }
+        });
+
+        ArrayList<Showable> pabs = new ArrayList<>();
+        pabs.add(new ClassroomDTO(1,"Exactas","Aula 5"));
+        pabs.add(new ClassroomDTO(1,"Exactas","Aula 3"));
+        pabs.add(new ClassroomDTO(1,"Exactas","Aula 2"));
+        pabs.add(new ClassroomDTO(1,"Exactas","Aula 1"));
+
+        viewPabs.getItems().addAll(pabs);
+
+
+
 
     }
 
@@ -191,5 +239,12 @@ public class HomeWindowCntlr {
     public void setHomeStage(Stage homeStage){
         this.homeStage = homeStage;
 
+    }
+
+    public void addPab(ActionEvent actionEvent) {
+
+    }
+
+    public void addRoom(ActionEvent actionEvent) {
     }
 }

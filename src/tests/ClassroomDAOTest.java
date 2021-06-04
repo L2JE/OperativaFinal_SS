@@ -17,14 +17,14 @@ public class ClassroomDAOTest {
         for(int i = 0 ; i < max; i++)
             dtos[i] = new ClassroomDTO(i, "Pab"+i , "Esp"+i);
 
-        dao.setClassroom(dtos[16%max]);
+        dao.createClassroom(dtos[16%max]);
 
         for(int i = 0 ; i < max ; i++){
             ClassroomDTO dto = dao.getRoomById(dtos[i].getIdRoom());
             System.out.println("Probando existencia de Aula: "+ dtos[i]);
             System.out.println("Existe: " + dto);
 
-            ArrayList<ClassroomDTO> returned = dao.getRoomsOnLocation(dtos[i].getPabName());
+            ArrayList<ClassroomDTO> returned = dao.getRoomsOnPab(dtos[i].getPabName());
             System.out.println("Aulas en el pabellon:");
 
             if( returned != null) {
