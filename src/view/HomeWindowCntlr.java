@@ -5,6 +5,7 @@ import data_access.ClassroomDAOImpl;
 import data_transfer.CareerDTO;
 import data_transfer.ClassroomDTO;
 import data_transfer.LectureDTO;
+import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -67,18 +68,18 @@ public class HomeWindowCntlr {
     private void initClassroom() {
         /**
          * TODO: Llenar con datos previamente almacenados
-         ClassroomDAO classroomDAO = new ClassroomDAOImp();
-         pabCBRoom.getItems().addAll(classroomDAO.getAllLocations());
           */
 
         viewPabs.setCellFactory(new ItemViewFactory());
+        viewRoomsForPab.setCellFactory(new ItemViewFactory());
 
-        ObservableList<Showable> items = viewPabs.getItems();
+        ObservableList<Showable> itemsPabs = viewPabs.getItems();
+        ReadOnlyProperty<Showable> selectedItemPab = viewPabs.getSelectionModel().selectedItemProperty();
 
-        viewPabs.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Showable>() {
+        selectedItemPab.addListener(new ChangeListener<Showable>() {
             @Override
             public void changed(ObservableValue<? extends Showable> observable, Showable oldValue, Showable newValue) {
-                System.out.println("Se ha seleccionado el item: "+ oldValue + "newValue: "+newValue);
+                //System.out.println("Se ha seleccionado el item: "+ oldValue + "newValue: "+newValue);
                 ArrayList<ClassroomDTO> rooms = ClassroomDAOImpl.getInstance().getRoomsOnPab(((ClassroomDTO)newValue).getPabName());
 
                 ObservableList<Showable> itemsRoomsForPab = viewRoomsForPab.getItems();
@@ -91,7 +92,7 @@ public class HomeWindowCntlr {
         });
 
 
-        items.addListener(new ListChangeListener<Showable>() {
+        itemsPabs.addListener(new ListChangeListener<Showable>() {
             @Override
             public void onChanged(Change<? extends Showable> c) {
                 while (c.next()){
@@ -115,14 +116,59 @@ public class HomeWindowCntlr {
                         }
 
 
-                        System.out.println("Pabellon Borrado y lista principal limpia");
+                        //System.out.println("Pabellon Borrado y lista principal limpia");
 
                         System.gc();
 
                     }
 
-                    System.out.println("ESTADO DE PERCISTENCIA\n"+ClassroomDAOImpl.getInstance().toString()+"\nFIN ESTADO DE PERCISTENCIA");
+                    //System.out.println("ESTADO DE PERCISTENCIA\n"+ClassroomDAOImpl.getInstance().toString()+"\nFIN ESTADO DE PERCISTENCIA");
 
+                }
+            }
+        });
+
+        ObservableList<Showable> itemsRooms = viewAllClassrooms.getItems();
+        ObservableList<Showable> itemsRoomsForPab = viewRoomsForPab.getItems();
+
+        //TODO: VER DE DIFERENCIAR ENTRE REMOVED FOR CLEAR Y REMOVED FOR BUTTON
+
+        itemsRooms.addListener(new ListChangeListener<Showable>() {
+            @Override
+            public void onChanged(Change<? extends Showable> c) {
+                while (c.next()){
+                    if(c.wasRemoved()){
+                        System.out.println("Cantidad de eliminados: "+ c.getRemovedSize());
+                        ClassroomDTO dto = (ClassroomDTO) c.getRemoved().get(0);
+                        ClassroomDAOImpl dao = ClassroomDAOImpl.getInstance();
+
+                        if(((ClassroomDTO)selectedItemPab.getValue()).getPabName().equals(dto.getPabName())){
+                            itemsRoomsForPab.remove(dto);
+                        }
+
+                        //Room is removed from system
+                        dao.deleteClassroom(dto.getIdRoom());
+                        System.out.println("Se elimino desde ALLrooms el dto: "+ dto);
+                    }
+                }
+            }
+        });
+
+        itemsRoomsForPab.addListener(new ListChangeListener<Showable>() {
+            @Override
+            public void onChanged(Change<? extends Showable> c) {
+                while (c.next()){
+                    if(c.wasRemoved()){
+                        System.out.println("Cantidad de eliminados: "+ c.getRemovedSize());
+                        ClassroomDTO dto = (ClassroomDTO) c.getRemoved().get(0);
+                        ClassroomDAOImpl dao = ClassroomDAOImpl.getInstance();
+
+                        itemsRooms.remove(dto);
+
+                        //Room is removed from system
+                        dao.deleteClassroom(dto.getIdRoom());
+                        System.out.println("Se elimino desde rooms for pab el dto: "+ dto);
+                    }
                 }
             }
         });
@@ -142,8 +188,6 @@ public class HomeWindowCntlr {
 
         /**
          * Agregar un listener: cuando se borra un valor de la vista, este se saca de la bd
-         * ItemView.getItem() returns Showable
-         * Cuando borro un itemView le pido a la lista que llame a un listener para avisar que se elimino
          */
         ObservableList<Showable> items = viewCareers.getItems();
         items.addListener(new ListChangeListener<Showable>() {
@@ -155,13 +199,9 @@ public class HomeWindowCntlr {
 
                         CareerDTO dto = (CareerDTO) c.getRemoved().get(0);
                         CareerCompDAOImpl.getInstance().deleteCareer(dto.getIdCareer());
-                        /*
-                        for(Showable item : c.getRemoved()){
-                            CareerDTO dto = (CareerDTO) item;
-                            CareerCompDAOImpl.getInstance().deleteCareer(dto.getIdCareer());
-                        }*/
+
                     }
-                    System.out.println("ESTADO DE PERCISTENCIA\n"+CareerCompDAOImpl.getInstance().toString()+"\nFIN ESTADO DE PERCISTENCIA");
+                    //System.out.println("ESTADO DE PERCISTENCIA\n"+CareerCompDAOImpl.getInstance().toString()+"\nFIN ESTADO DE PERCISTENCIA");
                 }
             }
         });
@@ -193,9 +233,9 @@ public class HomeWindowCntlr {
             CareerCompDAOImpl.getInstance().createCareer((CareerDTO)newCareer);
 
             viewCareers.getItems().add(newCareer);
-            System.out.println("Carrera Agregada!");
+            //System.out.println("Carrera Agregada!");
         }else
-            System.out.println("Datos Invalidos: No es posible agregar la carrera por un error en los datos ingresados.");
+            System.err.println("Datos Invalidos: No es posible agregar la carrera por un error en los datos ingresados.");
     }
 
 /** TEST:
@@ -265,9 +305,9 @@ public class HomeWindowCntlr {
             ClassroomDAOImpl.getInstance().createPab(((ClassroomDTO)newPab).getPabName());
 
             viewPabs.getItems().add(newPab);
-            System.out.println("Pabellon Agregado!");
+            //System.out.println("Pabellon Agregado!");
         }else
-            System.out.println("Datos Invalidos: No es posible agregar el Pabellon por un error en los datos ingresados.");
+            System.err.println("Datos Invalidos: No es posible agregar el Pabellon por un error en los datos ingresados.");
     }
 
     public void addRoom(ActionEvent actionEvent) {
@@ -278,8 +318,8 @@ public class HomeWindowCntlr {
 
             viewRoomsForPab.getItems().add(newRoom);
             viewAllClassrooms.getItems().add(newRoom);
-            System.out.println("Aula Agregada!");
+            //System.out.println("Aula Agregada!");
         }else
-            System.out.println("Datos Invalidos: No es posible agregar el Aula por un error en los datos ingresados.");
+            System.err.println("Datos Invalidos: No es posible agregar el Aula por un error en los datos ingresados.");
     }
 }
