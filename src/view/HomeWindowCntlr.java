@@ -98,11 +98,15 @@ public class HomeWindowCntlr {
                 while (c.next()){
                     if(c.wasRemoved()){
 
-                        ClassroomDTO dto = (ClassroomDTO) c.getRemoved().get(0);
                         ClassroomDAOImpl dao = ClassroomDAOImpl.getInstance();
+                        try{
+                            ClassroomDTO dto = (ClassroomDTO) c.getRemoved().get(0);
+                            //Pab is removed from system
+                            dao.deletePab(dto.getPabName());
+                        }catch (IllegalStateException e){
+                            e.printStackTrace();
+                        }
 
-                        //Pab is removed from system
-                        dao.deletePab(dto.getPabName());
 
                         //Pab is removed from views and viewAllClassrooms get refresh
                         ObservableList<Showable> itemsRoomsForPab = viewRoomsForPab.getItems();
@@ -142,6 +146,7 @@ public class HomeWindowCntlr {
                         ClassroomDTO dto = (ClassroomDTO) c.getRemoved().get(0);
                         ClassroomDAOImpl dao = ClassroomDAOImpl.getInstance();
 
+                        //Se elimina de la lista de aulas del item seleccionado
                         if(((ClassroomDTO)selectedItemPab.getValue()).getPabName().equals(dto.getPabName())){
                             itemsRoomsForPab.remove(dto);
                         }
