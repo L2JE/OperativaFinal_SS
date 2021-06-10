@@ -1,5 +1,8 @@
 package view.customView;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -34,6 +37,7 @@ public class ItemView extends ListCell<Showable> {
             container.refresh();
             //NO PUEDO ELIMINAR DESDE ACA XQ NO SE CUAL DTO ES
         });
+
     }
 
     @Override

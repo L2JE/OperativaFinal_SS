@@ -2,12 +2,13 @@ package data_transfer;
 
 import service.Showable;
 
-public class LectureDTO implements Showable {
+public class LectureDTO extends Showable {
     private int idLecture;
     private String idSubject;
     private String teacher;
 
     public LectureDTO(int idLecture, String idSubject, String teacher) {
+        super();
         this.idLecture = idLecture;
         this.idSubject = idSubject;
         this.teacher = teacher;

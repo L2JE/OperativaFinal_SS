@@ -2,7 +2,7 @@ package data_transfer;
 
 import service.Showable;
 
-public class CareerDTO implements Showable {
+public class CareerDTO extends Showable {
     private int idCareer = -1;
     private String name;
     private int years;
@@ -10,12 +10,14 @@ public class CareerDTO implements Showable {
     private int preferredEnd;
 
     public CareerDTO(String name, int years, int preferredStart, int preferredEnd) {
+        super();
         this.name = name;
         this.years = years;
         this.preferredStart = preferredStart;
         this.preferredEnd = preferredEnd;
     }
     public CareerDTO(int idCareer, String name, int years, int preferredStart, int preferredEnd) {
+        super();
         this.idCareer = idCareer;
         this.name = name;
         this.years = years;

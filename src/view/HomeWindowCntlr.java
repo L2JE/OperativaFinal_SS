@@ -5,13 +5,17 @@ import data_access.ClassroomDAOImpl;
 import data_transfer.CareerDTO;
 import data_transfer.ClassroomDTO;
 import data_transfer.LectureDTO;
+import javafx.beans.Observable;
 import javafx.beans.property.ReadOnlyProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.stage.Modality;
+import javafx.util.Callback;
 import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
+import service.ShowableChangeFXCb;
 import service.UIDataValidator;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -70,6 +74,10 @@ public class HomeWindowCntlr {
          * TODO: Llenar con datos previamente almacenados
           */
 
+        //set observable lists
+        viewPabs.setItems(FXCollections.observableArrayList(new ShowableChangeFXCb()));
+
+        //Inicialize custom item View
         viewPabs.setCellFactory(new ItemViewFactory());
         viewRoomsForPab.setCellFactory(new ItemViewFactory());
 
@@ -80,14 +88,18 @@ public class HomeWindowCntlr {
             @Override
             public void changed(ObservableValue<? extends Showable> observable, Showable oldValue, Showable newValue) {
                 //System.out.println("Se ha seleccionado el item: "+ oldValue + "newValue: "+newValue);
-                ArrayList<ClassroomDTO> rooms = ClassroomDAOImpl.getInstance().getRoomsOnPab(((ClassroomDTO)newValue).getPabName());
 
                 ObservableList<Showable> itemsRoomsForPab = viewRoomsForPab.getItems();
                 itemsRoomsForPab.clear();
-                if(rooms != null)
-                    itemsRoomsForPab.addAll(rooms);
 
-                System.gc();
+                if(newValue!=null){
+                    ArrayList<ClassroomDTO> rooms = ClassroomDAOImpl.getInstance().getRoomsOnPab(((ClassroomDTO)newValue).getPabName());
+
+                    if(rooms != null)
+                        itemsRoomsForPab.addAll(rooms);
+
+                    System.gc();
+                }
             }
         });
 
@@ -155,6 +167,9 @@ public class HomeWindowCntlr {
                         dao.deleteClassroom(dto.getIdRoom());
                         System.out.println("Se elimino desde ALLrooms el dto: "+ dto);
                     }
+                    if(c.wasUpdated()){
+                        System.out.println("FUE ACTUALIZADO EN ITEMSROOMS");
+                    }
                 }
             }
         });
@@ -173,6 +188,9 @@ public class HomeWindowCntlr {
                         //Room is removed from system
                         dao.deleteClassroom(dto.getIdRoom());
                         System.out.println("Se elimino desde rooms for pab el dto: "+ dto);
+                    }
+                    if(c.wasUpdated()){
+                        System.out.println("FUE ACTUALIZADO EN ITEMSROOMS4pab");
                     }
                 }
             }
