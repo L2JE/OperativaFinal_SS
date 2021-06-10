@@ -26,6 +26,8 @@ import javafx.scene.control.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 
 import javafx.stage.Stage;
 import service.Showable;
@@ -74,9 +76,6 @@ public class HomeWindowCntlr {
          * TODO: Llenar con datos previamente almacenados
           */
 
-        //set observable lists
-        viewPabs.setItems(FXCollections.observableArrayList(new ShowableChangeFXCb()));
-
         //Inicialize custom item View
         viewPabs.setCellFactory(new ItemViewFactory());
         viewRoomsForPab.setCellFactory(new ItemViewFactory());
@@ -110,34 +109,38 @@ public class HomeWindowCntlr {
                 while (c.next()){
                     if(c.wasRemoved()){
 
-                        ClassroomDAOImpl dao = ClassroomDAOImpl.getInstance();
+                        ClassroomDTO dto = null;
                         try{
-                            ClassroomDTO dto = (ClassroomDTO) c.getRemoved().get(0);
+                            dto = (ClassroomDTO) c.getRemoved().get(0);
                             //Pab is removed from system
-                            dao.deletePab(dto.getPabName());
                         }catch (IllegalStateException e){
                             e.printStackTrace();
                         }
 
+                        if(dto != null && dto.isDeleted().get()){
 
-                        //Pab is removed from views and viewAllClassrooms get refresh
-                        ObservableList<Showable> itemsRoomsForPab = viewRoomsForPab.getItems();
-                        itemsRoomsForPab.clear();
-                        viewAllClassrooms.getItems().clear();
-                        viewAllClassrooms.getItems().addAll(dao.getAllRooms());
+                            System.out.println("El Elemento: " + dto + "\n Ha sido eliminado de la lista");
 
-                        Showable selected = viewPabs.getSelectionModel().getSelectedItem();
-                        if(selected != null) {
-                            itemsRoomsForPab.addAll(dao.getRoomsOnPab(((ClassroomDTO) selected).getPabName()));
+                            ClassroomDAOImpl dao = ClassroomDAOImpl.getInstance();
+                            dao.deletePab(dto.getPabName());
+
+                            //Pab is removed from views and viewAllClassrooms get refresh
+                            ObservableList<Showable> itemsRoomsForPab = viewRoomsForPab.getItems();
+                            itemsRoomsForPab.clear();
+                            viewAllClassrooms.getItems().clear();
+                            viewAllClassrooms.getItems().addAll(dao.getAllRooms());
+
+                            Showable selected = viewPabs.getSelectionModel().getSelectedItem();
+                            if(selected != null) {
+                                itemsRoomsForPab.addAll(dao.getRoomsOnPab(((ClassroomDTO) selected).getPabName()));
+                            }
+
+
+                            //System.out.println("Pabellon Borrado y lista principal limpia");
+
+                            System.gc();
                         }
-
-
-                        //System.out.println("Pabellon Borrado y lista principal limpia");
-
-                        System.gc();
-
                     }
-
                     //System.out.println("ESTADO DE PERCISTENCIA\n"+ClassroomDAOImpl.getInstance().toString()+"\nFIN ESTADO DE PERCISTENCIA");
 
                 }
@@ -154,21 +157,42 @@ public class HomeWindowCntlr {
             public void onChanged(Change<? extends Showable> c) {
                 while (c.next()){
                     if(c.wasRemoved()){
-                        System.out.println("Cantidad de eliminados: "+ c.getRemovedSize());
-                        ClassroomDTO dto = (ClassroomDTO) c.getRemoved().get(0);
-                        ClassroomDAOImpl dao = ClassroomDAOImpl.getInstance();
-
-                        //Se elimina de la lista de aulas del item seleccionado
-                        if(((ClassroomDTO)selectedItemPab.getValue()).getPabName().equals(dto.getPabName())){
-                            itemsRoomsForPab.remove(dto);
+                        System.out.println("Llamado a listener por removed en itemsRoom");
+                        ClassroomDTO dto = null;
+                        try{
+                            dto = (ClassroomDTO) c.getRemoved().get(0);
+                            //Pab is removed from system
+                        }catch (IllegalStateException e){
+                            e.printStackTrace();
                         }
 
-                        //Room is removed from system
-                        dao.deleteClassroom(dto.getIdRoom());
-                        System.out.println("Se elimino desde ALLrooms el dto: "+ dto);
-                    }
-                    if(c.wasUpdated()){
-                        System.out.println("FUE ACTUALIZADO EN ITEMSROOMS");
+                        if(dto != null && dto.isDeleted().get()){
+                            //System.out.println("Cantidad de eliminados en ALLROOMS: "+ c.getRemovedSize());
+                            ClassroomDAOImpl dao = ClassroomDAOImpl.getInstance();
+
+                            //System.out.println("dto eliminado: "+ dto);
+
+                            //Se elimina de la lista de aulas del item seleccionado
+                            if(((ClassroomDTO)selectedItemPab.getValue()).getPabName().equals(dto.getPabName())){
+
+                                final ClassroomDTO finalDto = dto;
+                                int srcIndexDto = itemsRoomsForPab.filtered(new Predicate<Showable>() {
+                                    @Override
+                                    public boolean test(Showable showable) {
+                                        return finalDto.toString().equals(showable.toString());
+                                    }
+                                }).getSourceIndex(0);
+
+                                itemsRoomsForPab.remove(srcIndexDto);
+
+                                //System.out.println("Es del pabellon seleccionado, deberia haberse eliminado");
+                            }
+
+                            //Room is removed from system
+                            dao.deleteClassroom(dto.getIdRoom());
+                            System.out.println("Se elimino desde ALLrooms el dto: "+ dto);
+                        }
+
                     }
                 }
             }
@@ -179,18 +203,35 @@ public class HomeWindowCntlr {
             public void onChanged(Change<? extends Showable> c) {
                 while (c.next()){
                     if(c.wasRemoved()){
-                        System.out.println("Cantidad de eliminados: "+ c.getRemovedSize());
-                        ClassroomDTO dto = (ClassroomDTO) c.getRemoved().get(0);
-                        ClassroomDAOImpl dao = ClassroomDAOImpl.getInstance();
+                        System.out.println("Llamado a listener por removed en itemsRoom4 pab");
+                        ClassroomDTO dto = null;
+                        try{
+                            dto = (ClassroomDTO) c.getRemoved().get(0);
+                            //Pab is removed from system
+                        }catch (IllegalStateException e){
+                            e.printStackTrace();
+                        }
 
-                        itemsRooms.remove(dto);
+                        if(dto != null && dto.isDeleted().get()){
+                            //System.out.println("Cantidad de eliminados: "+ c.getRemovedSize());
+                            ClassroomDAOImpl dao = ClassroomDAOImpl.getInstance();
+                            //System.out.println("dto eliminado: "+ dto);
 
-                        //Room is removed from system
-                        dao.deleteClassroom(dto.getIdRoom());
-                        System.out.println("Se elimino desde rooms for pab el dto: "+ dto);
-                    }
-                    if(c.wasUpdated()){
-                        System.out.println("FUE ACTUALIZADO EN ITEMSROOMS4pab");
+                            final ClassroomDTO finalDto = dto;
+                            int srcIndexDto = itemsRooms.filtered(new Predicate<Showable>() {
+                                @Override
+                                public boolean test(Showable showable) {
+                                    return finalDto.toString().equals(showable.toString());
+                                }
+                            }).getSourceIndex(0);
+
+                            itemsRooms.remove(srcIndexDto);
+
+                            //Room is removed from system
+                            dao.deleteClassroom(dto.getIdRoom());
+                            System.out.println("Se elimino desde rooms for pab el dto: "+ dto);
+                        }
+
                     }
                 }
             }
