@@ -25,9 +25,8 @@ public class CareerCompDAOImpl implements CareerCompDAO{
 
     @Override
     public ArrayList<CareerCompDTO> getSubjects(int idCareer) {
-        /**
-         * idCareer is supposed to be already in the storage
-         */
+        //idCareer is supposed to be already in the storage
+
 
         ArrayList<CareerCompDTO> result = new ArrayList<>();
         for(CareerCompDTO dto : compositionCache)
@@ -89,7 +88,6 @@ public class CareerCompDAOImpl implements CareerCompDAO{
 
     @Override
     public CareerDTO createCareer(CareerDTO career) {
-        //Ver de guardar una copia en lugar del original
         for(CareerDTO dto : careerCache)
             if(dto.getIdCareer() == career.getIdCareer())
                 return null;

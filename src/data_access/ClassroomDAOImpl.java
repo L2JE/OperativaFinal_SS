@@ -3,9 +3,14 @@ package data_access;
 import data_transfer.ClassroomDTO;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ClassroomDAOImpl implements ClassroomDAO {
-    ArrayList<ClassroomDTO> cache = new ArrayList<>();
+    private final ArrayList<String> cachePabs = new ArrayList<>();
+    private final ArrayList<ClassroomDTO> cacheRooms = new ArrayList<>();
+    private int lastClassroomId = -1;
+
     static ClassroomDAOImpl instance;
 
     public static ClassroomDAOImpl getInstance(){
@@ -21,58 +26,144 @@ public class ClassroomDAOImpl implements ClassroomDAO {
 
     @Override
     public ClassroomDTO getRoomById(int idRoom) {
-        for (ClassroomDTO dto : cache)
-            if (dto.getIdRoom() == idRoom)
-                return dto;
+        for (ClassroomDTO dto : cacheRooms)
+            if (dto.getIdRoom() == idRoom) {
+                try {
+                    return (ClassroomDTO) dto.clone();
+                } catch (CloneNotSupportedException e) {
+                    e.printStackTrace();
+                }
+            }
 
         return null;
     }
 
     @Override
-    public ClassroomDTO getRoomByName(String roomFullName) {
-        for (ClassroomDTO dto : cache)
-            if (dto.getRoomName().equals(roomFullName))
-                return dto;
+    public ClassroomDTO getRoomByName(String pabName, String roomName) {
+
+        for (ClassroomDTO dto : cacheRooms)
+            if (dto.getPabName().equals(pabName) &&
+                dto.getRoomName().equals(roomName)) {
+                try {
+                    return (ClassroomDTO) dto.clone();
+                } catch (CloneNotSupportedException e) {
+                    e.printStackTrace();
+                }
+            }
 
         return null;
     }
 
     @Override
-    public ArrayList<ClassroomDTO> getRoomsOnLocation(String location) {
+    public ArrayList<ClassroomDTO> getRoomsOnPab(String pabName) {
+        //Assumes Pab exists
         ArrayList<ClassroomDTO> dtos = new ArrayList<>();
-        for (ClassroomDTO dto : cache)
-            if (dto.getPabName().equals(location))
-                dtos.add(dto);
+        for (ClassroomDTO dto : cacheRooms)
+            if (dto.getPabName().equals(pabName)) {
+                try {
+                    dtos.add((ClassroomDTO) dto.clone());
+                } catch (CloneNotSupportedException e) {
+                    e.printStackTrace();
+                }
+            }
 
-        if (dtos.size() > 0)
-            return dtos;
+        return dtos;
+    }
 
+    @Override
+    public ArrayList<ClassroomDTO> getAllRooms() {
+        return (ArrayList<ClassroomDTO>) this.cacheRooms.clone();
+    }
+
+    @Override
+    public ArrayList<ClassroomDTO> getAllPabs() {
+        ArrayList<ClassroomDTO> pabs = new ArrayList<>();
+        for (String pab : cachePabs) {
+            pabs.add(new ClassroomDTO(pab, null));
+        }
+
+        return pabs;
+    }
+
+    @Override
+    public ClassroomDTO createClassroom(ClassroomDTO classroom) {
+        if (!cachePabs.contains(classroom.getPabName()))
+            return null;
+
+        for (ClassroomDTO dto : cacheRooms)
+            if (dto.getPabName().equals(classroom.getPabName()) &&
+                dto.getRoomName().equals(classroom.getRoomName()))
+                return null;
+
+        this.lastClassroomId++;
+        classroom.setIdRoom(lastClassroomId);
+        try {
+            cacheRooms.add((ClassroomDTO) classroom.clone());
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+
+
+        return classroom;
+    }
+
+    @Override
+    public ClassroomDTO deleteClassroom(int idRoom){
+        int cantRooms = cacheRooms.size();
+        for (int i = 0; i < cantRooms; i++){
+            ClassroomDTO room = cacheRooms.get(i);
+            if (room.getIdRoom() == idRoom){
+                cacheRooms.remove(i);
+                return room;
+            }
+        }
         return null;
+    }
 
+
+    @Override
+    public ClassroomDTO createPab(String pabName) {
+        if(cachePabs.contains(pabName))
+            return null;
+
+        cachePabs.add(pabName);
+        return new ClassroomDTO(pabName,null);
     }
 
     @Override
-    public ArrayList<String> getAllLocations() {
-        ArrayList<String> locations = new ArrayList<>();
-        for (ClassroomDTO dto : cache)
-            if (!locations.contains(dto.getPabName()))
-                locations.add(dto.getPabName());
+    public ClassroomDTO deletePab(String pabName) {
+        int pabIndex = cachePabs.indexOf(pabName);
+        if(pabIndex < 0)
+            return null;
 
-        return locations;
+        ClassroomDTO removed = new ClassroomDTO(cachePabs.get(pabIndex), null);
+        cachePabs.remove(pabIndex);
+
+        for (int roomIndex = cacheRooms.size() - 1; roomIndex > -1 ; roomIndex--)
+            if(cacheRooms.get(roomIndex).getPabName().equals(pabName))
+                cacheRooms.remove(roomIndex);
+
+        return removed;
     }
 
     @Override
-    public ArrayList<ClassroomDTO> getAll() {
-
-        return (ArrayList<ClassroomDTO>) cache.clone();
+    public ClassroomDTO getPabByName(String pabName) {
+        if(cachePabs.contains(pabName))
+            return new ClassroomDTO(pabName, null);
+        return null;
     }
 
     @Override
-    public void setClassroom(ClassroomDTO classroom) {
-        for (ClassroomDTO dto : cache)
-            if (dto.getIdRoom() == classroom.getIdRoom())
-                return;
+    public String toString() {
+        String salida = "Lista de Pabellones";
+        for(String pab : cachePabs) {
+            salida += "\n "+ pab;
+        }
+        salida += "\n:::::::::::::::::::::::::::::\nLista de Aulas";
+        for(ClassroomDTO c : cacheRooms) {
+            salida += "\n (id: " + c.getIdRoom()+"), "+ c.getPabName()+". "+c.getRoomName();
+        }
 
-        cache.add(classroom);
+        return salida;
     }
 }

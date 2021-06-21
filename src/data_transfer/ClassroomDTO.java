@@ -2,13 +2,19 @@ package data_transfer;
 
 import service.Showable;
 
-public class ClassroomDTO implements Showable {
-    private int idRoom;
+public class ClassroomDTO extends Showable {
+    private int idRoom = -1;
     private String pabName;
     private String roomName;
 
+    public ClassroomDTO(String pabName, String roomName) {
+        super();
+        this.pabName = pabName;
+        this.roomName = roomName;
+    }
 
     public ClassroomDTO(int idRoom, String pabName, String roomName) {
+        super();
         this.idRoom = idRoom;
         this.pabName = pabName;
         this.roomName = roomName;
@@ -38,10 +44,19 @@ public class ClassroomDTO implements Showable {
         this.roomName = roomName;
     }
 
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        ClassroomDTO copy = new ClassroomDTO(idRoom,pabName,roomName);
+
+        return copy;
+    }
+
 
 
     @Override
     public String toString() {
+        if (roomName == null)
+            return pabName;
         return "Pabellon: " + pabName + " Aula: "+ roomName;
     }
 }
