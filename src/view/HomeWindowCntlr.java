@@ -10,10 +10,13 @@ import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.stage.Modality;
 import javafx.util.Callback;
+import javafx.util.Pair;
 import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import service.ShowableChangeFXCb;
 import service.UIDataValidator;
@@ -56,6 +59,11 @@ public class HomeWindowCntlr {
     private TextField newRoomField;
 
 
+    @FXML
+    private ComboBox<Showable> careerCBSubject;
+    @FXML
+    private ComboBox<Integer> yearCBSubject;
+
     private final int minTime = 8;
     private final int maxTime = 22;
     private final int bandDuration = 4;
@@ -65,6 +73,7 @@ public class HomeWindowCntlr {
     public void initialize(){
         initCareer();
         initClassroom();
+        initSubject();
         viewSubjects.setCellFactory(new ItemViewFactory());
         viewCareers.setCellFactory(new ItemViewFactory());
         viewAllClassrooms.setCellFactory(new ItemViewFactory());
@@ -262,6 +271,20 @@ public class HomeWindowCntlr {
                         //c.getRemoved().get(0);
 
                         CareerDTO dto = (CareerDTO) c.getRemoved().get(0);
+
+                        if(dto != null && dto.isDeleted().get()){
+                            final CareerDTO finalDto = dto;
+                             FilteredList filteredResult = careerCBSubject.getItems().filtered(new Predicate<Showable>() {
+                                @Override
+                                public boolean test(Showable showable) {
+                                    return finalDto.getIdCareer() == ((CareerDTO)showable).getIdCareer();
+                                }
+                            });
+
+                            if(filteredResult != null && filteredResult.size() > 0)
+                                careerCBSubject.getItems().remove(filteredResult.getSourceIndex(0));
+
+                        }
                         CareerCompDAOImpl.getInstance().deleteCareer(dto.getIdCareer());
 
                     }
@@ -269,6 +292,33 @@ public class HomeWindowCntlr {
                 }
             }
         });
+    }
+
+    private void initSubject(){
+
+        this.careerCBSubject.setVisibleRowCount(5);
+        this.yearCBSubject.setVisibleRowCount(5);
+
+        this.careerCBSubject.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Showable>() {
+            @Override
+            public void changed(ObservableValue<? extends Showable> observable, Showable oldValue, Showable newValue) {
+                if(newValue != null){
+                    int years = ((CareerDTO)newValue).getYears();
+                    ObservableList<Integer> items = yearCBSubject.getItems();
+                    items.clear();
+                    for(int i = 1; i <= years; i++)
+                        items.add(i);
+                }
+            }
+        });
+    }
+
+    public void initSubjectTab(Event event) {
+        this.careerCBSubject.getItems().clear();
+        ArrayList<CareerDTO> careers = UIDataValidator.getAvailableCareers();
+        this.careerCBSubject.getItems().addAll(careers);
+
+        System.gc();
     }
 
     private void fillChoiceBox(ComboBox cb, int min, int max, char format){
@@ -327,8 +377,13 @@ public class HomeWindowCntlr {
         return elems;
     }
 
-    public void addCareerMateria(ActionEvent actionEvent) throws IOException {
-        callWaitNewStageFill("materiaAddCareer.fxml", "Nueva carrera cursante");
+    public void addCareerSubjectPressed(ActionEvent actionEvent) {
+        Showable item = this.careerCBSubject.getValue();
+
+
+        Pair<Showable,Integer> careerInstance = UIDataValidator.careerInstanceValidator(this.careerCBSubject, this.yearCBSubject);
+
+        System.out.println(careerInstance);
     }
 
     public void fixLessonMateria(ActionEvent actionEvent) {

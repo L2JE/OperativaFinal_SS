@@ -5,6 +5,7 @@ import data_transfer.CareerDTO;
 import data_transfer.ClassroomDTO;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.util.Pair;
 
 import java.util.ArrayList;
 
@@ -84,6 +85,25 @@ public class UIDataValidator {
 
         return new ClassroomDTO(desiredPabName, null);
 
+    }
+
+    public static ArrayList<CareerDTO> getAvailableCareers(){
+        CareerCompDAO dao = CareerCompDAOImpl.getInstance();
+        ArrayList<CareerDTO> careers = dao.getCareers();
+        if(careers == null)
+            careers = new ArrayList<>();
+
+        return careers;
+    }
+
+    public static Pair<Showable, Integer> careerInstanceValidator(ComboBox<Showable> careerCBSubject, ComboBox<Integer> yearCBSubject) {
+        Integer year = yearCBSubject.getValue();
+        Showable career = careerCBSubject.getValue();
+
+        if(year == null || career == null)
+            return null;
+
+        return new Pair<>(career, year);
     }
 
     /*

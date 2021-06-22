@@ -130,7 +130,7 @@
                   </AnchorPane>
                </content>
           </Tab>
-            <Tab text="Materia">
+            <Tab onSelectionChanged="#initSubjectTab" text="Materia">
                <content>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0">
                      <children>
@@ -159,7 +159,7 @@
                                           <AnchorPane prefHeight="25.0" prefWidth="200.0">
                                              <children>
                                                 <Text layoutX="60.0" layoutY="17.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Materia" AnchorPane.leftAnchor="10.0" />
-                                                <Text layoutX="123.0" layoutY="17.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Comisiones" AnchorPane.rightAnchor="60.0" />
+                                                <Text disable="true" layoutX="123.0" layoutY="17.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Comisiones" visible="false" AnchorPane.rightAnchor="60.0" />
                                                 <Text layoutX="205.0" layoutY="17.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Clases" AnchorPane.rightAnchor="20.0" />
                                              </children>
                                           </AnchorPane>
@@ -168,13 +168,25 @@
                                                 <HBox alignment="CENTER" spacing="8.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                                    <children>
                                                       <TextField prefHeight="25.0" prefWidth="226.0" />
-                                                      <ComboBox disable="true" maxHeight="25.0" maxWidth="45.0" minHeight="25.0" minWidth="45.0" prefHeight="25.0" prefWidth="45.0" visibleRowCount="3" />
+                                                      <ComboBox disable="true" maxHeight="25.0" maxWidth="45.0" minHeight="25.0" minWidth="45.0" prefHeight="25.0" prefWidth="45.0" visible="false" visibleRowCount="3" />
                                                       <ComboBox maxHeight="25.0" maxWidth="45.0" minHeight="25.0" minWidth="45.0" prefHeight="25.0" prefWidth="45.0" visibleRowCount="3" />
                                                    </children>
                                                 </HBox>
                                              </children>
                                           </AnchorPane>
-                                          <Button fx:id="addCareerMateriaButton" mnemonicParsing="false" onAction="#addCareerMateria" text="Agregar una Carrera" />
+                                          <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                             <children>
+                                                <ComboBox fx:id="careerCBSubject" prefHeight="25.0" prefWidth="226.0" promptText="Agregar Carrera" />
+                                                <ComboBox fx:id="yearCBSubject" prefHeight="25.0" prefWidth="64.0" promptText="año" />
+                                                <Button fx:id="addCareerMateriaButton" mnemonicParsing="false" onAction="#addCareerSubjectPressed" prefHeight="25.0" prefWidth="31.0" stylesheets="@../content/stylesheets/addButton.css">
+                                                   <HBox.margin>
+                                                      <Insets />
+                                                   </HBox.margin></Button>
+                                             </children>
+                                             <padding>
+                                                <Insets left="5.0" />
+                                             </padding>
+                                          </HBox>
                                           <Button fx:id="fixClassMateriaButton" mnemonicParsing="false" onAction="#fixLessonMateria" text="Fijar una Clase" />
                                        </children>
                                     </VBox>

@@ -4,11 +4,13 @@ import service.Showable;
 
 public class LectureDTO extends Showable {
     private int idLecture;
+    private int idCareers[];
     private String idSubject;
     private String teacher;
 
     public LectureDTO(int idLecture, String idSubject, String teacher) {
         super();
+        this.idCareers = new int[]{};
         this.idLecture = idLecture;
         this.idSubject = idSubject;
         this.teacher = teacher;

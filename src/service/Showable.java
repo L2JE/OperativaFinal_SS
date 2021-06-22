@@ -16,6 +16,4 @@ public abstract class Showable {
 
     abstract public String toString();
 
-
-
 }

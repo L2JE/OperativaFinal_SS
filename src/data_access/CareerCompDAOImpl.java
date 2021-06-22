@@ -60,6 +60,11 @@ public class CareerCompDAOImpl implements CareerCompDAO{
     }
 
     @Override
+    public ArrayList<CareerDTO> getCareers() {
+        return (ArrayList<CareerDTO>)careerCache.clone();
+    }
+
+    @Override
     public CareerDTO getCareerByName(String careerName) {
         for(CareerDTO dto : careerCache)
             if(dto.getName().equals(careerName)) {
