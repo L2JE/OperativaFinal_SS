@@ -57,6 +57,10 @@ public class HomeWindowCntlr {
     private TextField newPabField;
     @FXML
     private TextField newRoomField;
+    @FXML
+    private ListView<Pair<Showable, Integer>> careersSubjectView;
+    @FXML
+    private ListView<Showable> lessonsSubjectView;
 
 
     @FXML
@@ -380,10 +384,10 @@ public class HomeWindowCntlr {
     public void addCareerSubjectPressed(ActionEvent actionEvent) {
         Showable item = this.careerCBSubject.getValue();
 
-
+        //Verifies the career is not in the subject already
         Pair<Showable,Integer> careerInstance = UIDataValidator.careerInstanceValidator(this.careerCBSubject, this.yearCBSubject);
 
-        System.out.println(careerInstance);
+        careersSubjectView.getItems().add(careerInstance);
     }
 
     public void fixLessonMateria(ActionEvent actionEvent) {

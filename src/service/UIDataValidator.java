@@ -7,6 +7,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.util.Pair;
 
+import java.lang.invoke.SwitchPoint;
 import java.util.ArrayList;
 
 /**
@@ -61,7 +62,7 @@ public class UIDataValidator {
     public static ClassroomDTO roomValidator(TextField newRoomField, Showable selectedPab) {
         String desiredRoomName = newRoomField.getText();
 
-        if(newRoomField.equals("") || selectedPab == null)
+        if(newRoomField.getText().equals("") || selectedPab == null)
             return null;
 
         String pabName = ((ClassroomDTO)selectedPab).getPabName();
@@ -97,13 +98,42 @@ public class UIDataValidator {
     }
 
     public static Pair<Showable, Integer> careerInstanceValidator(ComboBox<Showable> careerCBSubject, ComboBox<Integer> yearCBSubject) {
+
         Integer year = yearCBSubject.getValue();
         Showable career = careerCBSubject.getValue();
 
         if(year == null || career == null)
             return null;
 
-        return new Pair<>(career, year);
+        return new Pair<Showable, Integer>(career, year){
+            @Override
+            public String toString(){
+                String sufix;
+                switch (this.getValue()){
+                    case 1:
+                    case 3:
+                        sufix = "ro";
+                        break;
+                    case 2: sufix = "do";
+                        break;
+                    case 4:
+                    case 5:
+                    case 6: sufix = "to";
+                        break;
+                    case 7:
+                    case 10: sufix = "mo";
+                        break;
+                    case 8: sufix = "vo";
+                        break;
+                    case 9: sufix = "no";
+                        break;
+                    default: sufix = "avo";
+                        break;
+                }
+
+                return career + ", año: "+ this.getValue() + sufix;
+            }
+        };
     }
 
     /*
