@@ -3,40 +3,83 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="113.0" maxWidth="428.0" minHeight="113.0" minWidth="428.0" prefHeight="113.0" prefWidth="428.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.MateriaFixLesson">
+<AnchorPane maxHeight="196.0" maxWidth="428.0" minHeight="113.0" minWidth="428.0" prefHeight="196.0" prefWidth="428.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.MateriaFixLesson">
    <children>
-      <VBox AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="3.0">
+      <VBox alignment="CENTER" layoutX="3.0" spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <AnchorPane>
+            <VBox>
                <children>
-                  <Text layoutX="41.0" layoutY="105.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pabellon" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="3.0" />
-                  <Text layoutX="162.0" layoutY="105.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Aula" AnchorPane.bottomAnchor="3.0" />
-                  <Text layoutX="319.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" text="H.Inic." AnchorPane.bottomAnchor="3.0" />
-                  <Text layoutX="369.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Duracion" AnchorPane.bottomAnchor="3.0" />
+                  <AnchorPane>
+                     <children>
+                        <Text layoutX="41.0" layoutY="105.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pabellon" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="3.0" />
+                        <Text layoutX="177.0" layoutY="15.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Aula" AnchorPane.bottomAnchor="1.0" />
+                     </children>
+                  </AnchorPane>
+                  <HBox spacing="8.0">
+                     <children>
+                        <ComboBox fx:id="pabCB" prefHeight="25.0" prefWidth="174.0" />
+                        <ComboBox fx:id="roomCB" prefWidth="174.0" />
+                     </children>
+                  </HBox>
                </children>
-            </AnchorPane>
-            <HBox spacing="8.0">
+               <padding>
+                  <Insets left="3.0" />
+               </padding>
+            </VBox>
+            <VBox>
                <children>
-                  <ComboBox fx:id="pabellonButton" prefWidth="161.0" />
-                  <ComboBox prefWidth="150.0" />
-                  <ComboBox maxWidth="45.0" minWidth="45.0" prefWidth="45.0" />
-                  <ComboBox maxWidth="45.0" minWidth="45.0" prefWidth="45.0" />
+                  <AnchorPane>
+                     <children>
+                        <Text layoutX="41.0" layoutY="105.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dia" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="3.0" />
+                        <Text layoutX="177.0" layoutY="14.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Hora de Inicio" AnchorPane.bottomAnchor="2.98828125" />
+                        <Text layoutX="266.0" layoutY="14.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Duracion" visible="false" AnchorPane.bottomAnchor="2.98828125" />
+                     </children>
+                  </AnchorPane>
+                  <HBox spacing="8.0">
+                     <children>
+                        <ComboBox fx:id="dayCB" prefWidth="174.0" />
+                        <ComboBox fx:id="startTimeCB" prefHeight="25.0" prefWidth="82.0" />
+                        <ComboBox fx:id="durationCB" maxWidth="82.0" minWidth="45.0" prefHeight="25.0" prefWidth="82.0" visible="false" />
+                        <ComboBox maxWidth="45.0" minWidth="45.0" prefWidth="45.0" visible="false" />
+                     </children>
+                  </HBox>
                </children>
-            </HBox>
+               <padding>
+                  <Insets left="3.0" />
+               </padding>
+            </VBox>
+            <VBox>
+               <children>
+                  <AnchorPane>
+                     <children>
+                        <Text layoutX="41.0" layoutY="105.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Profesor" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="3.0" />
+                     </children>
+                  </AnchorPane>
+                  <HBox spacing="8.0">
+                     <children>
+                        <TextField fx:id="teacherText" prefHeight="25.0" prefWidth="174.0" />
+                     </children>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets left="3.0" />
+               </padding>
+            </VBox>
          </children>
          <padding>
-            <Insets left="3.0" />
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding>
       </VBox>
       <HBox alignment="BOTTOM_RIGHT" spacing="8.0" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0">
          <children>
-            <Button mnemonicParsing="false" text="Agregar" />
-            <Button mnemonicParsing="false" text="Cancelar" />
+            <Button fx:id="addButton" mnemonicParsing="false" onAction="#addPressed" onKeyPressed="#addPressed" text="Agregar" />
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelPressed" onKeyPressed="#cancelPressed" text="Cancelar" />
          </children>
          <padding>
             <Insets bottom="3.0" right="3.0" />
