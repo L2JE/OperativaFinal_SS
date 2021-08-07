@@ -99,7 +99,6 @@ public class MateriaFixLesson implements SendableFilling {
             //(Other cases are prohibited)
             boolean validData = false;
 
-
             if(validData){
                 Window w = ((Node)event.getSource()).getScene().getWindow();
                 ((Stage)w).close();
