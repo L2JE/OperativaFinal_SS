@@ -5,9 +5,7 @@ import data_access.ClassroomDAOImpl;
 import data_transfer.CareerDTO;
 import data_transfer.ClassroomDTO;
 import data_transfer.LectureDTO;
-import javafx.beans.Observable;
 import javafx.beans.property.ReadOnlyProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -15,10 +13,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.stage.Modality;
-import javafx.util.Callback;
 import javafx.util.Pair;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
-import service.ShowableChangeFXCb;
 import service.UIDataValidator;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -27,9 +22,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Predicate;
 
 import javafx.stage.Stage;
@@ -372,11 +365,7 @@ public class HomeWindowCntlr {
     {
         ArrayList<Showable> elems = new ArrayList<Showable>();
 
-        elems.add(new LectureDTO(1,"Introduccion a la Jodita C1", "Tinelli"));
-        elems.add(new LectureDTO(2,"Feminismo II", "Basile"));
-        elems.add(new LectureDTO(3,"Aborto Legal I C2", "Vidella"));
-        elems.add(new LectureDTO(4,"Org. de Manifestaciones C1", "Kirchner"));
-        elems.add(new LectureDTO(5,"Turismo Ahre C1", "Pacuolo"));
+        elems.add(new LectureDTO(1));
 
         return elems;
     }
