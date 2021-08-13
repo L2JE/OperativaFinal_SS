@@ -2,9 +2,7 @@ package view;
 
 import data_access.CareerCompDAOImpl;
 import data_access.ClassroomDAOImpl;
-import data_transfer.CareerDTO;
-import data_transfer.ClassroomDTO;
-import data_transfer.LectureDTO;
+import data_transfer.*;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -13,7 +11,6 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.stage.Modality;
-import javafx.util.Pair;
 import service.UIDataValidator;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -23,6 +20,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 
 import javafx.stage.Stage;
@@ -50,16 +48,15 @@ public class HomeWindowCntlr {
     private TextField newPabField;
     @FXML
     private TextField newRoomField;
-    @FXML
-    private ListView<Pair<Showable, Integer>> careersSubjectView;
-    @FXML
-    private ListView<Showable> lessonsSubjectView;
-
 
     @FXML
-    private ComboBox<Showable> careerCBSubject;
+    private ListView<Showable> careersSubjectView;
     @FXML
-    private ComboBox<Integer> yearCBSubject;
+    private ListView<Showable> lecturesSubjectView;
+    @FXML
+    private ListView<Showable> subjectsSubjectView;
+    @FXML
+    private TextField newSubjectField;
 
     private final int minTime = 8;
     private final int maxTime = 22;
@@ -70,11 +67,66 @@ public class HomeWindowCntlr {
     public void initialize(){
         initCareer();
         initClassroom();
-        initSubject();
+        initSubjectTab();
         viewSubjects.setCellFactory(new ItemViewFactory());
         viewCareers.setCellFactory(new ItemViewFactory());
         viewAllClassrooms.setCellFactory(new ItemViewFactory());
         runTestCustomItems();
+    }
+
+    private void initSubjectTab() {
+        //set custom cell factory
+        subjectsSubjectView.setCellFactory(new ItemViewFactory());
+        lecturesSubjectView.setCellFactory(new ItemViewFactory());
+        careersSubjectView.setCellFactory(new ItemViewFactory());
+
+        ObservableList<Showable> subjectsItems = lecturesSubjectView.getItems();
+        ObservableList<Showable> careersItems = careersSubjectView.getItems();
+        ObservableList<Showable> lecturesItems = lecturesSubjectView.getItems();
+
+        //load careers and lectures when selecting a subject
+        ReadOnlyProperty<Showable> selectedItemSubject = subjectsSubjectView.getSelectionModel().selectedItemProperty();
+        selectedItemSubject.addListener(new ChangeListener<Showable>() {
+            @Override
+            public void changed(ObservableValue<? extends Showable> observableValue, Showable oldValue, Showable newValue) {
+                System.out.println("Selected Item");
+                subjectsItems.clear();
+                careersItems.clear();
+
+                if(newValue != null){
+                    SubjectDTO newSubject = (SubjectDTO)newValue;
+                    //load lectures and careers
+                    //ArrayList<Showable> lectures = LectureDAOImpl.getInstance().getLectures(newSubject.getIdSubject());
+                    //lecturesItems.addAll(lectures);
+
+                    List<CareerInstance> careers = newSubject.getCareers();
+                    careersItems.addAll(careers);
+                }
+            }
+        });
+
+        careersItems.addListener(new ListChangeListener<Showable>() {
+            @Override
+            public void onChanged(Change<? extends Showable> change) {
+                while (change.next()) {
+                    if (change.wasRemoved()) {
+
+                        CareerInstance dto = null;
+                        try {
+                            dto = (CareerInstance) change.getRemoved().get(0);
+                            //Pab is removed from system
+                        } catch (IllegalStateException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (dto != null && dto.isDeleted().get()) {
+                            ((SubjectDTO) selectedItemSubject.getValue()).removeCareerInstance(dto);
+                        }
+
+                    }
+                }
+            }
+        });
     }
 
     private void initClassroom() {
@@ -270,16 +322,18 @@ public class HomeWindowCntlr {
                         CareerDTO dto = (CareerDTO) c.getRemoved().get(0);
 
                         if(dto != null && dto.isDeleted().get()){
-                            final CareerDTO finalDto = dto;
-                             FilteredList filteredResult = careerCBSubject.getItems().filtered(new Predicate<Showable>() {
+                            //TODO: Falta eliminar de las materias que no estan seleccionadas.
+                            final CareerDTO dtoToRemove = dto;
+                             careersSubjectView.getItems().removeIf(new Predicate<Showable>() {
                                 @Override
                                 public boolean test(Showable showable) {
-                                    return finalDto.getIdCareer() == ((CareerDTO)showable).getIdCareer();
+                                    boolean containsCareer = ((CareerInstance)showable).getIdCareer() == dtoToRemove.getIdCareer();
+                                    if(containsCareer)
+                                        showable.setDeleted(true);
+
+                                    return containsCareer;
                                 }
                             });
-
-                            if(filteredResult != null && filteredResult.size() > 0)
-                                careerCBSubject.getItems().remove(filteredResult.getSourceIndex(0));
 
                         }
                         CareerCompDAOImpl.getInstance().deleteCareer(dto.getIdCareer());
@@ -289,33 +343,6 @@ public class HomeWindowCntlr {
                 }
             }
         });
-    }
-
-    private void initSubject(){
-
-        this.careerCBSubject.setVisibleRowCount(5);
-        this.yearCBSubject.setVisibleRowCount(5);
-
-        this.careerCBSubject.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Showable>() {
-            @Override
-            public void changed(ObservableValue<? extends Showable> observable, Showable oldValue, Showable newValue) {
-                if(newValue != null){
-                    int years = ((CareerDTO)newValue).getYears();
-                    ObservableList<Integer> items = yearCBSubject.getItems();
-                    items.clear();
-                    for(int i = 1; i <= years; i++)
-                        items.add(i);
-                }
-            }
-        });
-    }
-
-    public void initSubjectTab(Event event) {
-        this.careerCBSubject.getItems().clear();
-        ArrayList<CareerDTO> careers = UIDataValidator.getAvailableCareers();
-        this.careerCBSubject.getItems().addAll(careers);
-
-        System.gc();
     }
 
     private void fillChoiceBox(ComboBox cb, int min, int max, char format){
@@ -370,13 +397,12 @@ public class HomeWindowCntlr {
         return elems;
     }
 
-    public void addCareerSubjectPressed(ActionEvent actionEvent) {
-        Showable item = this.careerCBSubject.getValue();
-
-        //Verifies the career is not in the subject already
-        Pair<Showable,Integer> careerInstance = UIDataValidator.careerInstanceValidator(this.careerCBSubject, this.yearCBSubject);
-
-        careersSubjectView.getItems().add(careerInstance);
+    public void addCareerMateria(ActionEvent actionEvent) {
+        SubjectDTO selected = (SubjectDTO) subjectsSubjectView.getSelectionModel().getSelectedItem();
+        if(selected != null)
+            callWaitNewStageFill("materiaAddCareer.fxml", "Agregar una Materia Cursante");
+        else
+            System.err.println("Error: Seleccione una materia primero");
     }
 
     public void fixLessonMateria(ActionEvent actionEvent) {
@@ -433,5 +459,31 @@ public class HomeWindowCntlr {
             //System.out.println("Aula Agregada!");
         }else
             System.err.println("Datos Invalidos: No es posible agregar el Aula por un error en los datos ingresados.");
+    }
+
+    public void tabMateriaSelected(Event event) {
+        //Load all subjects
+        if(subjectsSubjectView.getItems().size() < 1){
+            //ArrayList<Showable> subjects = SubjectDAOImpl.getInstance.getAllSubjects();
+           // subjectsSubjectView.getItems().addAll(subjects);
+        }
+    }
+
+    public void addSubject(ActionEvent actionEvent) {
+        Showable newSubject = UIDataValidator.subjectValidator(newSubjectField);
+        if(newSubject != null){
+
+            //SubjectDAOImpl.getInstance().createSubject((SubjectDTO)newSubject);
+
+            subjectsSubjectView.getItems().add(newSubject);
+            //System.out.println("Materia Agregada!");
+        }else
+            System.err.println("Datos Invalidos: No es posible agregar la materia porque ya existe o esta mal escrita.");
+    }
+
+    public void addValidCareerToSubject(Showable careerInstance) {
+        Showable selected = subjectsSubjectView.getSelectionModel().selectedItemProperty().get();
+        ((SubjectDTO)selected).addCareerInstance((CareerInstance) careerInstance);
+        careersSubjectView.getItems().add(careerInstance);
     }
 }

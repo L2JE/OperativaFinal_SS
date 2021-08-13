@@ -3,6 +3,7 @@ package service;
 import data_access.*;
 import data_transfer.CareerDTO;
 import data_transfer.ClassroomDTO;
+import data_transfer.SubjectDTO;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.util.Pair;
@@ -88,59 +89,16 @@ public class UIDataValidator {
 
     }
 
-    public static ArrayList<CareerDTO> getAvailableCareers(){
-        CareerCompDAO dao = CareerCompDAOImpl.getInstance();
-        ArrayList<CareerDTO> careers = dao.getCareers();
-        if(careers == null)
-            careers = new ArrayList<>();
+    public static SubjectDTO subjectValidator(TextField newSubjectField) {
+        String subjectName = newSubjectField.getText();
 
-        return careers;
-    }
-
-    public static Pair<Showable, Integer> careerInstanceValidator(ComboBox<Showable> careerCBSubject, ComboBox<Integer> yearCBSubject) {
-
-        Integer year = yearCBSubject.getValue();
-        Showable career = careerCBSubject.getValue();
-
-        if(year == null || career == null)
+        if(subjectName == null && subjectName.length() < 5)
             return null;
 
-        return new Pair<Showable, Integer>(career, year){
-            @Override
-            public String toString(){
-                String sufix;
-                switch (this.getValue()){
-                    case 1:
-                    case 3:
-                        sufix = "ro";
-                        break;
-                    case 2: sufix = "do";
-                        break;
-                    case 4:
-                    case 5:
-                    case 6: sufix = "to";
-                        break;
-                    case 7:
-                    case 10: sufix = "mo";
-                        break;
-                    case 8: sufix = "vo";
-                        break;
-                    case 9: sufix = "no";
-                        break;
-                    default: sufix = "avo";
-                        break;
-                }
+        //if(SubjectDAOImpl.getInstance().getSubjectByName(subjectName) != null)
+        //    return null;
 
-                return career + ", año: "+ this.getValue() + sufix;
-            }
-        };
+        return new SubjectDTO(subjectName);
+
     }
-
-    /*
-    public void initCareerDAO(){
-        if(careerAccess==null)
-            careerAccess
-    }
-     */
-
 }

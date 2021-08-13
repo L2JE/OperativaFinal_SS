@@ -1,5 +1,6 @@
 package view;
 
+import com.sun.scenario.effect.impl.prism.PrImage;
 import data_access.ClassroomDAO;
 import data_access.ClassroomDAOImpl;
 import data_access.LectureDAO;
@@ -22,7 +23,7 @@ import service.ScheduleStrategy;
 import service.Showable;
 import java.util.ArrayList;
 
-public class MateriaFixLesson implements SendableFilling {
+public class MateriaFixLesson extends SendableFilling {
 
     @FXML
     private Button addButton;
@@ -49,6 +50,7 @@ public class MateriaFixLesson implements SendableFilling {
     private Label errorMsjLabel;
 
     private HomeWindowCntlr home;
+    private LectureDTO lectureToAdd;
 
     private final int minTime = 8;
     private final int maxTime = 21;
@@ -89,21 +91,18 @@ public class MateriaFixLesson implements SendableFilling {
         this.home = homeCntlr;
     }
 
-    public void addPressed(Event event) {
-
-        System.out.println("Hubo un Evento en Agregar");
-
-        if(buttonWasPressed(event)){
-            if(validateData()){
-                Window w = ((Node)event.getSource()).getScene().getWindow();
-                ((Stage)w).close();
-            }
-            else
-                errorMsjLabel.setVisible(true);
-        }
+    @Override
+    protected void sendData() {
+        System.out.println("SENDING DATA");
     }
 
-    private boolean validateData() {
+    @Override
+    protected void showErrorMsj() {
+        errorMsjLabel.setVisible(true);
+    }
+
+    @Override
+    protected boolean validateUserInput() {
         //(pab, room, day, time, teacher)
         //(pab, room, day, time)
         //(day, time, teacher)
@@ -111,6 +110,7 @@ public class MateriaFixLesson implements SendableFilling {
         //(teacher) ... then all lessons available are assigned to the same teacher
         //(day)
         //(Other cases are prohibited)
+
         ClassroomDTO room = (ClassroomDTO)roomCB.getValue();
         String date = dayCB.getValue();
         int lectureStartAt = -1;
@@ -121,44 +121,26 @@ public class MateriaFixLesson implements SendableFilling {
             lectureStartAt = Integer.parseInt(tmp.substring(0, tmp.indexOf(":")));
         }
 
-        LectureDTO lecture = new LectureDTO(1);
-        if(room != null)                        lecture.setRoomId(room.getIdRoom());
-        if(date != null && !date.equals(""))    lecture.setDayOfWeek(DayOfWeek.valueOf(date));
-        if(teacher != null)                     lecture.setTeacher(teacher);
-        if(lectureStartAt > -1)                lecture.setDesiredTimeSlot(lectureStartAt);
+        LectureDTO lectureToAdd = new LectureDTO(1);
+        if(room != null)                        lectureToAdd.setRoomId(room.getIdRoom());
+        if(date != null && !date.equals(""))    lectureToAdd.setDayOfWeek(DayOfWeek.valueOf(date));
+        if(teacher != null)                     lectureToAdd.setTeacher(teacher);
+        if(lectureStartAt > -1)                lectureToAdd.setDesiredTimeSlot(lectureStartAt);
 
         System.out.println(":::::::::::::::::::::::::::::::::::::::::::::::");
-        System.out.println("Materia: "+ lecture.getIdSubject());
-        System.out.println("Clase: "+ lecture.getIdLecture());
-        System.out.println("Dia de la semana: "+ lecture.getDayOfWeek());
-        System.out.println("hora: "+ lecture.getDesiredTimeSlot());
-        System.out.println("Ticher: "+ lecture.getTeacher());
+        System.out.println("Materia: "+ lectureToAdd.getIdSubject());
+        System.out.println("Clase: "+ lectureToAdd.getIdLecture());
+        System.out.println("Dia de la semana: "+ lectureToAdd.getDayOfWeek());
+        System.out.println("hora: "+ lectureToAdd.getDesiredTimeSlot());
+        System.out.println("Ticher: "+ lectureToAdd.getTeacher());
         System.out.println(":::::::::::::::::::::::::::::::::::::::::::::::");
 
-        return false;
-    }
-
-    public void cancelPressed(Event event) {
-        System.out.println("Hubo un Evento en Cancelar");
-        if(buttonWasPressed(event)){
-            if(buttonWasPressed(event)){
-                Window w = ((Node)event.getSource()).getScene().getWindow();
-                ((Stage)w).close();
-            }
+        if(date != null || (teacher != null && !teacher.equals(""))){
+            this.lectureToAdd = lectureToAdd;
+            return true;
         }
-    }
-
-    private boolean buttonWasPressed(Event event){
-        String eventType = event.getEventType().getName();
-        if(eventType.equals("KEY_PRESSED") &&
-                ((KeyEvent) event).getCode() == KeyCode.ENTER)
-            return true;
-
-        if(eventType.equals("ACTION"))
-            return true;
 
         return false;
-
     }
 
     private String[] genValidDates(){
