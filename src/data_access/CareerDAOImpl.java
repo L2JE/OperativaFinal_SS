@@ -5,58 +5,22 @@ import data_transfer.CareerDTO;
 
 import java.util.ArrayList;
 
-public class CareerCompDAOImpl implements CareerCompDAO{
+public class CareerDAOImpl implements CareerDAO {
     private ArrayList<CareerCompDTO> compositionCache = new ArrayList<>();
     private ArrayList<CareerDTO> careerCache = new ArrayList<>();
     private int lastCareerId = -1;
 
-    private static CareerCompDAOImpl instance;
+    private static CareerDAOImpl instance;
 
 
-    private CareerCompDAOImpl(){
+    private CareerDAOImpl(){
 
     }
 
-    public static CareerCompDAOImpl getInstance(){
+    public static CareerDAOImpl getInstance(){
         if(instance == null)
-            instance = new CareerCompDAOImpl();
+            instance = new CareerDAOImpl();
         return instance;
-    }
-
-    @Override
-    public ArrayList<CareerCompDTO> getSubjects(int idCareer) {
-        //idCareer is supposed to be already in the storage
-
-
-        ArrayList<CareerCompDTO> result = new ArrayList<>();
-        for(CareerCompDTO dto : compositionCache)
-            if(dto.getIdCareer() == idCareer) {
-                try {
-                    result.add((CareerCompDTO) dto.clone());
-                } catch (CloneNotSupportedException e) {
-                    e.printStackTrace();
-                }
-            }
-        if(result.size() > 0)
-            return result;
-
-        return null;
-    }
-
-    @Override
-    public ArrayList<CareerCompDTO> getAll() {
-        return (ArrayList<CareerCompDTO>)compositionCache.clone();
-    }
-
-    @Override
-    public void setComposition(CareerCompDTO composition) {
-        if(careerCache.get(composition.getIdCareer()) != null){
-            for(CareerCompDTO dto : compositionCache)
-                if((dto.getIdCareer() == composition.getIdCareer())&&
-                        (dto.getIdSubject().equals(composition.getIdSubject())))
-                    return;
-            compositionCache.add(composition);
-        }
     }
 
     @Override

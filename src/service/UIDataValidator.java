@@ -6,10 +6,6 @@ import data_transfer.ClassroomDTO;
 import data_transfer.SubjectDTO;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import javafx.util.Pair;
-
-import java.lang.invoke.SwitchPoint;
-import java.util.ArrayList;
 
 /**
  * TODO: initialize careerAccess object!
@@ -54,7 +50,7 @@ public class UIDataValidator {
             return null;
 
         //Verifica que la carrera no existe
-        if(CareerCompDAOImpl.getInstance().getCareerByName(careerName) != null)
+        if(CareerDAOImpl.getInstance().getCareerByName(careerName) != null)
             return null;
 
         return new CareerDTO(careerName, duration, chosenStartTime, chosenEndTime);

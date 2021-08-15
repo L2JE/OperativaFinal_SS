@@ -1,6 +1,6 @@
 package view;
 
-import data_access.CareerCompDAOImpl;
+import data_access.CareerDAOImpl;
 import data_access.ClassroomDAOImpl;
 import data_transfer.*;
 import javafx.beans.property.ReadOnlyProperty;
@@ -280,7 +280,7 @@ public class HomeWindowCntlr {
                              return containsCareer;
                          });
                     }
-                    CareerCompDAOImpl.getInstance().deleteCareer(dto.getIdCareer());
+                    CareerDAOImpl.getInstance().deleteCareer(dto.getIdCareer());
 
                 }
                 //System.out.println("ESTADO DE PERCISTENCIA\n"+CareerCompDAOImpl.getInstance().toString()+"\nFIN ESTADO DE PERCISTENCIA");
@@ -311,7 +311,7 @@ public class HomeWindowCntlr {
 
         if(newCareer != null){
 
-            CareerCompDAOImpl.getInstance().createCareer((CareerDTO)newCareer);
+            CareerDAOImpl.getInstance().createCareer((CareerDTO)newCareer);
 
             viewCareers.getItems().add(newCareer);
             //System.out.println("Carrera Agregada!");

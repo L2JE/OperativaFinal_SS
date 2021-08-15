@@ -1,7 +1,7 @@
 package view;
 
-import data_access.CareerCompDAO;
-import data_access.CareerCompDAOImpl;
+import data_access.CareerDAO;
+import data_access.CareerDAOImpl;
 import data_transfer.CareerDTO;
 import data_transfer.CareerInstance;
 import javafx.collections.ObservableList;
@@ -28,7 +28,7 @@ public class MateriaAddCareer extends SendableFilling {
         this.careerCB.setVisibleRowCount(5);
         this.yearCB.setVisibleRowCount(5);
 
-        CareerCompDAO dao = CareerCompDAOImpl.getInstance();
+        CareerDAO dao = CareerDAOImpl.getInstance();
         ArrayList<CareerDTO> careers = dao.getCareers();
         if(careers == null)
             careers = new ArrayList<>();
