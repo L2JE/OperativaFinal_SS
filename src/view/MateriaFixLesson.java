@@ -129,6 +129,7 @@ public class MateriaFixLesson extends SendableFilling {
         }
 
         LectureDTO lectureToAdd = new LectureDTO(subjectId);
+
         if(room != null)                        lectureToAdd.setRoomId(room.getIdRoom());
         if(date != null && !date.equals(""))    lectureToAdd.setDayOfWeek(DayOfWeek.valueOf(date));
         if(teacher != null)                     lectureToAdd.setTeacher(teacher);

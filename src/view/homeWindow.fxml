@@ -177,7 +177,9 @@
                                  <children>
                                     <Label text="Clases" />
                                     <ListView fx:id="lecturesSubjectView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+
                                     <Button mnemonicParsing="false" onAction="#addFixedLessonMateria" prefHeight="24.0" prefWidth="230.0" text="Agregar una Clase" />
+
                                  </children>
                               </VBox>
                            </children>

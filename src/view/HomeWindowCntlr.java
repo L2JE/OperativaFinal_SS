@@ -111,7 +111,6 @@ public class HomeWindowCntlr {
                     if (dto != null && dto.isDeleted().get()) {
                         ((SubjectDTO) selectedItemSubject.getValue()).removeCareerInstance(dto);
                     }
-
                 }
             }
         });
@@ -344,6 +343,7 @@ public class HomeWindowCntlr {
         SubjectDTO selected = (SubjectDTO) subjectsSubjectView.getSelectionModel().getSelectedItem();
         if(selected != null)
             callWaitNewStageFill("materiaAddCareer.fxml", "Agregar una Materia Cursante", null);
+
         else
             System.err.println("Error: Seleccione una materia primero");
     }
@@ -438,5 +438,4 @@ public class HomeWindowCntlr {
     public void addValidLectureToSubject(Showable lecture){
         lecturesSubjectView.getItems().add(lecture);
     }
-
 }

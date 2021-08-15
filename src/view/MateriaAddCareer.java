@@ -10,8 +10,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import service.Showable;
-
-import javax.security.auth.Subject;
 import java.util.ArrayList;
 
 public class MateriaAddCareer extends SendableFilling {
