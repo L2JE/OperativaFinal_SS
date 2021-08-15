@@ -1,6 +1,8 @@
 package view;
 
+import data_access.CareerDAO;
 import data_access.CareerDAOImpl;
+import data_access.CareerSQLiteDAO;
 import data_access.ClassroomDAOImpl;
 import data_transfer.*;
 import javafx.beans.property.ReadOnlyProperty;
@@ -257,19 +259,18 @@ public class HomeWindowCntlr {
         fillChoiceBox(startTimeCBCareer, this.minTime, this.maxTime - bandDuration, 't');
         fillChoiceBox(endTimeCBCareer, this.minTime, this.maxTime, 't');
 
-        /**
-         * Agregar un listener: cuando se borra un valor de la vista, este se saca de la bd
-         */
         ObservableList<Showable> allCareersList = viewCareers.getItems();
+
+        CareerDAO dao = new CareerSQLiteDAO();
+        allCareersList.addAll(dao.getAllCareers());
+
         allCareersList.addListener((ListChangeListener<Showable>) c -> {
             while (c.next()){
                 if(c.wasRemoved()){
-                    CareerDTO dto = (CareerDTO) c.getRemoved().get(0);
+                    CareerDTO removedDTO = (CareerDTO) c.getRemoved().get(0);
 
-                    if(dto != null && dto.isDeleted().get()){
-                        //TODO: Solo se estan eliminando las carreras que se estan mostrando
-                        //TODO: Solucion propuesta:
-                        final CareerDTO careerToRemove = dto;
+                    if(removedDTO != null && removedDTO.isDeleted().get()){
+                        final CareerDTO careerToRemove = removedDTO;
 
                          careersSubjectView.getItems().removeIf(showable -> {
                              boolean containsCareer = ((CareerInstance)showable).getIdCareer() == careerToRemove.getIdCareer();
@@ -278,8 +279,9 @@ public class HomeWindowCntlr {
 
                              return containsCareer;
                          });
+
+                         dao.deleteCareer(removedDTO.getIdCareer());
                     }
-                    CareerDAOImpl.getInstance().deleteCareer(dto.getIdCareer());
 
                 }
                 //System.out.println("ESTADO DE PERCISTENCIA\n"+CareerCompDAOImpl.getInstance().toString()+"\nFIN ESTADO DE PERCISTENCIA");
@@ -301,20 +303,21 @@ public class HomeWindowCntlr {
         for(int i = 0; min <= max; i++, min++)
             values[i] = min + separator;
 
-        cb.getItems().addAll((Object[])values);
+        cb.getItems().addAll(values);
     }
 
     public void addCarreraPressed(ActionEvent actionEvent) {
 
-        Showable newCareer = UIDataValidator.careerValidator(yearsCBCareer, nameFieldCareer, startTimeCBCareer, endTimeCBCareer);
+        CareerDTO newCareer = UIDataValidator.careerValidator(yearsCBCareer, nameFieldCareer, startTimeCBCareer, endTimeCBCareer);
 
         if(newCareer != null){
+            CareerDAO dao = new CareerSQLiteDAO();
+            newCareer = dao.createCareer(newCareer);
 
-            CareerDAOImpl.getInstance().createCareer((CareerDTO)newCareer);
-
-            viewCareers.getItems().add(newCareer);
-            //System.out.println("Carrera Agregada!");
-        }else
+            if(newCareer != null)
+                viewCareers.getItems().add(newCareer);
+        }
+        if(newCareer == null)
             System.err.println("Datos Invalidos: No es posible agregar la carrera por un error en los datos ingresados.");
     }
 
@@ -332,7 +335,7 @@ public class HomeWindowCntlr {
 
     private ArrayList<Showable> createList()
     {
-        ArrayList<Showable> elems = new ArrayList<Showable>();
+        ArrayList<Showable> elems = new ArrayList<>();
 
         elems.add(new LectureDTO(1));
 
@@ -385,10 +388,10 @@ public class HomeWindowCntlr {
     }
 
     public void addPab(ActionEvent actionEvent) {
-        Showable newPab = UIDataValidator.pabValidator(newPabField);
+        ClassroomDTO newPab = UIDataValidator.pabValidator(newPabField);
         if(newPab != null){
 
-            ClassroomDAOImpl.getInstance().createPab(((ClassroomDTO)newPab).getPabName());
+            ClassroomDAOImpl.getInstance().createPab(newPab.getPabName());
 
             viewPabs.getItems().add(newPab);
             //System.out.println("Pabellon Agregado!");
@@ -397,10 +400,10 @@ public class HomeWindowCntlr {
     }
 
     public void addRoom(ActionEvent actionEvent) {
-        Showable newRoom = UIDataValidator.roomValidator(newRoomField,viewPabs.getSelectionModel().getSelectedItem());
+        ClassroomDTO newRoom = UIDataValidator.roomValidator(newRoomField,viewPabs.getSelectionModel().getSelectedItem());
         if(newRoom != null){
 
-            ClassroomDAOImpl.getInstance().createClassroom((ClassroomDTO)newRoom);
+            ClassroomDAOImpl.getInstance().createClassroom(newRoom);
 
             viewRoomsForPab.getItems().add(newRoom);
             viewAllClassrooms.getItems().add(newRoom);

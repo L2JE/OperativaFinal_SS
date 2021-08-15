@@ -50,7 +50,8 @@ public class UIDataValidator {
             return null;
 
         //Verifica que la carrera no existe
-        if(CareerDAOImpl.getInstance().getCareerByName(careerName) != null)
+        CareerDAO dao = new CareerSQLiteDAO();
+        if(dao.getCareerByName(careerName) != null)
             return null;
 
         return new CareerDTO(careerName, duration, chosenStartTime, chosenEndTime);

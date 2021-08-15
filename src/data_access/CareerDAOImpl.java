@@ -4,6 +4,7 @@ import data_transfer.CareerCompDTO;
 import data_transfer.CareerDTO;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CareerDAOImpl implements CareerDAO {
     private ArrayList<CareerCompDTO> compositionCache = new ArrayList<>();
@@ -24,7 +25,7 @@ public class CareerDAOImpl implements CareerDAO {
     }
 
     @Override
-    public ArrayList<CareerDTO> getCareers() {
+    public List<CareerDTO> getAllCareers() {
         return (ArrayList<CareerDTO>)careerCache.clone();
     }
 
@@ -83,7 +84,7 @@ public class CareerDAOImpl implements CareerDAO {
     }
 
     @Override
-    public CareerDTO deleteCareer(int idCareer) {
+    public int deleteCareer(int idCareer) {
         int cacheSize = careerCache.size();
         for(int careerIndex = 0; careerIndex<cacheSize ; careerIndex++)
             if(careerCache.get(careerIndex).getIdCareer() == idCareer){
@@ -94,9 +95,9 @@ public class CareerDAOImpl implements CareerDAO {
                         compositionCache.remove(compIndex);
                 }
 
-                return removed;
+                return 200;
             }
-        return null;
+        return 400;
     }
 
     @Override
