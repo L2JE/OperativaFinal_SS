@@ -2,13 +2,13 @@ package data_access;
 
 import data_transfer.CareerDTO;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface CareerDAO {
-    public abstract ArrayList<CareerDTO> getCareers();
-    public abstract CareerDTO getCareerByName(String careerName);
-    public abstract CareerDTO getCareerById(int id);
-    public abstract CareerDTO createCareer(CareerDTO career);
-    public abstract CareerDTO deleteCareer(int idCareer);
+    List<CareerDTO> getAllCareers();
+    CareerDTO getCareerByName(String careerName);
+    CareerDTO getCareerById(int id);
+    CareerDTO createCareer(CareerDTO career);
+    int deleteCareer(int idCareer);
 
 }

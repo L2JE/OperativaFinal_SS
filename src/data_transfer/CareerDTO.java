@@ -69,8 +69,16 @@ public class CareerDTO extends Showable {
 
     @Override
     public Object clone() throws CloneNotSupportedException {
-        CareerDTO copy = new CareerDTO(idCareer, name, years, preferredStart, preferredEnd);
+        CareerDTO careerDTO = new CareerDTO(idCareer, name, years, preferredStart, preferredEnd);
+        return careerDTO;
+    }
 
-        return copy;
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof CareerDTO)
+            return ((CareerDTO)obj).getIdCareer() == this.idCareer &&
+                   ((CareerDTO)obj).getName().equals(this.name);
+
+        return false;
     }
 }

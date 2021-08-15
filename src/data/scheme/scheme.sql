@@ -12,7 +12,7 @@ CREATE TABLE "carrera"(
         h_inic > 0 AND
         h_inic < 21 AND
         h_fin < 22 AND
-        h_fin > (carrera.h_inic + 2)
+        h_fin > (carrera.h_inic + 1)
     ),
 
     PRIMARY KEY ("id" AUTOINCREMENT)

@@ -2,15 +2,16 @@ package view;
 
 import data_access.CareerDAO;
 import data_access.CareerDAOImpl;
+import data_access.CareerSQLiteDAO;
 import data_transfer.CareerDTO;
 import data_transfer.CareerInstance;
-import data_transfer.SubjectDTO;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import service.Showable;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MateriaAddCareer extends SendableFilling {
 
@@ -28,8 +29,8 @@ public class MateriaAddCareer extends SendableFilling {
         this.careerCB.setVisibleRowCount(5);
         this.yearCB.setVisibleRowCount(5);
 
-        CareerDAO dao = CareerDAOImpl.getInstance();
-        ArrayList<CareerDTO> careers = dao.getCareers();
+        CareerDAO dao = new CareerSQLiteDAO();
+        List<CareerDTO> careers = dao.getAllCareers();
         if(careers == null)
             careers = new ArrayList<>();
 
