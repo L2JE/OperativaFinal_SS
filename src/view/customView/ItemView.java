@@ -1,13 +1,9 @@
 package view.customView;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import service.Showable;
 /**
  * PARA GENERALIZAR EXTENDER DE LISTCELL<Object> o LISTCELL<MiClase>

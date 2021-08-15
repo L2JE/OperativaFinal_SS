@@ -16,9 +16,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
 
-<SplitPane dividerPositions="0.5073891625615764" minHeight="150.0" minWidth="350.0" orientation="VERTICAL" prefHeight="408.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.HomeWindowCntlr">
+<SplitPane dividerPositions="0.5073891625615764" minHeight="150.0" minWidth="350.0" orientation="VERTICAL" prefHeight="408.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.HomeWindowCntlr">
    <items>
       <TabPane prefHeight="200.0" prefWidth="378.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
@@ -89,10 +88,10 @@
                      <children>
                         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <VBox prefHeight="164.0" prefWidth="220.0">
+                              <VBox maxWidth="350.0" prefHeight="164.0" prefWidth="220.0" HBox.hgrow="ALWAYS">
                                  <children>
                                     <Label text="Pabellones" />
-                                    <ListView fx:id="viewPabs" prefHeight="200.0" prefWidth="200.0" />
+                                    <ListView fx:id="viewPabs" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
                                     <AnchorPane>
                                        <children>
                                           <HBox alignment="CENTER" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -100,15 +99,21 @@
                                                 <TextField fx:id="newPabField" prefHeight="25.0" prefWidth="190.0" promptText="Nuevo Pabellon" />
                                                 <Button alignment="CENTER" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" onAction="#addPab" prefHeight="21.0" prefWidth="27.0" stylesheets="@../content/stylesheets/addButton.css" textAlignment="CENTER" />
                                              </children>
+                                             <padding>
+                                                <Insets top="5.0" />
+                                             </padding>
                                           </HBox>
                                        </children>
                                     </AnchorPane>
                                  </children>
+                                 <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </padding>
                               </VBox>
-                              <VBox prefHeight="164.0" prefWidth="220.0">
+                              <VBox maxWidth="350.0" prefHeight="164.0" prefWidth="220.0" HBox.hgrow="ALWAYS">
                                  <children>
                                     <Label text="Aulas" />
-                                    <ListView fx:id="viewRoomsForPab" prefHeight="200.0" prefWidth="200.0" />
+                                    <ListView fx:id="viewRoomsForPab" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
                                     <AnchorPane>
                                        <children>
                                           <HBox alignment="CENTER" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -116,10 +121,16 @@
                                                 <TextField fx:id="newRoomField" prefHeight="25.0" prefWidth="190.0" promptText="Nueva Aula" />
                                                 <Button alignment="CENTER" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" onAction="#addRoom" prefHeight="21.0" prefWidth="27.0" stylesheets="@../content/stylesheets/addButton.css" />
                                              </children>
+                                             <padding>
+                                                <Insets top="5.0" />
+                                             </padding>
                                           </HBox>
                                        </children>
                                     </AnchorPane>
                                  </children>
+                                 <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </padding>
                               </VBox>
                            </children>
                            <padding>
@@ -127,79 +138,53 @@
                            </padding>
                         </HBox>
                      </children>
+                     <padding>
+                        <Insets left="5.0" right="5.0" />
+                     </padding>
                   </AnchorPane>
                </content>
           </Tab>
-            <Tab text="Materia">
+            <Tab onSelectionChanged="#tabMateriaSelected" text="Materia">
                <content>
-                  <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                  <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <HBox alignment="CENTER_RIGHT" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                        <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="176.0" prefWidth="698.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <Button mnemonicParsing="false" text="Agregar" />
-                              <Button mnemonicParsing="false" text="Modificar" />
+                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="164.0" prefWidth="220.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label text="Materias" />
+                                    <ListView fx:id="subjectsSubjectView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                                    <AnchorPane>
+                                       <children>
+                                          <HBox alignment="CENTER" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <children>
+                                                <TextField fx:id="newSubjectField" prefHeight="25.0" prefWidth="190.0" promptText="Nuevo Materia" />
+                                                <Button alignment="CENTER" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" onAction="#addSubject" prefHeight="21.0" prefWidth="27.0" stylesheets="@../content/stylesheets/addButton.css" textAlignment="CENTER" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </AnchorPane>
+                                 </children>
+                              </VBox>
+                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="164.0" prefWidth="220.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label text="Carreras Cursantes" />
+                                    <ListView fx:id="careersSubjectView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                                    <Button mnemonicParsing="false" onAction="#addCareerMateria" prefHeight="24.0" prefWidth="228.0" text="Agregar una Carrera" />
+                                 </children>
+                              </VBox>
+                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="164.0" prefWidth="220.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label text="Clases" />
+                                    <ListView fx:id="lecturesSubjectView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                                    <Button mnemonicParsing="false" onAction="#fixLessonMateria" prefHeight="24.0" prefWidth="230.0" text="Agregar una Clase" />
+                                 </children>
+                              </VBox>
                            </children>
                            <padding>
-                              <Insets bottom="10.0" right="15.0" />
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </padding>
                         </HBox>
-                        <GridPane layoutX="249.0" layoutY="14.0" AnchorPane.bottomAnchor="38.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="347.0" minWidth="10.0" prefWidth="342.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="356.0" minWidth="10.0" prefWidth="356.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                           <children>
-                              <AnchorPane maxWidth="343.0" prefHeight="136.0" prefWidth="343.0">
-                                 <children>
-                                    <VBox alignment="TOP_CENTER" layoutX="101.0" layoutY="-64.0" prefHeight="200.0" prefWidth="100.0" spacing="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                       <children>
-                                          <AnchorPane prefHeight="25.0" prefWidth="200.0">
-                                             <children>
-                                                <Text layoutX="60.0" layoutY="17.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Materia" AnchorPane.leftAnchor="10.0" />
-                                                <Text layoutX="123.0" layoutY="17.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Comisiones" AnchorPane.rightAnchor="60.0" />
-                                                <Text layoutX="205.0" layoutY="17.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Clases" AnchorPane.rightAnchor="20.0" />
-                                             </children>
-                                          </AnchorPane>
-                                          <AnchorPane>
-                                             <children>
-                                                <HBox alignment="CENTER" spacing="8.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                                                   <children>
-                                                      <TextField prefHeight="25.0" prefWidth="226.0" />
-                                                      <ComboBox disable="true" maxHeight="25.0" maxWidth="45.0" minHeight="25.0" minWidth="45.0" prefHeight="25.0" prefWidth="45.0" visibleRowCount="3" />
-                                                      <ComboBox maxHeight="25.0" maxWidth="45.0" minHeight="25.0" minWidth="45.0" prefHeight="25.0" prefWidth="45.0" visibleRowCount="3" />
-                                                   </children>
-                                                </HBox>
-                                             </children>
-                                          </AnchorPane>
-                                          <Button fx:id="addCareerMateriaButton" mnemonicParsing="false" onAction="#addCareerMateria" text="Agregar una Carrera" />
-                                          <Button fx:id="fixClassMateriaButton" mnemonicParsing="false" onAction="#fixLessonMateria" text="Fijar una Clase" />
-                                       </children>
-                                    </VBox>
-                                 </children>
-                              </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
-                                 <children>
-                                    <VBox layoutX="137.0" layoutY="-59.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                       <children>
-                                          <TitledPane prefHeight="200.0" prefWidth="200.0" text="Carreras Cursantes">
-                                             <content>
-                                                <ListView prefHeight="200.0" prefWidth="200.0" />
-                                             </content>
-                                          </TitledPane>
-                                          <TitledPane prefHeight="200.0" prefWidth="200.0" text="Clases Fijadas">
-                                             <content>
-                                                <ListView prefHeight="200.0" prefWidth="200.0" />
-                                             </content>
-                                          </TitledPane>
-                                       </children>
-                                    </VBox>
-                                 </children>
-                              </AnchorPane>
-                           </children>
-                        </GridPane>
                      </children>
                   </AnchorPane>
                </content>

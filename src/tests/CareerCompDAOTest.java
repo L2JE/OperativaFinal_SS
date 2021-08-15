@@ -1,7 +1,7 @@
 package tests;
 
-import data_access.CareerCompDAO;
-import data_access.CareerCompDAOImpl;
+import data_access.CareerDAO;
+import data_access.CareerDAOImpl;
 import data_transfer.CareerDTO;
 
 public class CareerCompDAOTest {
@@ -16,7 +16,7 @@ public class CareerCompDAOTest {
         System.out.println(dto + " id: " + dto.getIdCareer() + ", inic: " +
                            dto.getPreferredStart() + ", fin: " + dto.getPreferredEnd());
 
-        CareerCompDAO dao = CareerCompDAOImpl.getInstance();
+        CareerDAO dao = CareerDAOImpl.getInstance();
         CareerDTO insertedDTO = null;
 
         insertedDTO = dao.createCareer(dto);
@@ -33,7 +33,7 @@ public class CareerCompDAOTest {
 
     }
     public static void should_return_null_on_not_existing_career(){
-        CareerCompDAO dao = CareerCompDAOImpl.getInstance();
+        CareerDAO dao = CareerDAOImpl.getInstance();
         CareerDTO result = dao.getCareerById(0);
 
         if(result != null) System.err.println("CACHE ESTA VACIA Y NO DEVUELVE NULL");

@@ -1,33 +1,23 @@
 package view;
 
-import data_access.CareerCompDAOImpl;
+import data_access.CareerDAOImpl;
 import data_access.ClassroomDAOImpl;
-import data_transfer.CareerDTO;
-import data_transfer.ClassroomDTO;
-import data_transfer.LectureDTO;
-import javafx.beans.Observable;
+import data_transfer.*;
 import javafx.beans.property.ReadOnlyProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.stage.Modality;
-import javafx.util.Callback;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
-import service.ShowableChangeFXCb;
 import service.UIDataValidator;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import javafx.stage.Stage;
 import service.Showable;
@@ -55,27 +45,79 @@ public class HomeWindowCntlr {
     @FXML
     private TextField newRoomField;
 
+    @FXML
+    private ListView<Showable> careersSubjectView;
+    @FXML
+    private ListView<Showable> lecturesSubjectView;
+    @FXML
+    private ListView<Showable> subjectsSubjectView;
+    @FXML
+    private TextField newSubjectField;
 
     private final int minTime = 8;
     private final int maxTime = 22;
     private final int bandDuration = 4;
-    public Button addCareerMateriaButton;
-    public Button fixClassMateriaButton;
 
     public void initialize(){
         initCareer();
         initClassroom();
+        initSubjectTab();
         viewSubjects.setCellFactory(new ItemViewFactory());
         viewCareers.setCellFactory(new ItemViewFactory());
         viewAllClassrooms.setCellFactory(new ItemViewFactory());
         runTestCustomItems();
     }
 
-    private void initClassroom() {
-        /**
-         * TODO: Llenar con datos previamente almacenados
-          */
+    private void initSubjectTab() {
+        //set custom cell factory
+        subjectsSubjectView.setCellFactory(new ItemViewFactory());
+        lecturesSubjectView.setCellFactory(new ItemViewFactory());
+        careersSubjectView.setCellFactory(new ItemViewFactory());
 
+        ObservableList<Showable> subjectsItems = lecturesSubjectView.getItems();
+        ObservableList<Showable> careersItems = careersSubjectView.getItems();
+        ObservableList<Showable> lecturesItems = lecturesSubjectView.getItems();
+
+        //load careers and lectures when selecting a subject
+        ReadOnlyProperty<Showable> selectedItemSubject = subjectsSubjectView.getSelectionModel().selectedItemProperty();
+        selectedItemSubject.addListener((observableValue, oldValue, newValue) -> {
+            System.out.println("Selected Item");
+            subjectsItems.clear();
+            careersItems.clear();
+
+            if(newValue != null){
+                SubjectDTO newSubject = (SubjectDTO)newValue;
+                //load lectures and careers
+                //ArrayList<Showable> lectures = LectureDAOImpl.getInstance().getLectures(newSubject.getIdSubject());
+                //lecturesItems.addAll(lectures);
+
+                List<CareerInstance> careers = newSubject.getCareers();
+                careersItems.addAll(careers);
+            }
+        });
+
+        careersItems.addListener((ListChangeListener<Showable>) change -> {
+            while (change.next()) {
+                if (change.wasRemoved()) {
+
+                    CareerInstance dto = null;
+                    try {
+                        dto = (CareerInstance) change.getRemoved().get(0);
+                        //Pab is removed from system
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (dto != null && dto.isDeleted().get()) {
+                        ((SubjectDTO) selectedItemSubject.getValue()).removeCareerInstance(dto);
+                    }
+
+                }
+            }
+        });
+    }
+
+    private void initClassroom() {
         //Inicialize custom item View
         viewPabs.setCellFactory(new ItemViewFactory());
         viewRoomsForPab.setCellFactory(new ItemViewFactory());
@@ -83,156 +125,125 @@ public class HomeWindowCntlr {
         ObservableList<Showable> itemsPabs = viewPabs.getItems();
         ReadOnlyProperty<Showable> selectedItemPab = viewPabs.getSelectionModel().selectedItemProperty();
 
-        selectedItemPab.addListener(new ChangeListener<Showable>() {
-            @Override
-            public void changed(ObservableValue<? extends Showable> observable, Showable oldValue, Showable newValue) {
-                //System.out.println("Se ha seleccionado el item: "+ oldValue + "newValue: "+newValue);
+        selectedItemPab.addListener((observable, oldValue, newValue) -> {
+            //System.out.println("Se ha seleccionado el item: "+ oldValue + "newValue: "+newValue);
 
-                ObservableList<Showable> itemsRoomsForPab = viewRoomsForPab.getItems();
-                itemsRoomsForPab.clear();
+            ObservableList<Showable> itemsRoomsForPab = viewRoomsForPab.getItems();
+            itemsRoomsForPab.clear();
 
-                if(newValue!=null){
-                    ArrayList<ClassroomDTO> rooms = ClassroomDAOImpl.getInstance().getRoomsOnPab(((ClassroomDTO)newValue).getPabName());
+            if(newValue!=null){
+                ArrayList<ClassroomDTO> rooms = ClassroomDAOImpl.getInstance().getRoomsOnPab(((ClassroomDTO)newValue).getPabName());
 
-                    if(rooms != null)
-                        itemsRoomsForPab.addAll(rooms);
+                if(rooms != null)
+                    itemsRoomsForPab.addAll(rooms);
 
-                    System.gc();
-                }
+                System.gc();
             }
         });
 
 
-        itemsPabs.addListener(new ListChangeListener<Showable>() {
-            @Override
-            public void onChanged(Change<? extends Showable> c) {
-                while (c.next()){
-                    if(c.wasRemoved()){
+        itemsPabs.addListener((ListChangeListener<Showable>) c -> {
+            while (c.next()){
+                if(c.wasRemoved()){
 
-                        ClassroomDTO dto = null;
-                        try{
-                            dto = (ClassroomDTO) c.getRemoved().get(0);
-                            //Pab is removed from system
-                        }catch (IllegalStateException e){
-                            e.printStackTrace();
-                        }
-
-                        if(dto != null && dto.isDeleted().get()){
-
-                            System.out.println("El Elemento: " + dto + "\n Ha sido eliminado de la lista");
-
-                            ClassroomDAOImpl dao = ClassroomDAOImpl.getInstance();
-                            dao.deletePab(dto.getPabName());
-
-                            //Pab is removed from views and viewAllClassrooms get refresh
-                            ObservableList<Showable> itemsRoomsForPab = viewRoomsForPab.getItems();
-                            itemsRoomsForPab.clear();
-                            viewAllClassrooms.getItems().clear();
-                            viewAllClassrooms.getItems().addAll(dao.getAllRooms());
-
-                            Showable selected = viewPabs.getSelectionModel().getSelectedItem();
-                            if(selected != null) {
-                                itemsRoomsForPab.addAll(dao.getRoomsOnPab(((ClassroomDTO) selected).getPabName()));
-                            }
-
-
-                            //System.out.println("Pabellon Borrado y lista principal limpia");
-
-                            System.gc();
-                        }
+                    ClassroomDTO dto = null;
+                    try{
+                        dto = (ClassroomDTO) c.getRemoved().get(0);
+                        //Pab is removed from system
+                    }catch (IllegalStateException e){
+                        e.printStackTrace();
                     }
-                    //System.out.println("ESTADO DE PERCISTENCIA\n"+ClassroomDAOImpl.getInstance().toString()+"\nFIN ESTADO DE PERCISTENCIA");
 
+                    if(dto != null && dto.isDeleted().get()){
+
+                        System.out.println("El Elemento: " + dto + "\n Ha sido eliminado de la lista");
+
+                        ClassroomDAOImpl dao = ClassroomDAOImpl.getInstance();
+                        dao.deletePab(dto.getPabName());
+
+                        //Pab is removed from views and viewAllClassrooms get refresh
+                        ObservableList<Showable> itemsRoomsForPab = viewRoomsForPab.getItems();
+                        itemsRoomsForPab.clear();
+                        viewAllClassrooms.getItems().clear();
+                        viewAllClassrooms.getItems().addAll(dao.getAllRooms());
+
+                        Showable selected = viewPabs.getSelectionModel().getSelectedItem();
+                        if(selected != null) {
+                            itemsRoomsForPab.addAll(dao.getRoomsOnPab(((ClassroomDTO) selected).getPabName()));
+                        }
+
+
+                        //System.out.println("Pabellon Borrado y lista principal limpia");
+
+                        System.gc();
+                    }
                 }
+                //System.out.println("ESTADO DE PERCISTENCIA\n"+ClassroomDAOImpl.getInstance().toString()+"\nFIN ESTADO DE PERCISTENCIA");
+
             }
         });
 
-        ObservableList<Showable> itemsRooms = viewAllClassrooms.getItems();
+        ObservableList<Showable> allRoomsList = viewAllClassrooms.getItems();
         ObservableList<Showable> itemsRoomsForPab = viewRoomsForPab.getItems();
 
-        //TODO: VER DE DIFERENCIAR ENTRE REMOVED FOR CLEAR Y REMOVED FOR BUTTON
-
-        itemsRooms.addListener(new ListChangeListener<Showable>() {
-            @Override
-            public void onChanged(Change<? extends Showable> c) {
-                while (c.next()){
-                    if(c.wasRemoved()){
-                        System.out.println("Llamado a listener por removed en itemsRoom");
-                        ClassroomDTO dto = null;
-                        try{
-                            dto = (ClassroomDTO) c.getRemoved().get(0);
-                            //Pab is removed from system
-                        }catch (IllegalStateException e){
-                            e.printStackTrace();
-                        }
-
-                        if(dto != null && dto.isDeleted().get()){
-                            //System.out.println("Cantidad de eliminados en ALLROOMS: "+ c.getRemovedSize());
-                            ClassroomDAOImpl dao = ClassroomDAOImpl.getInstance();
-
-                            //System.out.println("dto eliminado: "+ dto);
-
-                            //Se elimina de la lista de aulas del item seleccionado
-                            if(((ClassroomDTO)selectedItemPab.getValue()).getPabName().equals(dto.getPabName())){
-
-                                final ClassroomDTO finalDto = dto;
-                                int srcIndexDto = itemsRoomsForPab.filtered(new Predicate<Showable>() {
-                                    @Override
-                                    public boolean test(Showable showable) {
-                                        return finalDto.toString().equals(showable.toString());
-                                    }
-                                }).getSourceIndex(0);
-
-                                itemsRoomsForPab.remove(srcIndexDto);
-
-                                //System.out.println("Es del pabellon seleccionado, deberia haberse eliminado");
-                            }
-
-                            //Room is removed from system
-                            dao.deleteClassroom(dto.getIdRoom());
-                            System.out.println("Se elimino desde ALLrooms el dto: "+ dto);
-                        }
-
+        allRoomsList.addListener((ListChangeListener<Showable>) c -> {
+            while (c.next()){
+                if(c.wasRemoved()){
+                    ClassroomDTO dto = null;
+                    try{
+                        dto = (ClassroomDTO) c.getRemoved().get(0);
+                        //Pab is removed from system
+                    }catch (IllegalStateException e){
+                        e.printStackTrace();
                     }
+
+                    if(dto != null && dto.isDeleted().get()){
+                        ClassroomDAOImpl dao = ClassroomDAOImpl.getInstance();
+
+                        //Si esta seleccionado el pabellon al que pertenece el aula eliminada
+                        //Se elimina el aula de la lista de aulas
+                        if(((ClassroomDTO)selectedItemPab.getValue()).getPabName().equals(dto.getPabName())){
+
+                            final ClassroomDTO dtoToRemove = dto;
+
+                            itemsRoomsForPab.removeIf(itemToCompare -> dtoToRemove.toString().equals(itemToCompare.toString()));
+
+                        }
+
+                        //Room is removed from system
+                        dao.deleteClassroom(dto.getIdRoom());
+                        System.out.println("Se elimino desde ALLrooms el dto: "+ dto);
+                    }
+
                 }
             }
         });
 
-        itemsRoomsForPab.addListener(new ListChangeListener<Showable>() {
-            @Override
-            public void onChanged(Change<? extends Showable> c) {
-                while (c.next()){
-                    if(c.wasRemoved()){
-                        System.out.println("Llamado a listener por removed en itemsRoom4 pab");
-                        ClassroomDTO dto = null;
-                        try{
-                            dto = (ClassroomDTO) c.getRemoved().get(0);
-                            //Pab is removed from system
-                        }catch (IllegalStateException e){
-                            e.printStackTrace();
-                        }
-
-                        if(dto != null && dto.isDeleted().get()){
-                            //System.out.println("Cantidad de eliminados: "+ c.getRemovedSize());
-                            ClassroomDAOImpl dao = ClassroomDAOImpl.getInstance();
-                            //System.out.println("dto eliminado: "+ dto);
-
-                            final ClassroomDTO finalDto = dto;
-                            int srcIndexDto = itemsRooms.filtered(new Predicate<Showable>() {
-                                @Override
-                                public boolean test(Showable showable) {
-                                    return finalDto.toString().equals(showable.toString());
-                                }
-                            }).getSourceIndex(0);
-
-                            itemsRooms.remove(srcIndexDto);
-
-                            //Room is removed from system
-                            dao.deleteClassroom(dto.getIdRoom());
-                            System.out.println("Se elimino desde rooms for pab el dto: "+ dto);
-                        }
-
+        itemsRoomsForPab.addListener((ListChangeListener<Showable>) c -> {
+            while (c.next()){
+                if(c.wasRemoved()){
+                    System.out.println("Llamado a listener por removed en itemsRoom4 pab");
+                    ClassroomDTO dto = null;
+                    try{
+                        dto = (ClassroomDTO) c.getRemoved().get(0);
+                        //Pab is removed from system
+                    }catch (IllegalStateException e){
+                        e.printStackTrace();
                     }
+
+                    if(dto != null && dto.isDeleted().get()){
+                        ClassroomDAOImpl dao = ClassroomDAOImpl.getInstance();
+
+                        final ClassroomDTO classroomToRemove = dto;
+
+                        //Remove from view
+                        allRoomsList.removeIf(itemToCompare -> classroomToRemove.toString().equals(itemToCompare.toString()));
+
+                        //Room is removed from system
+                        dao.deleteClassroom(dto.getIdRoom());
+                        System.out.println("Se elimino desde rooms for pab el dto: "+ dto);
+                    }
+
                 }
             }
         });
@@ -240,9 +251,6 @@ public class HomeWindowCntlr {
     }
 
     private void initCareer(){
-        /**
-         * TODO: Llenar con datos previamente almacenados
-         */
         yearsCBCareer.setVisibleRowCount(3);
         startTimeCBCareer.setVisibleRowCount(3);
         endTimeCBCareer.setVisibleRowCount(3);
@@ -253,20 +261,29 @@ public class HomeWindowCntlr {
         /**
          * Agregar un listener: cuando se borra un valor de la vista, este se saca de la bd
          */
-        ObservableList<Showable> items = viewCareers.getItems();
-        items.addListener(new ListChangeListener<Showable>() {
-            @Override
-            public void onChanged(Change<? extends Showable> c) {
-                while (c.next()){
-                    if(c.wasRemoved()){
-                        //c.getRemoved().get(0);
+        ObservableList<Showable> allCareersList = viewCareers.getItems();
+        allCareersList.addListener((ListChangeListener<Showable>) c -> {
+            while (c.next()){
+                if(c.wasRemoved()){
+                    CareerDTO dto = (CareerDTO) c.getRemoved().get(0);
 
-                        CareerDTO dto = (CareerDTO) c.getRemoved().get(0);
-                        CareerCompDAOImpl.getInstance().deleteCareer(dto.getIdCareer());
+                    if(dto != null && dto.isDeleted().get()){
+                        //TODO: Solo se estan eliminando las carreras que se estan mostrando
+                        //TODO: Solucion propuesta:
+                        final CareerDTO careerToRemove = dto;
 
+                         careersSubjectView.getItems().removeIf(showable -> {
+                             boolean containsCareer = ((CareerInstance)showable).getIdCareer() == careerToRemove.getIdCareer();
+                             if(containsCareer)
+                                 showable.setDeleted(true);
+
+                             return containsCareer;
+                         });
                     }
-                    //System.out.println("ESTADO DE PERCISTENCIA\n"+CareerCompDAOImpl.getInstance().toString()+"\nFIN ESTADO DE PERCISTENCIA");
+                    CareerDAOImpl.getInstance().deleteCareer(dto.getIdCareer());
+
                 }
+                //System.out.println("ESTADO DE PERCISTENCIA\n"+CareerCompDAOImpl.getInstance().toString()+"\nFIN ESTADO DE PERCISTENCIA");
             }
         });
     }
@@ -294,7 +311,7 @@ public class HomeWindowCntlr {
 
         if(newCareer != null){
 
-            CareerCompDAOImpl.getInstance().createCareer((CareerDTO)newCareer);
+            CareerDAOImpl.getInstance().createCareer((CareerDTO)newCareer);
 
             viewCareers.getItems().add(newCareer);
             //System.out.println("Carrera Agregada!");
@@ -318,17 +335,17 @@ public class HomeWindowCntlr {
     {
         ArrayList<Showable> elems = new ArrayList<Showable>();
 
-        elems.add(new LectureDTO(1,"Introduccion a la Jodita C1", "Tinelli"));
-        elems.add(new LectureDTO(2,"Feminismo II", "Basile"));
-        elems.add(new LectureDTO(3,"Aborto Legal I C2", "Vidella"));
-        elems.add(new LectureDTO(4,"Org. de Manifestaciones C1", "Kirchner"));
-        elems.add(new LectureDTO(5,"Turismo Ahre C1", "Pacuolo"));
+        elems.add(new LectureDTO(1));
 
         return elems;
     }
 
-    public void addCareerMateria(ActionEvent actionEvent) throws IOException {
-        callWaitNewStageFill("materiaAddCareer.fxml", "Nueva carrera cursante");
+    public void addCareerMateria(ActionEvent actionEvent) {
+        SubjectDTO selected = (SubjectDTO) subjectsSubjectView.getSelectionModel().getSelectedItem();
+        if(selected != null)
+            callWaitNewStageFill("materiaAddCareer.fxml", "Agregar una Materia Cursante");
+        else
+            System.err.println("Error: Seleccione una materia primero");
     }
 
     public void fixLessonMateria(ActionEvent actionEvent) {
@@ -385,5 +402,31 @@ public class HomeWindowCntlr {
             //System.out.println("Aula Agregada!");
         }else
             System.err.println("Datos Invalidos: No es posible agregar el Aula por un error en los datos ingresados.");
+    }
+
+    public void tabMateriaSelected(Event event) {
+        //Load all subjects
+        if(subjectsSubjectView.getItems().size() < 1){
+            //ArrayList<Showable> subjects = SubjectDAOImpl.getInstance.getAllSubjects();
+           // subjectsSubjectView.getItems().addAll(subjects);
+        }
+    }
+
+    public void addSubject(ActionEvent actionEvent) {
+        Showable newSubject = UIDataValidator.subjectValidator(newSubjectField);
+        if(newSubject != null){
+
+            //SubjectDAOImpl.getInstance().createSubject((SubjectDTO)newSubject);
+
+            subjectsSubjectView.getItems().add(newSubject);
+            //System.out.println("Materia Agregada!");
+        }else
+            System.err.println("Datos Invalidos: No es posible agregar la materia porque ya existe o esta mal escrita.");
+    }
+
+    public void addValidCareerToSubject(Showable careerInstance) {
+        Showable selected = subjectsSubjectView.getSelectionModel().selectedItemProperty().get();
+        ((SubjectDTO)selected).addCareerInstance((CareerInstance) careerInstance);
+        careersSubjectView.getItems().add(careerInstance);
     }
 }

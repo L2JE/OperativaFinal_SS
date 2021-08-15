@@ -3,10 +3,9 @@ package service;
 import data_access.*;
 import data_transfer.CareerDTO;
 import data_transfer.ClassroomDTO;
+import data_transfer.SubjectDTO;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-
-import java.util.ArrayList;
 
 /**
  * TODO: initialize careerAccess object!
@@ -51,7 +50,7 @@ public class UIDataValidator {
             return null;
 
         //Verifica que la carrera no existe
-        if(CareerCompDAOImpl.getInstance().getCareerByName(careerName) != null)
+        if(CareerDAOImpl.getInstance().getCareerByName(careerName) != null)
             return null;
 
         return new CareerDTO(careerName, duration, chosenStartTime, chosenEndTime);
@@ -60,7 +59,7 @@ public class UIDataValidator {
     public static ClassroomDTO roomValidator(TextField newRoomField, Showable selectedPab) {
         String desiredRoomName = newRoomField.getText();
 
-        if(newRoomField.equals("") || selectedPab == null)
+        if(newRoomField.getText().equals("") || selectedPab == null)
             return null;
 
         String pabName = ((ClassroomDTO)selectedPab).getPabName();
@@ -86,11 +85,16 @@ public class UIDataValidator {
 
     }
 
-    /*
-    public void initCareerDAO(){
-        if(careerAccess==null)
-            careerAccess
-    }
-     */
+    public static SubjectDTO subjectValidator(TextField newSubjectField) {
+        String subjectName = newSubjectField.getText();
 
+        if(subjectName == null && subjectName.length() < 5)
+            return null;
+
+        //if(SubjectDAOImpl.getInstance().getSubjectByName(subjectName) != null)
+        //    return null;
+
+        return new SubjectDTO(subjectName);
+
+    }
 }
