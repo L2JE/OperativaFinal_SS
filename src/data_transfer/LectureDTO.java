@@ -60,12 +60,30 @@ public class LectureDTO extends Showable {
     }
 
     public void setTeacher(String teacher) {
-        this.teacher = teacher;
+        this.teacher = (teacher != null && !teacher.equals(""))? teacher : null;
     }
 
 
     @Override
     public String toString() {
-        return idLecture + ", " + idSubject +", "+ teacher;
+        String out = "";
+
+        if (dayOfWeek != null && desiredTimeSlot > -1)
+            out += dayOfWeek.toString()+ ", "+ desiredTimeSlot + "hs. ";
+        else if (dayOfWeek != null)
+                out += dayOfWeek.toString() + ". ";
+            else if (desiredTimeSlot > -1)
+                    out += desiredTimeSlot + "hs. ";
+
+
+        if (roomId > -1){
+            out += "idAula_"+roomId;
+            if (teacher != null)
+                out += ", ";
+        }
+        if (teacher != null)
+            out += "Doc.: "+ teacher;
+
+        return out;
     }
 }

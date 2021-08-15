@@ -11,6 +11,7 @@ import service.Showable;
 
 public abstract class SendableFilling {
     public abstract void setFillingReceiver(HomeWindowCntlr homeCntlr);
+    public abstract void setParam(Object param);
     protected abstract boolean validateUserInput();
 
     //Stores data un persistanse and send it to parent window

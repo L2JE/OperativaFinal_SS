@@ -343,16 +343,20 @@ public class HomeWindowCntlr {
     public void addCareerMateria(ActionEvent actionEvent) {
         SubjectDTO selected = (SubjectDTO) subjectsSubjectView.getSelectionModel().getSelectedItem();
         if(selected != null)
-            callWaitNewStageFill("materiaAddCareer.fxml", "Agregar una Materia Cursante");
+            callWaitNewStageFill("materiaAddCareer.fxml", "Agregar una Materia Cursante", null);
         else
             System.err.println("Error: Seleccione una materia primero");
     }
 
-    public void fixLessonMateria(ActionEvent actionEvent) {
-        callWaitNewStageFill("materiaFixLesson.fxml", "Fijar una clase");
+    public void addFixedLessonMateria(ActionEvent actionEvent) {
+        SubjectDTO selected = (SubjectDTO) subjectsSubjectView.getSelectionModel().getSelectedItem();
+        if(selected != null)
+            callWaitNewStageFill("materiaFixLesson.fxml", "Fijar una clase", selected);
+        else
+            System.err.println("Error: Seleccione una materia primero");
     }
 
-    private void callWaitNewStageFill(String path, String stageTitle){
+    private void callWaitNewStageFill(String path, String stageTitle, Object param){
         try{
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
@@ -360,6 +364,7 @@ public class HomeWindowCntlr {
             Parent root = loader.load();
             SendableFilling filling = loader.getController();
             filling.setFillingReceiver(this);
+            filling.setParam(param);
 
             stage.initOwner(this.homeStage);
             stage.initModality(Modality.WINDOW_MODAL);
@@ -429,4 +434,9 @@ public class HomeWindowCntlr {
         ((SubjectDTO)selected).addCareerInstance((CareerInstance) careerInstance);
         careersSubjectView.getItems().add(careerInstance);
     }
+
+    public void addValidLectureToSubject(Showable lecture){
+        lecturesSubjectView.getItems().add(lecture);
+    }
+
 }

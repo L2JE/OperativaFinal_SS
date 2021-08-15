@@ -4,12 +4,14 @@ import data_access.CareerDAO;
 import data_access.CareerDAOImpl;
 import data_transfer.CareerDTO;
 import data_transfer.CareerInstance;
+import data_transfer.SubjectDTO;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import service.Showable;
 
+import javax.security.auth.Subject;
 import java.util.ArrayList;
 
 public class MateriaAddCareer extends SendableFilling {
@@ -68,6 +70,10 @@ public class MateriaAddCareer extends SendableFilling {
 
         return true;
 
+    }
+
+    @Override
+    public void setParam(Object param) {
     }
 
     @Override
