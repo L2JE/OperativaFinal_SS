@@ -7,6 +7,7 @@ import data_access.LectureDAO;
 import data_transfer.ClassroomDTO;
 import data_transfer.DayOfWeek;
 import data_transfer.LectureDTO;
+import data_transfer.SubjectDTO;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -50,6 +51,7 @@ public class MateriaFixLesson extends SendableFilling {
     private Label errorMsjLabel;
 
     private HomeWindowCntlr home;
+    private int subjectId = -1;
     private LectureDTO lectureToAdd;
 
     private final int minTime = 8;
@@ -92,8 +94,13 @@ public class MateriaFixLesson extends SendableFilling {
     }
 
     @Override
+    public void setParam(Object param) {
+       subjectId = ((SubjectDTO)param).getIdSubject();
+    }
+
+    @Override
     protected void sendData() {
-        System.out.println("SENDING DATA");
+        home.addValidLectureToSubject(lectureToAdd);
     }
 
     @Override
@@ -121,7 +128,8 @@ public class MateriaFixLesson extends SendableFilling {
             lectureStartAt = Integer.parseInt(tmp.substring(0, tmp.indexOf(":")));
         }
 
-        LectureDTO lectureToAdd = new LectureDTO(1);
+        LectureDTO lectureToAdd = new LectureDTO(subjectId);
+
         if(room != null)                        lectureToAdd.setRoomId(room.getIdRoom());
         if(date != null && !date.equals(""))    lectureToAdd.setDayOfWeek(DayOfWeek.valueOf(date));
         if(teacher != null)                     lectureToAdd.setTeacher(teacher);
