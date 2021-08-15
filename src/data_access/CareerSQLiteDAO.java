@@ -2,7 +2,6 @@ package data_access;
 
 import data_transfer.CareerDTO;
 
-import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -13,17 +12,17 @@ public class CareerSQLiteDAO implements CareerDAO{
     private static final String createStr = "insert into carrera(name, duration, h_inic, h_fin) " +
                                             "values (?,?,?,?)";
 
-    private static final String readStr = "select id,duration,h_inic,h_fin from carrera where name=?";
+    private static final String readByNameStr = "select id,duration,h_inic,h_fin from carrera where name=?";
 
     private static final String updateStr = "";
 
-    private static final String deleteStr = "delete from carrera where 1=1";
+    private static final String deleteStr = "";
 
     public CareerSQLiteDAO(){
         try {
             conn = DriverManager.getConnection(urlToDB);
-            System.out.println("Conexion Establecida!!!");
         } catch (SQLException exception) {
+            System.err.println("ERROR AL CONECTAR CON LA BASE DE DATOS");
             exception.printStackTrace();
         }
     }
@@ -38,16 +37,11 @@ public class CareerSQLiteDAO implements CareerDAO{
 
         CareerDTO career = null;
 
-        try (PreparedStatement readSt = conn.prepareStatement(readStr)) {
+        try (PreparedStatement readSt = conn.prepareStatement(readByNameStr)) {
             readSt.setString(1, careerName);
             ResultSet res = readSt.executeQuery();
 
             if (res != null && res.next()){
-                System.out.println("id = " + res.getInt("id"));
-                System.out.println("duration = " + res.getInt("duration"));
-                System.out.println("h_Inic = " + res.getInt("h_inic"));
-                System.out.println("h_Fin = " + res.getInt("h_fin"));
-
                 career = new CareerDTO(
                         res.getInt("id"),
                         careerName,
@@ -58,6 +52,7 @@ public class CareerSQLiteDAO implements CareerDAO{
 
 
         } catch (SQLException exception) {
+            System.err.println("ERROR AL EJECUTAR LA CONSULTA A LA BASE DE DATOS");
             exception.printStackTrace();
         }
 
@@ -83,14 +78,20 @@ public class CareerSQLiteDAO implements CareerDAO{
             createSt.executeUpdate();
             conn.commit();
         }catch (SQLException e) {
-            if (conn != null) {
                 try {
-                    System.err.print("Transaction is being rolled back");
-                    conn.rollback();
+                    System.err.println("::::::::::::::::::::::::::::::::::::::::::::::::::::");
+                    System.err.print("ERROR AL CREAR EL REGISTRO: ");
+                    if (conn != null) {
+                        System.err.println(e.getMessage());
+                        System.err.println("INTENTADO HACER ROLLBACK");
+                        System.err.println("::::::::::::::::::::::::::::::::::::::::::::::::::::");
+                        conn.rollback();
+                    }
                 } catch (SQLException excep) {
+                    System.err.print("ERROR AL INTENTAR HACER ROLLBACK");
                     excep.printStackTrace();
                 }
-            }
+                return null;
         }
 
         return this.getCareerByName(career.getName());
