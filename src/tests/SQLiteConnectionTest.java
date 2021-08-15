@@ -13,6 +13,8 @@ public class SQLiteConnectionTest {
         should_create_a_new_career_and_return_with_id();
         should_delete_career_by_given_id();
         should_return_careers_list_consistant_with_external_script();
+
+
     }
 
     private static void should_return_careers_list_consistant_with_external_script() {

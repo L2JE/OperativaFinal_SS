@@ -1,9 +1,6 @@
 package view;
 
-import data_access.CareerDAO;
-import data_access.CareerDAOImpl;
-import data_access.CareerSQLiteDAO;
-import data_access.ClassroomDAOImpl;
+import data_access.*;
 import data_transfer.*;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.ListChangeListener;
@@ -89,11 +86,12 @@ public class HomeWindowCntlr {
 
             if(newValue != null){
                 SubjectDTO newSubject = (SubjectDTO)newValue;
-                //load lectures and careers
-                //ArrayList<Showable> lectures = LectureDAOImpl.getInstance().getLectures(newSubject.getIdSubject());
-                //lecturesItems.addAll(lectures);
 
-                List<CareerInstance> careers = newSubject.getCareers();
+                SubjectDAO dao = new SubjectSQLiteDAO();
+                List<LectureDTO> lectures = dao.getLectures(newSubject.getIdSubject());
+                lecturesItems.addAll(lectures);
+
+                List<CareerInstance> careers = dao.getCareers(newSubject.getIdSubject());
                 careersItems.addAll(careers);
             }
         });
@@ -102,16 +100,36 @@ public class HomeWindowCntlr {
             while (change.next()) {
                 if (change.wasRemoved()) {
 
-                    CareerInstance dto = null;
+                    CareerInstance removedCInstance = null;
                     try {
-                        dto = (CareerInstance) change.getRemoved().get(0);
-                        //Pab is removed from system
+                        removedCInstance = (CareerInstance) change.getRemoved().get(0);
+
                     } catch (IllegalStateException e) {
                         e.printStackTrace();
                     }
 
-                    if (dto != null && dto.isDeleted().get()) {
-                        ((SubjectDTO) selectedItemSubject.getValue()).removeCareerInstance(dto);
+                    if (removedCInstance != null && removedCInstance.isDeleted().get()) {
+                        SubjectDAO dao = new SubjectSQLiteDAO();
+                        dao.removeCareer(((SubjectDTO) selectedItemSubject.getValue()).getIdSubject(), removedCInstance);
+                    }
+                }
+            }
+        });
+
+        lecturesItems.addListener((ListChangeListener<Showable>) change -> {
+            while (change.next()){
+                if (change.wasRemoved()){
+                    LectureDTO removedLecture = null;
+                    try {
+                        removedLecture = (LectureDTO) change.getRemoved().get(0);
+
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (removedLecture != null && removedLecture.isDeleted().get()) {
+                        SubjectDAO dao = new SubjectSQLiteDAO();
+                        dao.removeLecture(removedLecture);
                     }
                 }
             }
@@ -345,7 +363,7 @@ public class HomeWindowCntlr {
     public void addCareerMateria(ActionEvent actionEvent) {
         SubjectDTO selected = (SubjectDTO) subjectsSubjectView.getSelectionModel().getSelectedItem();
         if(selected != null)
-            callWaitNewStageFill("materiaAddCareer.fxml", "Agregar una Materia Cursante", null);
+            callWaitNewStageFill("materiaAddCareer.fxml", "Agregar una Materia Cursante", selected);
 
         else
             System.err.println("Error: Seleccione una materia primero");
@@ -415,20 +433,23 @@ public class HomeWindowCntlr {
     public void tabMateriaSelected(Event event) {
         //Load all subjects
         if(subjectsSubjectView.getItems().size() < 1){
-            //ArrayList<Showable> subjects = SubjectDAOImpl.getInstance.getAllSubjects();
-           // subjectsSubjectView.getItems().addAll(subjects);
+            SubjectDAO dao = new SubjectSQLiteDAO();
+            List<SubjectDTO> subjects = dao.getAllSubjects();
+            subjectsSubjectView.getItems().addAll(subjects);
         }
     }
 
     public void addSubject(ActionEvent actionEvent) {
-        Showable newSubject = UIDataValidator.subjectValidator(newSubjectField);
+        SubjectDTO newSubject = UIDataValidator.subjectValidator(newSubjectField);
         if(newSubject != null){
+            SubjectDAO dao = new SubjectSQLiteDAO();
+            newSubject = dao.createSubject(newSubject);
 
-            //SubjectDAOImpl.getInstance().createSubject((SubjectDTO)newSubject);
-
-            subjectsSubjectView.getItems().add(newSubject);
+            if(newSubject != null)
+                subjectsSubjectView.getItems().add(newSubject);
             //System.out.println("Materia Agregada!");
-        }else
+        }
+        if (newSubject == null)
             System.err.println("Datos Invalidos: No es posible agregar la materia porque ya existe o esta mal escrita.");
     }
 

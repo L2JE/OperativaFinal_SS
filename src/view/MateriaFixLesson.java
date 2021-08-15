@@ -1,9 +1,7 @@
 package view;
 
 import com.sun.scenario.effect.impl.prism.PrImage;
-import data_access.ClassroomDAO;
-import data_access.ClassroomDAOImpl;
-import data_access.LectureDAO;
+import data_access.*;
 import data_transfer.ClassroomDTO;
 import data_transfer.DayOfWeek;
 import data_transfer.LectureDTO;
@@ -117,7 +115,7 @@ public class MateriaFixLesson extends SendableFilling {
         //(teacher) ... then all lessons available are assigned to the same teacher
         //(day)
         //(Other cases are prohibited)
-
+        this.lectureToAdd = null;
         ClassroomDTO room = (ClassroomDTO)roomCB.getValue();
         String date = dayCB.getValue();
         int lectureStartAt = -1;
@@ -134,7 +132,7 @@ public class MateriaFixLesson extends SendableFilling {
         if(date != null && !date.equals(""))    lectureToAdd.setDayOfWeek(DayOfWeek.valueOf(date));
         if(teacher != null)                     lectureToAdd.setTeacher(teacher);
         if(lectureStartAt > -1)                lectureToAdd.setDesiredTimeSlot(lectureStartAt);
-
+/*
         System.out.println(":::::::::::::::::::::::::::::::::::::::::::::::");
         System.out.println("Materia: "+ lectureToAdd.getIdSubject());
         System.out.println("Clase: "+ lectureToAdd.getIdLecture());
@@ -142,11 +140,13 @@ public class MateriaFixLesson extends SendableFilling {
         System.out.println("hora: "+ lectureToAdd.getDesiredTimeSlot());
         System.out.println("Ticher: "+ lectureToAdd.getTeacher());
         System.out.println(":::::::::::::::::::::::::::::::::::::::::::::::");
+*/
+        SubjectDAO dao = new SubjectSQLiteDAO();
+        if(date != null || (teacher != null && !teacher.equals("")))
+            this.lectureToAdd = dao.createLecture(this.subjectId, lectureToAdd);
 
-        if(date != null || (teacher != null && !teacher.equals(""))){
-            this.lectureToAdd = lectureToAdd;
+        if (this.lectureToAdd != null)
             return true;
-        }
 
         return false;
     }
