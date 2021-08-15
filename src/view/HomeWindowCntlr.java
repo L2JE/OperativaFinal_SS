@@ -2,7 +2,9 @@ package view;
 
 import data_access.CareerCompDAOImpl;
 import data_access.ClassroomDAOImpl;
-import data_transfer.*;
+import data_transfer.CareerDTO;
+import data_transfer.ClassroomDTO;
+import data_transfer.LectureDTO;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
