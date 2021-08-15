@@ -1,3 +1,4 @@
+# USAR PNG CRUSH p/dejar imagenes limpias
 # *SkedSoft (Scheduler Software)*
 > Proyecto final para la cátedra "Investigacion Operativa"
 
