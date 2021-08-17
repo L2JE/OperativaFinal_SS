@@ -70,9 +70,9 @@ public class MateriaAddCareer extends SendableFilling {
 
         SubjectDAO dao = new SubjectSQLiteDAO();
         careerToAdd = new CareerInstance(career.getIdCareer(), career.getName(), year);
-        careerToAdd = dao.createCInstance(this.subjectId, this.careerToAdd);
 
-        return careerToAdd != null;
+
+        return dao.createCInstance(this.subjectId, this.careerToAdd) == 200;
     }
 
     @Override

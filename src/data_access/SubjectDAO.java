@@ -22,7 +22,7 @@ public interface SubjectDAO {
     int removeLecture(int lectureId);
 
     ///////CAREERS
-    CareerInstance createCInstance(int subjectId, CareerInstance careerToAdd);
+    int createCInstance(int subjectId, CareerInstance careerToAdd);
 
     List<CareerInstance> getCareers(int idSubject);
 

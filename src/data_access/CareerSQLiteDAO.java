@@ -5,9 +5,10 @@ import data_transfer.CareerDTO;
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 public class CareerSQLiteDAO implements CareerDAO{
-    private static final String urlToDB = "jdbc:sqlite:.data.dt";
+    private String urlToDB = "jdbc:sqlite:.data.dt";
     private static Connection conn = null;
 
     private static final String createStr = "insert into carrera(name, duration, h_inic, h_fin) " +
@@ -20,7 +21,10 @@ public class CareerSQLiteDAO implements CareerDAO{
     private static final String deleteStr = "delete from carrera where id=?";
 
     public CareerSQLiteDAO(){
-        establishConnection();
+    }
+
+    public CareerSQLiteDAO(String urlToDB){
+        this.urlToDB = urlToDB;
     }
 
     private void establishConnection(){
@@ -63,7 +67,7 @@ public class CareerSQLiteDAO implements CareerDAO{
                 while (res.next()){
                     allCareersList.add(new CareerDTO(
                             res.getInt("id"),
-                            res.getString("name"),
+                            capitalizeWords(res.getString("name")), //CAMBIAR PPRIMERA LETRA DE CADA PALABRA EN MAYUSCULA
                             res.getInt("duration"),
                             res.getInt("h_inic"),
                             res.getInt("h_fin"))
@@ -85,7 +89,7 @@ public class CareerSQLiteDAO implements CareerDAO{
         establishConnection();
 
         CareerDTO career = null;
-
+        careerName = careerName.toLowerCase(Locale.ROOT);
         try (PreparedStatement readSt = conn.prepareStatement(readByNameStr)) {
             readSt.setString(1, careerName);
             ResultSet res = readSt.executeQuery();
@@ -93,7 +97,7 @@ public class CareerSQLiteDAO implements CareerDAO{
             if (res != null && res.next()){
                 career = new CareerDTO(
                         res.getInt("id"),
-                        careerName,
+                        capitalizeWords(careerName),
                         res.getInt("duration"),
                         res.getInt("h_inic"),
                         res.getInt("h_fin"));
@@ -108,6 +112,24 @@ public class CareerSQLiteDAO implements CareerDAO{
         }
 
         return career;
+    }
+
+    private String capitalizeWords(String string) {
+        char[] charArray = string.toCharArray();
+        boolean foundSpace = true;
+
+        for(int i = 0; i < charArray.length; i++) {
+            if(Character.isLetter(charArray[i])) {
+                // check space is present before the letter
+                if(foundSpace) {
+                    charArray[i] = Character.toUpperCase(charArray[i]);
+                    foundSpace = false;
+                }
+            }
+            else
+                foundSpace = true;
+        }
+        return String.valueOf(charArray);
     }
 
     @Override
@@ -140,25 +162,32 @@ public class CareerSQLiteDAO implements CareerDAO{
     }
 
     @Override
-    public CareerDTO createCareer(CareerDTO career) {
+    public CareerDTO createCareer(CareerDTO careerToAdd) {
         establishConnection();
 
         CareerDTO careerToReturn = null;
 
-
         //(name, duration, h_inic, h_fin)
-        try (PreparedStatement createSt = conn.prepareStatement(createStr)) {
+        try (PreparedStatement createSt = conn.prepareStatement(createStr, Statement.RETURN_GENERATED_KEYS)) {
+            int returnedId = -1;
             conn.setAutoCommit(false);
 
-            createSt.setString(1, career.getName());
-            createSt.setInt(2, career.getYears());
-            createSt.setInt(3, career.getPreferredStart());
-            createSt.setInt(4, career.getPreferredEnd());
+            createSt.setString(1, careerToAdd.getName());
+            createSt.setInt(2, careerToAdd.getYears());
+            createSt.setInt(3, careerToAdd.getPreferredStart());
+            createSt.setInt(4, careerToAdd.getPreferredEnd());
 
             createSt.executeUpdate();
+
+            ResultSet res = createSt.getGeneratedKeys();
+            if (res != null && res.next())
+                returnedId =  res.getInt(1);
+
+
             conn.commit();
 
-            careerToReturn = this.getCareerByName(career.getName());
+            careerToReturn = careerToAdd;
+            careerToReturn.setIdCareer(returnedId);
         }catch (SQLException e) {
                 try {
                     System.err.println("::::::::::::::::::::::::::::::::::::::::::::::::::::");
@@ -184,7 +213,7 @@ public class CareerSQLiteDAO implements CareerDAO{
     @Override
     public int deleteCareer(int idCareer) {
         establishConnection();
-
+        int returnCode = 400;
         try (PreparedStatement deleteSt = conn.prepareStatement(deleteStr)) {
             conn.setAutoCommit(false);
 
@@ -192,6 +221,7 @@ public class CareerSQLiteDAO implements CareerDAO{
 
             deleteSt.executeUpdate();
             conn.commit();
+            returnCode = 200;
         }catch (SQLException e) {
             try {
                 System.err.print("ERROR AL ELIMINAR EL REGISTRO: ");
@@ -206,10 +236,9 @@ public class CareerSQLiteDAO implements CareerDAO{
             }finally {
                 closeConnection();
             }
-            return 400;
         }finally {
             closeConnection();
         }
-        return 200;
+        return returnCode;
     }
 }

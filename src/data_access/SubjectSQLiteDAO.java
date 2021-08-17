@@ -2,12 +2,27 @@ package data_access;
 
 import data_transfer.*;
 import org.sqlite.*;
+import org.sqlite.core.Codes;
 
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 
 public class SubjectSQLiteDAO implements SubjectDAO{
+
+    private enum ResultCode {
+      FK_FAILED (404),
+      YEAR_OVER_MAX (400),
+      SUCCESS (200),
+      UNKNOWN (-1);
+
+      private final int resultCode;
+
+      private ResultCode(int resultCode) {
+            this.resultCode = resultCode;
+      }
+    };
+
     private String urlToDB = "jdbc:sqlite:.data.dt";
     private static final SQLiteConfig connConfig = new SQLiteConfig();
     private static Connection conn = null;
@@ -29,14 +44,16 @@ public class SubjectSQLiteDAO implements SubjectDAO{
             "WHERE c.id_asignatura=?\n" +
             "ORDER by c.id_clase;";
 
+    private static final String removeLectureIdStr = "delete from clase where id_clase=?";
+    private static final String createCarSubjStr = "insert into comp_carrera (id_asignatura,id_carrera,year) values (?,?,?);";
+
 
     public SubjectSQLiteDAO(){
         connConfig.enforceForeignKeys(true);
-
-        establishConnection();
     }
 
     public SubjectSQLiteDAO(String databaseURL){
+        connConfig.enforceForeignKeys(true);
         urlToDB = databaseURL;
     }
 
@@ -91,7 +108,7 @@ public class SubjectSQLiteDAO implements SubjectDAO{
 
             if (res != null)
                 while (res.next())
-                    allSubjectsList.add(new SubjectDTO(res.getInt("id"), res.getString("name")));
+                    allSubjectsList.add(new SubjectDTO(res.getInt("id"), capitalizeWords(res.getString("name"))));
 
         } catch (SQLException exception) {
             System.err.println("ERROR AL EJECUTAR LA CONSULTA A LA BASE DE DATOS");
@@ -151,6 +168,8 @@ public class SubjectSQLiteDAO implements SubjectDAO{
             if (res != null && res.next())
                 idLecture =  res.getInt(1);
 
+            conn.commit();
+
             ////Llenar los registros de ocupacion segun corresponda
             ////(id_aula,id_clase,day,hour,id_profesor)
             if(lectureToAdd.getRoomId() > 0 && lectureToAdd.getDayOfWeek() != null && lectureToAdd.getStartTime() > 0){
@@ -170,7 +189,7 @@ public class SubjectSQLiteDAO implements SubjectDAO{
             if(lectureToAdd.getStartTime() > 0) createOcupationSt.setInt(4, lectureToAdd.getStartTime());
             else                                createOcupationSt.setNull(4, Types.INTEGER);
 
-            if(lectureToAdd.getTeacher() != null)   createOcupationSt.setString(5,lectureToAdd.getTeacher());
+            if(lectureToAdd.getTeacher() != null)   createOcupationSt.setString(5,lectureToAdd.getTeacher().toLowerCase());
             else                                    createOcupationSt.setNull(5,Types.VARCHAR);
 
             createOcupationSt.executeUpdate();
@@ -222,7 +241,7 @@ public class SubjectSQLiteDAO implements SubjectDAO{
                     int idRoom = res.getInt("idRoom");
                     DayOfWeek day = toDayOfWeek(res.getInt("day"));
                     int hour = res.getInt("hour");
-                    String teacher = res.getString("teacher");
+                    String teacher = capitalizeWords(res.getString("teacher"));
 
                     idRoom = (idRoom < 1)? idRoom - 1 : idRoom;
                     hour = (hour < 1)? hour - 1 : hour;
@@ -262,13 +281,74 @@ public class SubjectSQLiteDAO implements SubjectDAO{
 
     @Override
     public int removeLecture(int lectureId) {
-        return 0;
+        establishConnection();
+        int returnCode = 400;
+        try (PreparedStatement deleteSt = conn.prepareStatement(removeLectureIdStr)) {
+            conn.setAutoCommit(false);
+
+            deleteSt.setInt(1, lectureId);
+
+            deleteSt.executeUpdate();
+            conn.commit();
+            returnCode = 200;
+        }catch (SQLException e) {
+            try {
+                System.err.print("ERROR AL ELIMINAR EL REGISTRO: ");
+                if (conn != null) {
+                    System.err.println(e.getMessage());
+                    System.err.println("INTENTADO HACER ROLLBACK");
+                    conn.rollback();
+                }
+            } catch (SQLException excep) {
+                System.err.print("ERROR AL INTENTAR HACER ROLLBACK");
+                excep.printStackTrace();
+            }finally {
+                closeConnection();
+            }
+        }finally {
+            closeConnection();
+        }
+        return returnCode;
     }
 
     ///////CAREERS
     @Override
-    public CareerInstance createCInstance(int subjectId, CareerInstance careerToAdd) {
-        return null;
+    public int createCInstance(int subjectId, CareerInstance careerToAdd) {
+        establishConnection();
+        int returnCode = ResultCode.UNKNOWN.resultCode;
+
+        try (PreparedStatement createCarSubjSt = conn.prepareStatement(createCarSubjStr)) {
+            conn.setAutoCommit(false);
+
+            createCarSubjSt.setInt(1, subjectId);
+            createCarSubjSt.setInt(2, careerToAdd.getIdCareer());
+            createCarSubjSt.setInt(3, careerToAdd.getYear());
+
+            createCarSubjSt.executeUpdate();
+            conn.commit();
+            returnCode = ResultCode.SUCCESS.resultCode;
+        }catch (SQLException e) {
+            try {
+                System.err.print("ERROR AL CREAR EL REGISTRO (CARRERA-MATERIA): ");
+                System.err.println(e.getMessage());
+
+                if(e.getErrorCode() == Codes.SQLITE_CONSTRAINT)
+                    returnCode = extractErrorCode(e.getMessage()).resultCode;
+
+                System.err.println("INTENTADO HACER ROLLBACK\n");
+                if (conn != null)
+                    conn.rollback();
+
+            } catch (SQLException excep) {
+                System.err.print("ERROR AL INTENTAR HACER ROLLBACK");
+                excep.printStackTrace();
+            }finally {
+                closeConnection();
+            }
+        }finally {
+            closeConnection();
+        }
+        return returnCode;
     }
 
     @Override
@@ -308,5 +388,36 @@ public class SubjectSQLiteDAO implements SubjectDAO{
                 System.err.println(exception.getMessage());
             }
         }
+    }
+
+    private String capitalizeWords(String string) {
+        if(string != null){
+            char[] charArray = string.toCharArray();
+            boolean foundSpace = true;
+
+            for(int i = 0; i < charArray.length; i++) {
+                if(Character.isLetter(charArray[i])) {
+                    // check space is present before the letter
+                    if(foundSpace) {
+                        charArray[i] = Character.toUpperCase(charArray[i]);
+                        foundSpace = false;
+                    }
+                }
+                else
+                    foundSpace = true;
+            }
+            return String.valueOf(charArray);
+        }
+        return null;
+    }
+
+    private ResultCode extractErrorCode(String message) {
+        if(message.contains("TRIGGER"))
+            return ResultCode.YEAR_OVER_MAX;
+
+        if (message.contains("FOREIGN"))
+            return ResultCode.FK_FAILED;
+
+        return ResultCode.UNKNOWN;
     }
 }

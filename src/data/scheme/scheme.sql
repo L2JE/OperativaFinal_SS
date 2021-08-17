@@ -35,7 +35,7 @@ CREATE TABLE "comp_carrera"(
             ON UPDATE CASCADE
             ON DELETE CASCADE,
     FOREIGN KEY ("id_carrera")
-        REFERENCES "asignatura"("id")
+        REFERENCES "carrera"("id")
             ON UPDATE CASCADE
             ON DELETE CASCADE
 );

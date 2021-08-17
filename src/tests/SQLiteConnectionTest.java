@@ -4,10 +4,7 @@ import data_access.CareerDAO;
 import data_access.CareerSQLiteDAO;
 import data_access.SubjectDAO;
 import data_access.SubjectSQLiteDAO;
-import data_transfer.CareerDTO;
-import data_transfer.DayOfWeek;
-import data_transfer.LectureDTO;
-import data_transfer.SubjectDTO;
+import data_transfer.*;
 import org.sqlite.SQLiteConfig;
 
 import java.sql.Connection;
@@ -35,9 +32,10 @@ public class SQLiteConnectionTest {
         should_create_a_new_lecture_and_return_with_id();
         should_return_lecture_list_consistant_with_external_script();
         should_delete_lecture_by_given_id();
-/*
+
         ///////CAREERS
-        should_create_a_new_careerInstance_and_return_it();
+        should_return_correct_resultCode_when_add_careerInstances();
+        /*
         should_return_careerInstance_list_consistant_with_external_script();
         should_delete_careerInstance_by_given_id();
          */
@@ -45,28 +43,51 @@ public class SQLiteConnectionTest {
 
     private static void should_delete_careerInstance_by_given_id() {
         restartDB();
-        System.out.println("TEST PASSED: SQLiteSubjectDAO::should_delete_careerInstance_by_given_id");
+        System.out.println("TEST PASSED: SQLiteCareerSubjectDAO::should_delete_careerInstance_by_given_id");
     }
 
     private static void should_return_careerInstance_list_consistant_with_external_script() {
         restartDB();
-        System.out.println("TEST PASSED: SQLiteSubjectDAO::should_return_careerInstance_list_consistant_with_external_script");
+        System.out.println("TEST PASSED: SQLiteCareerSubjectDAO::should_return_careerInstance_list_consistant_with_external_script");
     }
 
-    private static void should_create_a_new_careerInstance_and_return_it() {
+    private static void should_return_correct_resultCode_when_add_careerInstances() {
         restartDB();
-        System.out.println("TEST PASSED: SQLiteSubjectDAO::should_create_a_new_careerInstance_and_return_it");
+        final int idSubject = 958;
+        final int idCareer = 321;
+        final int careerDuration = 5;
+        final String careerName = "Carrera de Ejemplo";
+
+        execQueryDB("insert into carrera (id, name, duration, h_inic, h_fin) " +
+                                  "values ("+idCareer+",'"+careerName+"',"+careerDuration+",10,15)");
+
+        execQueryDB("insert into asignatura (id,name)" +
+                    "values ("+idSubject+", 'NameSubject1')");
+
+        CareerInstance shouldBeInserted = new CareerInstance(idCareer, careerName, careerDuration);
+        CareerInstance shouldNOTBeInserted_NotFound = new CareerInstance(505, careerName, careerDuration);
+        CareerInstance shouldNOTBeInserted_ExededYears = new CareerInstance(idCareer, careerName, careerDuration + 1);
+
+        SubjectSQLiteDAO dao = new SubjectSQLiteDAO(urlToDB);
+        int should200 = dao.createCInstance(idSubject, shouldBeInserted);
+        int should404 = dao.createCInstance(idSubject, shouldNOTBeInserted_NotFound);
+        int should400 = dao.createCInstance(idSubject, shouldNOTBeInserted_ExededYears);
+
+        assert should200 == 200 && should404 == 404 && should400 == 400
+                : "\n[NO SE INSERTO LA CARRERA EN LA MATERIA CORRECTAMENTE - LOS CODIGOS SON INCORRECTOS] \n" +
+                "Valor de retorno del create: (should200:"+should200+
+                                            ", should404:"+should404+
+                                            ", should400:"+should400+")";
+        System.out.println("TEST PASSED: SQLiteCareerSubjectDAO::should_return_correct_resultCode_when_add_careerInstances");
     }
 
     private static void should_delete_lecture_by_given_id() {
         restartDB();
-        final int lectureIdToBeDeleted = 256;
+        final int lectureIdToBeDeleted = 485;
         execQueryDB("insert into asignatura (id, name) values (2,'Mat2');");
         execQueryDB("insert into clase (id_asignatura, id_clase, p_asigned) values (2,"+lectureIdToBeDeleted+",0);"); //full asignada
 
-
-
-        SubjectDAO dao = new SubjectSQLiteDAO();
+        SubjectDAO dao = new SubjectSQLiteDAO(urlToDB);
         int removedLecture = dao.removeLecture(lectureIdToBeDeleted);
 
 
@@ -80,9 +101,9 @@ public class SQLiteConnectionTest {
         restartDB();
         final int idRequiredSubject = 985;
         execQueryDB("insert into profesor (name)\n" +
-                    "values ('Jose')," +
-                    "('Juan')," +
-                    "('Luis');");
+                    "values ('jose')," +
+                    "('juan')," +
+                    "('luis');");
         execQueryDB("insert into aula (id,pab,room) " +
                     "values (55, 'pab2', 'au3')," +
                     "(56, 'pab1', 'au3')," +
@@ -106,14 +127,14 @@ public class SQLiteConnectionTest {
                 "("+idRequiredSubject+", 101, 2);"); //full asignada
 
         execQueryDB("insert into ocupation (id_aula, id_clase, day, hour, id_profesor) " +
-                    "values (56, 101, 5, 8, 'Juan')," + //required
-                    "(56, 125, 5, 15, 'Luis');");
+                    "values (56, 101, 5, 8, 'juan')," + //required
+                    "(56, 125, 5, 15, 'luis');");
 
         execQueryDB("insert into clase_fija_parcial (id_aula, id_clase, day, hour, id_profesor) " +
                     "values (55, 2, null, 5, null)," +
                     "(null, 898, 4, 9, null)," + //required
                     "(55, 888, null, 5, null)," +
-                    "(null, 111, null, 10, 'Jose');"); //required
+                    "(null, 111, null, 10, 'jose');"); //required
 
         List<LectureDTO> list = new LinkedList<>();
         list.add(new LectureDTO(idRequiredSubject, 101, 8, DayOfWeek.Viernes, 56, "Juan"));
@@ -121,7 +142,7 @@ public class SQLiteConnectionTest {
         list.add(new LectureDTO(idRequiredSubject, 145, -1, null, -1, null));
         list.add(new LectureDTO(idRequiredSubject, 898, 9, DayOfWeek.Jueves, -1, null));
 
-        SubjectDAO dao = new SubjectSQLiteDAO();
+        SubjectDAO dao = new SubjectSQLiteDAO(urlToDB);
         List<LectureDTO> returned = dao.getLectures(idRequiredSubject);
 
         assert returned != null &&
@@ -139,7 +160,7 @@ public class SQLiteConnectionTest {
         restartDB();
         execQueryDB("insert into asignatura (id,name) values ("+idSubject+",'AsignaturaEjemplo')");
         execQueryDB("insert into profesor (name) values ('"+teacher+"')");
-        SubjectDAO dao = new SubjectSQLiteDAO();
+        SubjectDAO dao = new SubjectSQLiteDAO(urlToDB);
 
         LectureDTO beforeInsertion = new LectureDTO(idSubject, -1, 15
                                                     , DayOfWeek.Jueves, -1, teacher);
@@ -163,7 +184,7 @@ public class SQLiteConnectionTest {
         restartDB();
         execQueryDB("insert into asignatura (id, name)\n" +
                 "values (959, 'Asignatura Te123st Subj 1');");
-        SubjectDAO dao = new SubjectSQLiteDAO();
+        SubjectDAO dao = new SubjectSQLiteDAO(urlToDB);
 
         String expectedName = "Asignatura Te123st Subj 1";
 
@@ -189,7 +210,7 @@ public class SQLiteConnectionTest {
         list.add(new SubjectDTO(300, "Asignatura Test Subj 2"));
         list.add(new SubjectDTO(400, "Asignatura Test Subj 3"));
 
-        SubjectDAO dao = new SubjectSQLiteDAO();
+        SubjectDAO dao = new SubjectSQLiteDAO(urlToDB);
         List<SubjectDTO> returned = dao.getAllSubjects();
 
         assert returned != null &&
@@ -203,7 +224,7 @@ public class SQLiteConnectionTest {
 
     private static void should_create_a_new_subject_and_return_with_id() {
         restartDB();
-        SubjectDAO dao = new SubjectSQLiteDAO();
+        SubjectDAO dao = new SubjectSQLiteDAO(urlToDB);
 
         SubjectDTO beforeInsertion = new SubjectDTO("Asignatura Test Subj 1");
         SubjectDTO afterInsertion = dao.createSubject(beforeInsertion);
@@ -241,7 +262,7 @@ public class SQLiteConnectionTest {
         list.add(new CareerDTO(14, "Carrera 7", 5, 8, 13));
         list.add(new CareerDTO(16, "Carrera 8", 5, 8, 13));
 
-        CareerDAO dao = new CareerSQLiteDAO();
+        CareerDAO dao = new CareerSQLiteDAO(urlToDB);
         List<CareerDTO> returned = dao.getAllCareers();
 
         assert returned != null &&
@@ -258,7 +279,7 @@ public class SQLiteConnectionTest {
                 "values (256, 'Introduccion a la Joda', 5, 8, 12);");
         final int idToBeDeleted = 256;
 
-        CareerDAO dao = new CareerSQLiteDAO();
+        CareerDAO dao = new CareerSQLiteDAO(urlToDB);
         int removedCareer = dao.deleteCareer(idToBeDeleted);
 
         assert removedCareer == 200
@@ -270,7 +291,7 @@ public class SQLiteConnectionTest {
 
     private static void should_create_a_new_career_and_return_with_id(){
         restartDB();
-        CareerDAO dao = new CareerSQLiteDAO();
+        CareerDAO dao = new CareerSQLiteDAO(urlToDB);
 
         CareerDTO beforeInsertion = new CareerDTO("Carrera Prueba", 5, 8, 12);
 
