@@ -4,9 +4,11 @@ import service.Showable;
 
 public class LectureDTO extends Showable {
     private int idSubject;
+
     private int idLecture = -1;
 
-    private int desiredTimeSlot = -1;
+    private int startTime = -1;
+
     private DayOfWeek dayOfWeek = null;
     private int roomId = -1;
     private String teacher = null;
@@ -16,12 +18,24 @@ public class LectureDTO extends Showable {
         this.idSubject = idSubject;
     }
 
-    public int getDesiredTimeSlot() {
-        return desiredTimeSlot;
+    public LectureDTO(int idSubject, int idLecture, int startTime, DayOfWeek dayOfWeek, int roomId, String teacher) {
+        super();
+        this.idSubject = idSubject;
+        this.idLecture = idLecture;
+        this.startTime = startTime;
+        this.dayOfWeek = dayOfWeek;
+        this.roomId = roomId;
+        this.teacher = teacher;
     }
 
-    public void setDesiredTimeSlot(int desiredTimeSlot) {
-        this.desiredTimeSlot = desiredTimeSlot;
+
+
+    public int getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(int startTime) {
+        this.startTime = startTime;
     }
 
     public DayOfWeek getDayOfWeek() {
@@ -68,12 +82,12 @@ public class LectureDTO extends Showable {
     public String toString() {
         String out = "";
 
-        if (dayOfWeek != null && desiredTimeSlot > -1)
-            out += dayOfWeek.toString()+ ", "+ desiredTimeSlot + "hs. ";
+        if (dayOfWeek != null && startTime > -1)
+            out += dayOfWeek+ ", "+ startTime + "hs. ";
         else if (dayOfWeek != null)
-                out += dayOfWeek.toString() + ". ";
-            else if (desiredTimeSlot > -1)
-                    out += desiredTimeSlot + "hs. ";
+                out += dayOfWeek + ". ";
+            else if (startTime > -1)
+                    out += startTime + "hs. ";
 
 
         if (roomId > -1){
@@ -85,5 +99,28 @@ public class LectureDTO extends Showable {
             out += "Doc.: "+ teacher;
 
         return out;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (super.equals(obj))
+            return true;
+
+        if(obj instanceof LectureDTO){
+            LectureDTO other = (LectureDTO)obj;
+            boolean result = (other.idSubject == this.idSubject &&
+                    other.idLecture == this.idLecture &&
+                    other.startTime == this.startTime &&
+                    other.roomId == this.roomId);
+
+            if (teacher != null)
+                result = result && other.teacher.equals(this.getTeacher());
+
+            if (other.dayOfWeek != null && this.dayOfWeek != null)
+                return result && other.dayOfWeek.ordinal() == this.dayOfWeek.ordinal();
+            else if (other.dayOfWeek == null && this.dayOfWeek == null)
+                    return result;
+        }
+        return false;
     }
 }

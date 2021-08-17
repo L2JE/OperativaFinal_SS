@@ -1,24 +1,16 @@
 package view;
 
-import com.sun.scenario.effect.impl.prism.PrImage;
 import data_access.*;
 import data_transfer.ClassroomDTO;
 import data_transfer.DayOfWeek;
 import data_transfer.LectureDTO;
 import data_transfer.SubjectDTO;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.stage.Stage;
-import javafx.stage.Window;
-import service.ScheduleStrategy;
 import service.Showable;
 import java.util.ArrayList;
 
@@ -131,7 +123,7 @@ public class MateriaFixLesson extends SendableFilling {
         if(room != null)                        lectureToAdd.setRoomId(room.getIdRoom());
         if(date != null && !date.equals(""))    lectureToAdd.setDayOfWeek(DayOfWeek.valueOf(date));
         if(teacher != null)                     lectureToAdd.setTeacher(teacher);
-        if(lectureStartAt > -1)                lectureToAdd.setDesiredTimeSlot(lectureStartAt);
+        if(lectureStartAt > -1)                lectureToAdd.setStartTime(lectureStartAt);
 /*
         System.out.println(":::::::::::::::::::::::::::::::::::::::::::::::");
         System.out.println("Materia: "+ lectureToAdd.getIdSubject());
@@ -143,7 +135,7 @@ public class MateriaFixLesson extends SendableFilling {
 */
         SubjectDAO dao = new SubjectSQLiteDAO();
         if(date != null || (teacher != null && !teacher.equals("")))
-            this.lectureToAdd = dao.createLecture(this.subjectId, lectureToAdd);
+            this.lectureToAdd = dao.createLecture(lectureToAdd);
 
         if (this.lectureToAdd != null)
             return true;

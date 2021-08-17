@@ -129,7 +129,7 @@ public class HomeWindowCntlr {
 
                     if (removedLecture != null && removedLecture.isDeleted().get()) {
                         SubjectDAO dao = new SubjectSQLiteDAO();
-                        dao.removeLecture(removedLecture);
+                        dao.removeLecture(removedLecture.getIdLecture());
                     }
                 }
             }
@@ -455,7 +455,6 @@ public class HomeWindowCntlr {
 
     public void addValidCareerToSubject(Showable careerInstance) {
         Showable selected = subjectsSubjectView.getSelectionModel().selectedItemProperty().get();
-        ((SubjectDTO)selected).addCareerInstance((CareerInstance) careerInstance);
         careersSubjectView.getItems().add(careerInstance);
     }
 

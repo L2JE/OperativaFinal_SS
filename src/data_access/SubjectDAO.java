@@ -15,11 +15,11 @@ public interface SubjectDAO {
     SubjectDTO getSubjectByName(String subjectName);
 
     ///////LECTURES
-    LectureDTO createLecture(int subjectId, LectureDTO lectureToAdd);
+    LectureDTO createLecture(LectureDTO lectureToAdd);
 
     List<LectureDTO> getLectures(int idSubject);
 
-    int removeLecture(LectureDTO lecture);
+    int removeLecture(int lectureId);
 
     ///////CAREERS
     CareerInstance createCInstance(int subjectId, CareerInstance careerToAdd);
