@@ -46,6 +46,9 @@ public class SubjectSQLiteDAO implements SubjectDAO{
 
     private static final String removeLectureIdStr = "delete from clase where id_clase=?";
     private static final String createCarSubjStr = "insert into comp_carrera (id_asignatura,id_carrera,year) values (?,?,?);";
+    private static final String readAllCareersStr = "select cp.id_carrera id_c, c.name name, cp.year year\n" +
+            "from comp_carrera cp join carrera c on cp.id_carrera = c.id\n" +
+            "where cp.id_asignatura=?;";
 
 
     public SubjectSQLiteDAO(){
@@ -352,10 +355,35 @@ public class SubjectSQLiteDAO implements SubjectDAO{
     }
 
     @Override
-    public List<CareerInstance> getCareers(int idSubject) {
-        List<CareerInstance> careers = new LinkedList<>();
+    public List<CareerInstance> getCareers(int idRequiredSubject) {
+        establishConnection();
+        List<CareerInstance> allCareersList = new LinkedList<>();
 
-        return careers;
+        try (PreparedStatement readSt = conn.prepareStatement(readAllCareersStr)) {
+
+            readSt.setInt(1, idRequiredSubject);
+
+            ResultSet res = readSt.executeQuery();
+
+            if (res != null)
+                //(id_c, name, year)
+                while (res.next()){
+                    int idCareer = res.getInt("id_c");
+                    String name = capitalizeWords(res.getString("name"));
+                    int year = res.getInt("year");
+
+                    allCareersList.add(new CareerInstance(idCareer, name, year));
+                }
+
+        } catch (SQLException exception) {
+            System.err.println("ERROR AL EJECUTAR LA CONSULTA A LA BASE DE DATOS");
+            exception.printStackTrace();
+            allCareersList = null;
+        } finally {
+            closeConnection();
+        }
+
+        return allCareersList;
     }
 
     @Override

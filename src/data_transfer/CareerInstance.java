@@ -52,4 +52,14 @@ public class CareerInstance extends Showable {
 
         return this.name + ", año: "+ this.year + suffix;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof CareerInstance)
+            return ((CareerInstance)obj).idCareer == this.idCareer &&
+                    ((CareerInstance)obj).name.equals(this.name) &&
+                    ((CareerInstance)obj).year == this.year;
+
+        return false;
+    }
 }

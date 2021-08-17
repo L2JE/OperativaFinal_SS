@@ -35,8 +35,8 @@ public class SQLiteConnectionTest {
 
         ///////CAREERS
         should_return_correct_resultCode_when_add_careerInstances();
-        /*
         should_return_careerInstance_list_consistant_with_external_script();
+        /*
         should_delete_careerInstance_by_given_id();
          */
     }
@@ -48,6 +48,46 @@ public class SQLiteConnectionTest {
 
     private static void should_return_careerInstance_list_consistant_with_external_script() {
         restartDB();
+        final int desiredSubjectId = 654;
+
+        execQueryDB("insert into carrera (id, name, duration, h_inic, h_fin)\n" +
+                "values (2, 'Lola', 4, 8, 10),\n" +
+                "       (5, 'Lola1', 5, 8, 10),\n" +
+                "       (1, 'Lola0', 4, 8, 10),\n" +
+                "       (8, 'Lola2', 7, 8, 10),\n" +
+                "       (9, 'Lola9', 4, 8, 10),\n" +
+                "       (7, 'Lola3', 8, 8, 10);");
+
+        execQueryDB("insert into asignatura (id,name)\n" +
+                "values (666, 'Asignatura1'),\n" +
+                "       (655, 'Asignatura2'),\n" +
+                "       (658, 'Asignatura3'),\n" +
+                "       ("+desiredSubjectId+", 'AsignaturaDeseada');");
+
+        execQueryDB("insert into comp_carrera (id_asignatura, id_carrera, year)\n" +
+                "values ("+desiredSubjectId+", 2, 4),\n" +
+                "       (655, 2, 3),\n" +
+                "       (655, 5, 3),\n" +
+                "       ("+desiredSubjectId+", 5, 3),\n" +
+                "       (658, 8, 3),\n" +
+                "       ("+desiredSubjectId+", 8, 5),\n" +
+                "       (666, 9, 3),\n" +
+                "       ("+desiredSubjectId+", 7, 7);");
+
+        List<CareerInstance> expectedList = new LinkedList<>();
+        expectedList.add(new CareerInstance(2,"Lola", 4));
+        expectedList.add(new CareerInstance(5,"Lola1", 3));
+        expectedList.add(new CareerInstance(8,"Lola2", 5));
+        expectedList.add(new CareerInstance(7,"Lola3", 7));
+
+        SubjectDAO dao = new SubjectSQLiteDAO(urlToDB);
+        List<CareerInstance> returned = dao.getCareers(desiredSubjectId);
+
+        assert returned != null &&
+                returned.containsAll(expectedList)
+                :"\n[NO SE RECUPERARON CORRECTAMENTE - LOS DATOS NO COINCIDEN] \n" +
+                "Valor de retorno: " + returned;
+
         System.out.println("TEST PASSED: SQLiteCareerSubjectDAO::should_return_careerInstance_list_consistant_with_external_script");
     }
 
