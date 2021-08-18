@@ -7,10 +7,6 @@ import data_transfer.SubjectDTO;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 
-/**
- * TODO: initialize careerAccess object!
- */
-
 public class UIDataValidator {
     public static CareerDTO careerValidator(ComboBox yearsCBCareer, TextField nameFieldCareer, ComboBox startTimeCBCareer, ComboBox endTimeCBCareer) {
 

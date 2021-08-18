@@ -97,7 +97,6 @@ public class FileCntlr {
             System.out.println("Error initializing stream");
             return false;
         } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             return false;
         }
