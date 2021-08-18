@@ -92,10 +92,10 @@ public class UIDataValidator {
         if(subjectName == null && subjectName.length() < 5)
             return null;
 
-        //if(SubjectDAOImpl.getInstance().getSubjectByName(subjectName) != null)
-        //    return null;
+        SubjectDAO dao = new SubjectSQLiteDAO();
+        if(dao.getSubjectByName(subjectName) != null)
+            return null;
 
         return new SubjectDTO(subjectName);
-
     }
 }

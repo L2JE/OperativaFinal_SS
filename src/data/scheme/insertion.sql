@@ -4,8 +4,21 @@ VALUES ();
 INSERT INTO "profesor"("name")
 VALUES ();
 
-INSERT INTO "clase"("id_asignatura", "id_clase", "id_profesor")
-VALUES ();
+-----------------------------------------------------
+-----------------------------------------------------
+PRAGMA foreign_keys = ON;
+insert into clase (id_asignatura, id_clase, p_asigned)
+values (2, 3, 0),
+(985, 898, 1),
+(985, 145, 0),
+(8, 888, 1),
+(10, 125, 2),
+(985, 111, 1),
+(14, 100, 0),
+(985, 101, 2);
+-------------------------------------------------------
+-------------------------------------------------------
+
 
 INSERT INTO "aula"("pab", "room")
 VALUES ();

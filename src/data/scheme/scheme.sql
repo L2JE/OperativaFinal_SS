@@ -35,7 +35,7 @@ CREATE TABLE "comp_carrera"(
             ON UPDATE CASCADE
             ON DELETE CASCADE,
     FOREIGN KEY ("id_carrera")
-        REFERENCES "asignatura"("id")
+        REFERENCES "carrera"("id")
             ON UPDATE CASCADE
             ON DELETE CASCADE
 );
@@ -48,16 +48,42 @@ CREATE TABLE "profesor" (
 CREATE TABLE "clase" (
 	"id_asignatura"	INTEGER NOT NULL,
 	"id_clase"	INTEGER NOT NULL,
-	"id_profesor"	TEXT NOT NULL,
-	PRIMARY KEY("id_asignatura","id_clase"),
+	"p_asigned" INTEGER NOT NULL,
+	PRIMARY KEY("id_clase" AUTOINCREMENT),
 	FOREIGN KEY("id_asignatura") 
         REFERENCES "asignatura"("id") 
             ON DELETE RESTRICT 
-            ON UPDATE RESTRICT,
-	FOREIGN KEY("id_profesor") 
+            ON UPDATE RESTRICT
+);
+
+CREATE TABLE "clase_fija_parcial"(
+    "id_clase"  INTEGER NOT NULL,
+    "id_aula"   INTEGER NULL,
+    "day"   INTEGER NULL,
+    "hour"  INTEGER NULL,
+    "id_profesor" TEXT NULL,
+
+    CHECK (
+    	    day > 0 AND
+    	    day < 7 AND
+    	    hour > 0 AND
+    	    hour < 22
+        ),
+
+    UNIQUE ("day", "hour", "id_profesor"),
+    PRIMARY KEY ("id_clase"),
+    FOREIGN KEY("id_clase")
+                REFERENCES "clase"("id_clase")
+                    ON DELETE CASCADE
+                    ON UPDATE RESTRICT ,
+    FOREIGN KEY("id_profesor")
         REFERENCES "profesor"("name")
-            ON DELETE RESTRICT 
-            ON UPDATE CASCADE
+            ON DELETE RESTRICT
+            ON UPDATE CASCADE,
+    FOREIGN KEY("id_aula")
+            REFERENCES "aula"("id")
+                ON DELETE RESTRICT
+                ON UPDATE CASCADE
 );
 
 CREATE TABLE "aula" (
@@ -70,10 +96,12 @@ CREATE TABLE "aula" (
 
 CREATE TABLE "ocupation" (
 	"id_aula"	INTEGER NOT NULL,
-	"id_asignatura"	INTEGER NOT NULL,
 	"id_clase"	INTEGER NOT NULL,
-	"day"	INTEGER,
-	"hour"	INTEGER,
+	"day"	INTEGER NOT NULL,
+	"hour"	INTEGER NOT NULL,
+	"id_profesor" TEXT NULL,
+
+	UNIQUE ("day", "hour", "id_profesor"),
 
 	CHECK (
 	    day > 0 AND
@@ -83,12 +111,16 @@ CREATE TABLE "ocupation" (
     ),
 
 	PRIMARY KEY("id_aula","day","hour"),
-	FOREIGN KEY("id_aula") 
-        REFERENCES "aula"("id") 
-            ON DELETE RESTRICT 
+	FOREIGN KEY("id_aula")
+        REFERENCES "aula"("id")
+            ON DELETE RESTRICT
             ON UPDATE CASCADE,
-	FOREIGN KEY("id_asignatura","id_clase") 
-        REFERENCES "clase"("id_asignatura","id_clase") 
+	FOREIGN KEY("id_profesor")
+	REFERENCES "profesor"("name")
+		ON DELETE RESTRICT
+		ON UPDATE CASCADE,
+	FOREIGN KEY("id_clase")
+        REFERENCES "clase"("id_clase")
             ON DELETE CASCADE 
             ON UPDATE RESTRICT
 );

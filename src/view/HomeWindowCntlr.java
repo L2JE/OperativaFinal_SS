@@ -1,9 +1,6 @@
 package view;
 
-import data_access.CareerDAO;
-import data_access.CareerDAOImpl;
-import data_access.CareerSQLiteDAO;
-import data_access.ClassroomDAOImpl;
+import data_access.*;
 import data_transfer.*;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.ListChangeListener;
@@ -20,6 +17,7 @@ import javafx.scene.control.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import javafx.stage.Stage;
 import service.Showable;
@@ -33,9 +31,9 @@ public class HomeWindowCntlr {
     public ListView<Showable> viewRanges;
     public ListView<Showable> viewCareers;
     public ListView<Showable> viewAllClassrooms;
-    public ComboBox yearsCBCareer;
-    public ComboBox startTimeCBCareer;
-    public ComboBox endTimeCBCareer;
+    public ComboBox<String> yearsCBCareer;
+    public ComboBox<String> startTimeCBCareer;
+    public ComboBox<String> endTimeCBCareer;
     public TextField nameFieldCareer;
 
     @FXML
@@ -67,33 +65,89 @@ public class HomeWindowCntlr {
         viewSubjects.setCellFactory(new ItemViewFactory());
         viewCareers.setCellFactory(new ItemViewFactory());
         viewAllClassrooms.setCellFactory(new ItemViewFactory());
-        runTestCustomItems();
     }
 
     private void initSubjectTab() {
+        //Load subjects in home view
+        SubjectDAO dao = new SubjectSQLiteDAO();
+        viewSubjects.getItems().addAll(dao.getAllSubjects());
+
         //set custom cell factory
         subjectsSubjectView.setCellFactory(new ItemViewFactory());
         lecturesSubjectView.setCellFactory(new ItemViewFactory());
         careersSubjectView.setCellFactory(new ItemViewFactory());
 
-        ObservableList<Showable> subjectsItems = lecturesSubjectView.getItems();
+        ObservableList<Showable> subjectsItems = subjectsSubjectView.getItems();
         ObservableList<Showable> careersItems = careersSubjectView.getItems();
         ObservableList<Showable> lecturesItems = lecturesSubjectView.getItems();
+
+        //Syncronize homeview N tabView
+        viewSubjects.getItems().addListener((ListChangeListener<Showable>) change -> {
+            while (change.next()) {
+                if (change.wasRemoved()) {
+
+                    SubjectDTO removedSubject = null;
+                    try {
+                        removedSubject = (SubjectDTO) change.getRemoved().get(0);
+
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (removedSubject != null && removedSubject.isDeleted().get()) {
+                        if(dao.removeSubject(removedSubject.getIdSubject()) != 200){
+                            removedSubject.setDeleted(false);
+                            viewSubjects.getItems().add(removedSubject);
+                        }else {
+                            SubjectDTO subjectToCompare = removedSubject;
+                            subjectsItems.removeIf(showable -> ((SubjectDTO)showable).getIdSubject() == subjectToCompare.getIdSubject());
+                        }
+
+                    }
+                }
+            }
+        });
+
+        subjectsItems.addListener((ListChangeListener<Showable>) change -> {
+            while (change.next()) {
+                if (change.wasRemoved()) {
+                    SubjectDTO removedSubject = null;
+                    try {
+                        removedSubject = (SubjectDTO) change.getRemoved().get(0);
+
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (removedSubject != null && removedSubject.isDeleted().get()) {
+                        if(dao.removeSubject(removedSubject.getIdSubject()) != 200){
+                            removedSubject.setDeleted(false);
+                            subjectsItems.add(removedSubject);
+                        } else {
+                            SubjectDTO subjectToCompare = removedSubject;
+                            viewSubjects.getItems().removeIf(showable -> ((SubjectDTO)showable).getIdSubject() == subjectToCompare.getIdSubject());
+                        }
+
+                    }
+                }
+            }
+        });
+
 
         //load careers and lectures when selecting a subject
         ReadOnlyProperty<Showable> selectedItemSubject = subjectsSubjectView.getSelectionModel().selectedItemProperty();
         selectedItemSubject.addListener((observableValue, oldValue, newValue) -> {
             System.out.println("Selected Item");
-            subjectsItems.clear();
+            lecturesItems.clear();
             careersItems.clear();
 
             if(newValue != null){
                 SubjectDTO newSubject = (SubjectDTO)newValue;
-                //load lectures and careers
-                //ArrayList<Showable> lectures = LectureDAOImpl.getInstance().getLectures(newSubject.getIdSubject());
-                //lecturesItems.addAll(lectures);
 
-                List<CareerInstance> careers = newSubject.getCareers();
+                List<LectureDTO> lectures = dao.getLectures(newSubject.getIdSubject());
+                lecturesItems.addAll(lectures);
+
+                List<CareerInstance> careers = dao.getCareers(newSubject.getIdSubject());
                 careersItems.addAll(careers);
             }
         });
@@ -102,16 +156,34 @@ public class HomeWindowCntlr {
             while (change.next()) {
                 if (change.wasRemoved()) {
 
-                    CareerInstance dto = null;
+                    CareerInstance removedCInstance = null;
                     try {
-                        dto = (CareerInstance) change.getRemoved().get(0);
-                        //Pab is removed from system
+                        removedCInstance = (CareerInstance) change.getRemoved().get(0);
+
                     } catch (IllegalStateException e) {
                         e.printStackTrace();
                     }
 
-                    if (dto != null && dto.isDeleted().get()) {
-                        ((SubjectDTO) selectedItemSubject.getValue()).removeCareerInstance(dto);
+                    if (removedCInstance != null && removedCInstance.isDeleted().get()) {
+                        dao.removeCareer(((SubjectDTO) selectedItemSubject.getValue()).getIdSubject(), removedCInstance);
+                    }
+                }
+            }
+        });
+
+        lecturesItems.addListener((ListChangeListener<Showable>) change -> {
+            while (change.next()){
+                if (change.wasRemoved()){
+                    LectureDTO removedLecture = null;
+                    try {
+                        removedLecture = (LectureDTO) change.getRemoved().get(0);
+
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (removedLecture != null && removedLecture.isDeleted().get()) {
+                        dao.removeLecture(removedLecture.getIdLecture());
                     }
                 }
             }
@@ -289,15 +361,14 @@ public class HomeWindowCntlr {
         });
     }
 
-    private void fillChoiceBox(ComboBox cb, int min, int max, char format){
+    private void fillChoiceBox(ComboBox<String> cb, int min, int max, char format){
         String[] values = new String[max-min+1];
         String separator;
 
-        switch (format){
-            case 't':   separator = ":00hs";
-                break;
-            default:    separator = "";
-                break;
+        if (format == 't') {
+            separator = ":00hs";
+        } else {
+            separator = "";
         }
 
         for(int i = 0; min <= max; i++, min++)
@@ -321,31 +392,10 @@ public class HomeWindowCntlr {
             System.err.println("Datos Invalidos: No es posible agregar la carrera por un error en los datos ingresados.");
     }
 
-/** TEST:
- *  CLICK EN LISTA "MATERIAS" AGREGAR 5 ELEMENTOS
- **/
-    private void runTestCustomItems(){
-        viewSubjects.setOnMouseClicked(event -> {
-            System.out.println("Nro Elementos Antes: " + viewSubjects.getItems().size());
-            viewSubjects.getItems().addAll(createList());
-            System.out.println("Nro Elementos Despues: " + viewSubjects.getItems().size());
-            System.out.println("=====================================");
-        });
-    }
-
-    private ArrayList<Showable> createList()
-    {
-        ArrayList<Showable> elems = new ArrayList<>();
-
-        elems.add(new LectureDTO(1));
-
-        return elems;
-    }
-
     public void addCareerMateria(ActionEvent actionEvent) {
         SubjectDTO selected = (SubjectDTO) subjectsSubjectView.getSelectionModel().getSelectedItem();
         if(selected != null)
-            callWaitNewStageFill("materiaAddCareer.fxml", "Agregar una Materia Cursante", null);
+            callWaitNewStageFill("materiaAddCareer.fxml", "Agregar una Materia Cursante", selected);
 
         else
             System.err.println("Error: Seleccione una materia primero");
@@ -415,26 +465,30 @@ public class HomeWindowCntlr {
     public void tabMateriaSelected(Event event) {
         //Load all subjects
         if(subjectsSubjectView.getItems().size() < 1){
-            //ArrayList<Showable> subjects = SubjectDAOImpl.getInstance.getAllSubjects();
-           // subjectsSubjectView.getItems().addAll(subjects);
+            SubjectDAO dao = new SubjectSQLiteDAO();
+            List<SubjectDTO> subjects = dao.getAllSubjects();
+            subjectsSubjectView.getItems().addAll(subjects);
         }
     }
 
     public void addSubject(ActionEvent actionEvent) {
-        Showable newSubject = UIDataValidator.subjectValidator(newSubjectField);
+        SubjectDTO newSubject = UIDataValidator.subjectValidator(newSubjectField);
         if(newSubject != null){
+            SubjectDAO dao = new SubjectSQLiteDAO();
+            newSubject = dao.createSubject(newSubject);
 
-            //SubjectDAOImpl.getInstance().createSubject((SubjectDTO)newSubject);
-
-            subjectsSubjectView.getItems().add(newSubject);
+            if(newSubject != null){
+                subjectsSubjectView.getItems().add(newSubject);
+                viewSubjects.getItems().add(newSubject);
+            }
             //System.out.println("Materia Agregada!");
-        }else
+        }
+        if (newSubject == null)
             System.err.println("Datos Invalidos: No es posible agregar la materia porque ya existe o esta mal escrita.");
     }
 
     public void addValidCareerToSubject(Showable careerInstance) {
         Showable selected = subjectsSubjectView.getSelectionModel().selectedItemProperty().get();
-        ((SubjectDTO)selected).addCareerInstance((CareerInstance) careerInstance);
         careersSubjectView.getItems().add(careerInstance);
     }
 

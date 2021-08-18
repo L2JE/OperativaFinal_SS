@@ -8,9 +8,13 @@ import java.util.List;
 public class SubjectDTO extends Showable {
     private int id = -1;
     private String name;
-    private List<CareerInstance> careers = new LinkedList<>();
 
     public SubjectDTO(String subjectName) {
+        this.name = subjectName;
+    }
+
+    public SubjectDTO(int id, String subjectName) {
+        this.id = id;
         this.name = subjectName;
     }
 
@@ -35,19 +39,11 @@ public class SubjectDTO extends Showable {
         return name;
     }
 
-    public void addCareerInstance(CareerInstance careerInstance) {
-        careers.add(careerInstance);
-    }
-
-    public void setCareers(List<CareerInstance> careers){
-        this.careers = careers;
-    }
-
-    public List<CareerInstance> getCareers() {
-        return careers;
-    }
-
-    public void removeCareerInstance(CareerInstance careerInstance) {
-        careers.remove(careerInstance);
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof SubjectDTO)
+            return super.equals(obj) || (((SubjectDTO)obj).id == this.id &&
+                                         ((SubjectDTO)obj).name.equals(this.name));
+        return false;
     }
 }

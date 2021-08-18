@@ -25,8 +25,8 @@
                   </AnchorPane>
                   <HBox spacing="8.0">
                      <children>
-                        <ComboBox fx:id="pabCB" prefHeight="25.0" prefWidth="174.0" />
-                        <ComboBox fx:id="roomCB" prefWidth="174.0" />
+                        <ComboBox fx:id="pabCB" disable="true" prefHeight="25.0" prefWidth="174.0" />
+                        <ComboBox fx:id="roomCB" disable="true" prefWidth="174.0" />
                      </children>
                   </HBox>
                </children>
@@ -65,7 +65,7 @@
                   </AnchorPane>
                   <HBox spacing="8.0">
                      <children>
-                        <TextField fx:id="teacherText" prefHeight="25.0" prefWidth="174.0" />
+                        <TextField fx:id="teacherText" disable="true" prefHeight="25.0" prefWidth="174.0" />
                      </children>
                   </HBox>
                </children>

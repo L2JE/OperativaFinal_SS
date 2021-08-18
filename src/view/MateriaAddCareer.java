@@ -1,10 +1,12 @@
 package view;
 
 import data_access.CareerDAO;
-import data_access.CareerDAOImpl;
 import data_access.CareerSQLiteDAO;
+import data_access.SubjectDAO;
+import data_access.SubjectSQLiteDAO;
 import data_transfer.CareerDTO;
 import data_transfer.CareerInstance;
+import data_transfer.SubjectDTO;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -23,7 +25,8 @@ public class MateriaAddCareer extends SendableFilling {
     private Label errorMsjLabel;
 
     private HomeWindowCntlr homeCntlr;
-    private Showable careerToAdd;
+    private int subjectId;
+    private CareerInstance careerToAdd;
 
     public void initialize() {
         this.careerCB.setVisibleRowCount(5);
@@ -65,14 +68,16 @@ public class MateriaAddCareer extends SendableFilling {
         if(year == null || career == null)
             return false;
 
+        SubjectDAO dao = new SubjectSQLiteDAO();
         careerToAdd = new CareerInstance(career.getIdCareer(), career.getName(), year);
 
-        return true;
 
+        return dao.createCInstance(this.subjectId, this.careerToAdd) == 200;
     }
 
     @Override
     public void setParam(Object param) {
+        this.subjectId = ((SubjectDTO)param).getIdSubject();
     }
 
     @Override
