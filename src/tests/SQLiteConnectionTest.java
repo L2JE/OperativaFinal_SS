@@ -36,13 +36,46 @@ public class SQLiteConnectionTest {
         ///////CAREERS
         should_return_correct_resultCode_when_add_careerInstances();
         should_return_careerInstance_list_consistant_with_external_script();
-        /*
         should_delete_careerInstance_by_given_id();
-         */
+
     }
 
     private static void should_delete_careerInstance_by_given_id() {
         restartDB();
+        final int idSubjectToDeleteFrom = 485;
+
+        execQueryDB("insert into carrera (id, name, duration, h_inic, h_fin)\n" +
+                "values (2, 'Lola', 4, 8, 10),\n" +
+                "       (5, 'Lola1', 5, 8, 10),\n" +
+                "       (1, 'Lola0', 4, 8, 10),\n" +
+                "       (8, 'Lola2', 7, 8, 10),\n" +
+                "       (9, 'Lola9', 4, 8, 10),\n" +
+                "       (7, 'Lola3', 8, 8, 10);");
+
+        execQueryDB("insert into asignatura (id,name)\n" +
+                "values (666, 'Asignatura1'),\n" +
+                "       (655, 'Asignatura2'),\n" +
+                "       (658, 'Asignatura3'),\n" +
+                "       ("+idSubjectToDeleteFrom+", 'AsignaturaDeseada');");
+
+        execQueryDB("insert into comp_carrera (id_asignatura, id_carrera, year)\n" +
+                "values ("+idSubjectToDeleteFrom+", 2, 4),"+
+                "       (655, 5, 3);");
+
+
+
+        final CareerInstance cInstToDelete = new CareerInstance(2,"Lola", 4);
+
+        SubjectDAO dao = new SubjectSQLiteDAO(urlToDB);
+        int resultCode = dao.removeCareer(idSubjectToDeleteFrom, cInstToDelete);
+
+        assert resultCode == 200
+                : "\n[NO SE ELIMINO CORRECTAMENTE - LOS DATOS NO COINCIDEN] \n" +
+                "Valor de retorno del DELETE: " + resultCode;
+
+
+
+
         System.out.println("TEST PASSED: SQLiteCareerSubjectDAO::should_delete_careerInstance_by_given_id");
     }
 

@@ -14,7 +14,7 @@ public class SubjectSQLiteDAO implements SubjectDAO{
       FK_FAILED (404),
       YEAR_OVER_MAX (400),
       SUCCESS (200),
-      UNKNOWN (-1);
+      UNKNOWN_ERR (-1);
 
       private final int resultCode;
 
@@ -49,6 +49,11 @@ public class SubjectSQLiteDAO implements SubjectDAO{
     private static final String readAllCareersStr = "select cp.id_carrera id_c, c.name name, cp.year year\n" +
             "from comp_carrera cp join carrera c on cp.id_carrera = c.id\n" +
             "where cp.id_asignatura=?;";
+
+    private static final String removeCInstStr = "delete from comp_carrera\n" +
+            "where id_asignatura=? AND\n" +
+            "      id_carrera=? AND\n" +
+            "      year=?;";
 
 
     public SubjectSQLiteDAO(){
@@ -318,7 +323,7 @@ public class SubjectSQLiteDAO implements SubjectDAO{
     @Override
     public int createCInstance(int subjectId, CareerInstance careerToAdd) {
         establishConnection();
-        int returnCode = ResultCode.UNKNOWN.resultCode;
+        int returnCode = ResultCode.UNKNOWN_ERR.resultCode;
 
         try (PreparedStatement createCarSubjSt = conn.prepareStatement(createCarSubjStr)) {
             conn.setAutoCommit(false);
@@ -388,7 +393,37 @@ public class SubjectSQLiteDAO implements SubjectDAO{
 
     @Override
     public int removeCareer(int idSubject, CareerInstance careerInstance) {
-        return 0;
+        establishConnection();
+
+        int returnCode = ResultCode.UNKNOWN_ERR.resultCode;
+        try (PreparedStatement deleteSt = conn.prepareStatement(removeCInstStr)) {
+            conn.setAutoCommit(false);
+
+            deleteSt.setInt(1, idSubject);
+            deleteSt.setInt(2, careerInstance.getIdCareer());
+            deleteSt.setInt(3, careerInstance.getYear());
+
+            deleteSt.executeUpdate();
+            conn.commit();
+            returnCode = ResultCode.SUCCESS.resultCode;
+        }catch (SQLException e) {
+            try {
+                System.err.print("ERROR AL ELIMINAR EL REGISTRO: ");
+                if (conn != null) {
+                    System.err.println(e.getMessage());
+                    System.err.println("INTENTADO HACER ROLLBACK");
+                    conn.rollback();
+                }
+            } catch (SQLException excep) {
+                System.err.print("ERROR AL INTENTAR HACER ROLLBACK");
+                excep.printStackTrace();
+            }finally {
+                closeConnection();
+            }
+        }finally {
+            closeConnection();
+        }
+        return returnCode;
     }
 
     private void establishConnection(){
@@ -446,6 +481,6 @@ public class SubjectSQLiteDAO implements SubjectDAO{
         if (message.contains("FOREIGN"))
             return ResultCode.FK_FAILED;
 
-        return ResultCode.UNKNOWN;
+        return ResultCode.UNKNOWN_ERR;
     }
 }
