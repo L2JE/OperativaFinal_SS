@@ -38,6 +38,7 @@ public class SQLiteConnectionTest {
         should_return_careerInstance_list_consistant_with_external_script();
         should_delete_careerInstance_by_given_id();
 
+        restartDB();
     }
 
     private static void should_delete_careerInstance_by_given_id() {

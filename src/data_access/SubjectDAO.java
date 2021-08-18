@@ -27,4 +27,6 @@ public interface SubjectDAO {
     List<CareerInstance> getCareers(int idSubject);
 
     int removeCareer(int idSubject, CareerInstance careerInstance);
+
+    int removeSubject(int idSubject);
 }

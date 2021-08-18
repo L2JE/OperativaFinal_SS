@@ -15,7 +15,6 @@ import service.Showable;
 import java.util.ArrayList;
 
 public class MateriaFixLesson extends SendableFilling {
-
     @FXML
     private Button addButton;
 
@@ -72,6 +71,8 @@ public class MateriaFixLesson extends SendableFilling {
             }
         });
 
+
+
         dayCB.setVisibleRowCount(5);
         dayCB.getItems().addAll(genValidDates());
         startTimeCB.setVisibleRowCount(5);
@@ -122,7 +123,7 @@ public class MateriaFixLesson extends SendableFilling {
 
         if(room != null)                        lectureToAdd.setRoomId(room.getIdRoom());
         if(date != null && !date.equals(""))    lectureToAdd.setDayOfWeek(DayOfWeek.valueOf(date));
-        if(teacher != null)                     lectureToAdd.setTeacher(teacher);
+        if(teacher != null && !teacher.equals(""))                     lectureToAdd.setTeacher(teacher);
         if(lectureStartAt > -1)                lectureToAdd.setStartTime(lectureStartAt);
 /*
         System.out.println(":::::::::::::::::::::::::::::::::::::::::::::::");
@@ -134,7 +135,7 @@ public class MateriaFixLesson extends SendableFilling {
         System.out.println(":::::::::::::::::::::::::::::::::::::::::::::::");
 */
         SubjectDAO dao = new SubjectSQLiteDAO();
-        if(date != null || (teacher != null && !teacher.equals("")))
+        if(date != null && !date.equals("") || (teacher != null && !teacher.equals("")))
             this.lectureToAdd = dao.createLecture(lectureToAdd);
 
         if (this.lectureToAdd != null)

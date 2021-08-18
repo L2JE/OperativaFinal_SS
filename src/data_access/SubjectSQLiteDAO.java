@@ -18,10 +18,10 @@ public class SubjectSQLiteDAO implements SubjectDAO{
 
       private final int resultCode;
 
-      private ResultCode(int resultCode) {
+      ResultCode(int resultCode) {
             this.resultCode = resultCode;
       }
-    };
+    }
 
     private String urlToDB = "jdbc:sqlite:.data.dt";
     private static final SQLiteConfig connConfig = new SQLiteConfig();
@@ -31,6 +31,7 @@ public class SubjectSQLiteDAO implements SubjectDAO{
     private static final String readSubjByNameStr = "select id from asignatura where name=?";
     private static final String createLectStr = "insert into clase (id_asignatura,p_asigned) " +
                                                 "values (?,?)";
+    private static final String removeSubjectIdStr = "delete from asignatura where id=?;";
 
     private static final String fixedLectTblStr = "insert into ocupation (id_aula,id_clase,day,hour,id_profesor) values (?,?,?,?,?)";
     private static final String parcFixexLectTblStr = "insert into clase_fija_parcial (id_aula,id_clase,day,hour,id_profesor) values (?,?,?,?,?)";
@@ -152,6 +153,39 @@ public class SubjectSQLiteDAO implements SubjectDAO{
         }
 
         return subjectToReturn;
+    }
+
+    @Override
+    public int removeSubject(int idSubject) {
+        establishConnection();
+        int returnCode = ResultCode.UNKNOWN_ERR.resultCode;
+
+        try (PreparedStatement deleteSt = conn.prepareStatement(removeSubjectIdStr)) {
+            conn.setAutoCommit(false);
+
+            deleteSt.setInt(1, idSubject);
+
+            deleteSt.executeUpdate();
+            conn.commit();
+            returnCode = ResultCode.SUCCESS.resultCode;
+        }catch (SQLException e) {
+            try {
+                System.err.print("ERROR AL ELIMINAR EL REGISTRO: ");
+                if (conn != null) {
+                    System.err.println(e.getMessage());
+                    System.err.println("INTENTADO HACER ROLLBACK");
+                    conn.rollback();
+                }
+            } catch (SQLException excep) {
+                System.err.print("ERROR AL INTENTAR HACER ROLLBACK");
+                excep.printStackTrace();
+            }finally {
+                closeConnection();
+            }
+        }finally {
+            closeConnection();
+        }
+        return returnCode;
     }
 
     ///////LECTURES
@@ -426,6 +460,8 @@ public class SubjectSQLiteDAO implements SubjectDAO{
         return returnCode;
     }
 
+
+    ///////SUPPORT METHODS
     private void establishConnection(){
         try {
             if(conn == null || conn.isClosed()){
