@@ -1,31 +1,13 @@
 package data_access;
 
 import data_transfer.*;
-import org.sqlite.*;
 import org.sqlite.core.Codes;
 
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 
-public class SubjectSQLiteDAO implements SubjectDAO{
-
-    private enum ResultCode {
-      FK_FAILED (404),
-      YEAR_OVER_MAX (400),
-      SUCCESS (200),
-      UNKNOWN_ERR (-1);
-
-      private final int resultCode;
-
-      ResultCode(int resultCode) {
-            this.resultCode = resultCode;
-      }
-    }
-
-    private String urlToDB = "jdbc:sqlite:.data.dt";
-    private static final SQLiteConfig connConfig = new SQLiteConfig();
-    private static Connection conn = null;
+public class SubjectSQLiteDAO extends SQLiteDAO implements SubjectDAO{
 
     private static final String createSubjStr = "insert into asignatura (name) values (?)";
     private static final String readSubjByNameStr = "select id from asignatura where name=?";
@@ -58,12 +40,11 @@ public class SubjectSQLiteDAO implements SubjectDAO{
 
 
     public SubjectSQLiteDAO(){
-        connConfig.enforceForeignKeys(true);
+        super();
     }
 
     public SubjectSQLiteDAO(String databaseURL){
-        connConfig.enforceForeignKeys(true);
-        urlToDB = databaseURL;
+        super(databaseURL);
     }
 
     ///////SUBJECTS
@@ -458,65 +439,5 @@ public class SubjectSQLiteDAO implements SubjectDAO{
             closeConnection();
         }
         return returnCode;
-    }
-
-
-    ///////SUPPORT METHODS
-    private void establishConnection(){
-        try {
-            if(conn == null || conn.isClosed()){
-                try {
-                    conn = DriverManager.getConnection(urlToDB, connConfig.toProperties());
-
-                } catch (SQLException exception) {
-                    System.err.println("ERROR AL CONECTAR CON LA BASE DE DATOS");
-                    exception.printStackTrace();
-                }
-            }
-        } catch (SQLException exception) {
-            System.err.println("ERROR AL VERIFICAR SI LA CONEXION ESTA CERRADA.");
-        }
-    }
-
-    private void closeConnection(){
-        if(conn != null){
-            try {
-                conn.close();
-            } catch (SQLException exception) {
-                System.err.println("ERROR AL INTENTAR DESCONECTAR DE LA BASE DE DATOS.");
-                System.err.println(exception.getMessage());
-            }
-        }
-    }
-
-    private String capitalizeWords(String string) {
-        if(string != null){
-            char[] charArray = string.toCharArray();
-            boolean foundSpace = true;
-
-            for(int i = 0; i < charArray.length; i++) {
-                if(Character.isLetter(charArray[i])) {
-                    // check space is present before the letter
-                    if(foundSpace) {
-                        charArray[i] = Character.toUpperCase(charArray[i]);
-                        foundSpace = false;
-                    }
-                }
-                else
-                    foundSpace = true;
-            }
-            return String.valueOf(charArray);
-        }
-        return null;
-    }
-
-    private ResultCode extractErrorCode(String message) {
-        if(message.contains("TRIGGER"))
-            return ResultCode.YEAR_OVER_MAX;
-
-        if (message.contains("FOREIGN"))
-            return ResultCode.FK_FAILED;
-
-        return ResultCode.UNKNOWN_ERR;
     }
 }

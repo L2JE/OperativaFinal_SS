@@ -34,21 +34,35 @@ BEGIN
 end;
 
 CREATE TRIGGER IF NOT EXISTS "update_names_to_lower_aula_tg"
-    AFTER UPDATE OF "pab","room" ON "aula"
+    AFTER UPDATE OF "room" ON "aula"
 BEGIN
     UPDATE "aula"
-    SET "pab" = lower(new.pab), "room" = lower(new.room)
-    WHERE lower("pab") = lower(new."pab") AND
-          lower("room") = lower(new."room");
+    SET "room" = lower(new.room)
+    WHERE lower("room") = lower(new."room");
 end;
 
 CREATE TRIGGER IF NOT EXISTS "insert_names_to_lower_aula_tg"
     AFTER INSERT ON "aula"
 BEGIN
     UPDATE "aula"
-    SET "pab" = lower(new.pab), "room" = lower(new.room)
-    WHERE lower("pab") = lower(new."pab") AND
-          lower("room") = lower(new."room");
+    SET "room" = lower(new.room)
+    WHERE lower("room") = lower(new."room");
+end;
+
+CREATE TRIGGER IF NOT EXISTS "update_names_to_lower_pabellon_tg"
+    AFTER UPDATE OF "pab_name" ON "pabellon"
+BEGIN
+    UPDATE "pabellon"
+    SET "pab_name" = lower(new.pab_name)
+    WHERE lower("pab_name") = lower(new."pab_name");
+end;
+
+CREATE TRIGGER IF NOT EXISTS "insert_names_to_lower_pabellon_tg"
+    AFTER INSERT ON "pabellon"
+BEGIN
+    UPDATE "pabellon"
+    SET "pab_name" = lower(new.pab_name)
+    WHERE lower("pab_name") = lower(new."pab_name");
 end;
 
 -----------------------------------------------------

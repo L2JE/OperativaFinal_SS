@@ -1,10 +1,8 @@
 package tests;
 
-import data_access.CareerDAO;
-import data_access.CareerSQLiteDAO;
-import data_access.SubjectDAO;
-import data_access.SubjectSQLiteDAO;
+import data_access.*;
 import data_transfer.*;
+import javafx.util.Pair;
 import org.sqlite.SQLiteConfig;
 
 import java.sql.Connection;
@@ -13,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class SQLiteConnectionTest {
 
@@ -38,8 +37,96 @@ public class SQLiteConnectionTest {
         should_return_careerInstance_list_consistant_with_external_script();
         should_delete_careerInstance_by_given_id();
 
-        restartDB();
+        //////Classrooms
+        should_create_a_new_pab_and_return_with_id();
+        should_create_a_new_classroom_and_return_with_id();
+        should_return_all_pabs_consistant_with_external_script();
+
+
+
     }
+
+    private static void should_create_a_new_pab_and_return_with_id() {
+        restartDB();
+        String desiredPabName = "Pab Name Example";
+
+        ClassroomDAO dao = new RoomSQLiteDAO(urlToDB);
+        ClassroomDTO returned = dao.createPab(desiredPabName);
+
+        assert returned.getPabName().equals(desiredPabName) &&
+                returned.getIdPab() > 0 &&
+                returned.getIdRoom() < 0
+
+                : "\n[NO SE RECUPERO EL PABELLON - LOS DATOS NO COINCIDEN] \n" +
+                "Valor de retorno: " + returned + " idPab: " +returned.getIdPab() +" idRoom: " + returned.getIdRoom();
+
+        System.out.println("TEST PASSED: SQLiteClassroomDAO::should_create_a_new_pab_and_return_with_id");
+    }
+
+    private static void should_create_a_new_classroom_and_return_with_id() {
+        restartDB();
+        int desiredPabId = 585;
+        execQueryDB("insert into pabellon (id, pab_name)\n" +
+                    "values ("+desiredPabId+", 'Pab Ex')");
+
+        ClassroomDTO beforeInsertion = new ClassroomDTO();
+        beforeInsertion.setIdPab(desiredPabId);
+        beforeInsertion.setRoomName("Room Example");
+
+        ClassroomDAO dao = new RoomSQLiteDAO(urlToDB);
+        ClassroomDTO returned = dao.createClassroom(beforeInsertion);
+
+        assert  returned.getIdPab() == desiredPabId &&
+                returned.getIdRoom() > 0 &&
+                returned.getRoomName().equals(beforeInsertion.getRoomName()) &&
+                returned.getPabName() == null
+
+                : "\n[NO SE RECUPERO EL PABELLON - LOS DATOS NO COINCIDEN] \n" +
+                "Valor de retorno: " + returned + " idPab: " +returned.getIdPab() +" idRoom: " + returned.getIdRoom();
+
+        System.out.println("TEST PASSED: SQLiteClassroomDAO::should_create_a_new_classroom_and_return_with_id");
+    }
+
+    private static void should_return_all_pabs_consistant_with_external_script(){
+        restartDB();
+
+        List<ClassroomDTO> expectedList = new LinkedList<>();
+        expectedList.add(new ClassroomDTO(123,"Lsldksdn Lsdjfnsd"));
+        expectedList.add(new ClassroomDTO(312,"Llajdnfljas Plsdkmf"));
+        expectedList.add(new ClassroomDTO(3451,"Pldskfmv Sakjdfn"));
+        expectedList.add(new ClassroomDTO(9871,"Pksdjf Ldsfjk"));
+        expectedList.add(new ClassroomDTO(345341,"Ll3Wef Msd"));
+
+        execQueryDB("insert into pabellon (id,pab_name) " +
+                    "values ("+expectedList.get(0).getIdPab()+",'"+expectedList.get(0).getPabName()+"')," +
+                    "("+expectedList.get(1).getIdPab()+",'"+expectedList.get(1).getPabName()+"')," +
+                    "("+expectedList.get(2).getIdPab()+",'"+expectedList.get(2).getPabName()+"')," +
+                    "("+expectedList.get(3).getIdPab()+",'"+expectedList.get(3).getPabName()+"')," +
+                    "("+expectedList.get(4).getIdPab()+",'"+expectedList.get(4).getPabName()+"');");
+
+        ClassroomDAO dao = new RoomSQLiteDAO(urlToDB);
+        List<ClassroomDTO> returned = dao.getAllPabs();
+
+        assert returned != null &&
+                returned.containsAll(expectedList)
+                :"\n[NO SE RECUPERARON CORRECTAMENTE - LOS DATOS NO COINCIDEN] \n" +
+                "Valor de retorno:\n" + printList(returned) +
+                "-----------------------------------------------\n"+
+                printList(expectedList);
+
+        System.out.println("TEST PASSED: SQLiteCareerSubjectDAO::should_return_all_pabs_consistant_with_external_script");
+    }
+
+    private static String printList(List<ClassroomDTO> dtos){
+        StringBuilder out = new StringBuilder();
+        if(dtos != null)
+            for (ClassroomDTO dto : dtos){
+                out.append("(").append(dto.getIdPab()).append(", ").append(dto.getPabName()).append(", ").append(dto.getIdRoom()).append(", ").append(dto.getRoomName()).append(")\n");
+            }
+
+        return out.toString();
+    }
+
 
     private static void should_delete_careerInstance_by_given_id() {
         restartDB();
@@ -178,10 +265,15 @@ public class SQLiteConnectionTest {
                     "values ('jose')," +
                     "('juan')," +
                     "('luis');");
+
+        execQueryDB("insert into pabellon (id, pab_name) \n" +
+                    "values (1, 'Pab1')," +
+                    "(2, 'Pab2')");
+
         execQueryDB("insert into aula (id,pab,room) " +
-                    "values (55, 'pab2', 'au3')," +
-                    "(56, 'pab1', 'au3')," +
-                    "(57, 'pab1', 'au4');");
+                    "values (55, 2, 'au3')," +
+                    "(56, 1, 'au3')," +
+                    "(57, 1, 'au4');");
 
         execQueryDB("insert into asignatura (id, name)\n" +
                     "values (2,'Mat2')," +
@@ -416,6 +508,7 @@ public class SQLiteConnectionTest {
                 statements.add(conn.prepareStatement("delete from profesor where 1=1;"));
                 statements.add(conn.prepareStatement("delete from clase_fija_parcial where 1=1;"));
                 statements.add(conn.prepareStatement("delete from aula where 1=1;"));
+                statements.add(conn.prepareStatement("delete from pabellon where 1=1;"));
 
                 conn.setAutoCommit(false);
 

@@ -3,7 +3,6 @@ package data_access;
 import data_transfer.ClassroomDTO;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class ClassroomDAOImpl implements ClassroomDAO {
@@ -76,7 +75,7 @@ public class ClassroomDAOImpl implements ClassroomDAO {
     }
 
     @Override
-    public ArrayList<ClassroomDTO> getAllPabs() {
+    public List<ClassroomDTO> getAllPabs() {
         ArrayList<ClassroomDTO> pabs = new ArrayList<>();
         for (String pab : cachePabs) {
             pabs.add(new ClassroomDTO(pab, null));
