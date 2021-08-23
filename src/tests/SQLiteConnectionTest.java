@@ -1,9 +1,7 @@
 package tests;
 
-import com.sun.scenario.effect.impl.prism.PrImage;
 import data_access.*;
 import data_transfer.*;
-import javafx.util.Pair;
 import org.sqlite.SQLiteConfig;
 
 import java.sql.Connection;
@@ -12,13 +10,13 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class SQLiteConnectionTest {
 
     private static final String urlToDB = "jdbc:sqlite:.data.dt";
 
     public static void main(String[] args) {
+        ////////CAREERS
         should_create_a_new_career_and_return_with_id();
         should_delete_career_by_given_id();
         should_return_careers_list_consistant_with_external_script();
@@ -33,7 +31,7 @@ public class SQLiteConnectionTest {
         should_return_lecture_list_consistant_with_external_script();
         should_delete_lecture_by_given_id();
 
-        ///////CAREERS
+        ///////CAREERS ON SUBJECT
         should_return_correct_resultCode_when_add_careerInstances();
         should_return_careerInstance_list_consistant_with_external_script();
         should_delete_careerInstance_by_given_id();
@@ -43,7 +41,8 @@ public class SQLiteConnectionTest {
         should_create_a_new_classroom_and_return_with_id();
         should_return_all_pabs_consistant_with_external_script();
         should_return_ROOMS_GIVEN_PAB_consistant_with_external_script();
-
+        should_delete_room_given_id();
+        should_delete_pab_given_id();
 
     }
 
@@ -163,6 +162,69 @@ public class SQLiteConnectionTest {
                 "-----------------------------------------------\n"+
                 printList(expectedList);
         System.out.println("TEST PASSED: SQLiteCareerSubjectDAO::should_return_ROOMS_GIVEN_PAB_consistant_with_external_script");
+    }
+
+    private static void should_delete_room_given_id(){
+        restartDB();
+
+        execQueryDB("insert into pabellon (id, pab_name)\n" +
+                "values (1, 'Pab 1'),\n" +
+                "       (2, 'Pab 2'),\n" +
+                "       (3, 'Pab 3'),\n" +
+                "       (4, 'Pab 4'),\n" +
+                "       (5, 'Pab 5');");
+        execQueryDB("insert into aula (id, pab, room)\n" +
+                "values (1, 1, 'Aula 1'),\n" +
+                "       (2, 2, 'Aula 12'),\n" +
+                "       (3, 1, 'Aula 13'),\n" +
+                "       (4, 4, 'Aula 14'),\n" +
+                "       (5, 5, 'Aula 15'),\n" +
+                "       (6, 1, 'Aula 16'),\n" +
+                "       (7, 2, 'Aula 17'),\n" +
+                "       (8, 3, 'Aula 18');");
+
+        final ClassroomDTO roomToDelete = new ClassroomDTO();
+        roomToDelete.setIdPab(1);
+        roomToDelete.setIdRoom(6);
+        roomToDelete.setRoomName("Aula Para Eliminar");
+
+        ClassroomDAO dao = new RoomSQLiteDAO(urlToDB);
+        int resultCode = dao.removeClassroom(roomToDelete.getIdRoom());
+
+        assert resultCode == 200
+                : "\n[NO SE ELIMINO CORRECTAMENTE - LOS DATOS NO COINCIDEN] \n" +
+                "Valor de retorno del DELETE: " + resultCode;
+    }
+    private static void should_delete_pab_given_id(){
+        //Deberia comprobar que registros estan al principio y cuales quedan al final
+        restartDB();
+
+        execQueryDB("insert into pabellon (id, pab_name)\n" +
+                "values (1, 'Pab 1'),\n" +
+                "       (2, 'Pab 2'),\n" +
+                "       (3, 'Pab 3'),\n" +
+                "       (4, 'Pab 4'),\n" +
+                "       (5, 'Pab 5');");
+        execQueryDB("insert into aula (id, pab, room)\n" +
+                "values (1, 1, 'Aula 1'),\n" +
+                "       (2, 2, 'Aula 12'),\n" +
+                "       (3, 1, 'Aula 13'),\n" +
+                "       (4, 4, 'Aula 14'),\n" +
+                "       (5, 5, 'Aula 15'),\n" +
+                "       (6, 1, 'Aula 16'),\n" +
+                "       (7, 2, 'Aula 17'),\n" +
+                "       (8, 3, 'Aula 18');");
+
+        final ClassroomDTO pabToDelete = new ClassroomDTO();
+        pabToDelete.setIdPab(1);
+        pabToDelete.setPabName("Pab 1");
+
+        ClassroomDAO dao = new RoomSQLiteDAO(urlToDB);
+        int resultCode = dao.removePab(pabToDelete.getIdPab());
+
+        assert resultCode == 200
+                : "\n[NO SE ELIMINO CORRECTAMENTE - LOS DATOS NO COINCIDEN] \n" +
+                "Valor de retorno del DELETE: " + resultCode;
     }
 
     private static String printList(List<ClassroomDTO> dtos){

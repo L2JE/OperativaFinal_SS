@@ -15,9 +15,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import javafx.stage.Stage;
 import service.Showable;
@@ -232,7 +230,7 @@ public class HomeWindowCntlr {
                         System.out.println("El Elemento: " + dto + "\n Ha sido eliminado de la lista");
 
                         ClassroomDAOImpl dao = ClassroomDAOImpl.getInstance();
-                        dao.deletePab(dto.getPabName());
+                        dao.removePab(dto.getIdPab());
 
                         //Pab is removed from views and viewAllClassrooms get refresh
                         ObservableList<Showable> itemsRoomsForPab = viewRoomsForPab.getItems();
@@ -284,7 +282,7 @@ public class HomeWindowCntlr {
                         }
 
                         //Room is removed from system
-                        dao.deleteClassroom(dto.getIdRoom());
+                        dao.removeClassroom(dto.getIdRoom());
                         System.out.println("Se elimino desde ALLrooms el dto: "+ dto);
                     }
 
@@ -313,7 +311,7 @@ public class HomeWindowCntlr {
                         allRoomsList.removeIf(itemToCompare -> classroomToRemove.toString().equals(itemToCompare.toString()));
 
                         //Room is removed from system
-                        dao.deleteClassroom(dto.getIdRoom());
+                        dao.removeClassroom(dto.getIdRoom());
                         System.out.println("Se elimino desde rooms for pab el dto: "+ dto);
                     }
 

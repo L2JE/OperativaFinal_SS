@@ -14,10 +14,10 @@ public interface ClassroomDAO {
     List<ClassroomDTO> getAllPabs();
 
     ClassroomDTO createClassroom(ClassroomDTO classroom);
-    ClassroomDTO deleteClassroom(int idRoom);
+    int removeClassroom(int idRoom);
 
     ClassroomDTO createPab(String pabName);
-    ClassroomDTO deletePab(String pabName);
+    int removePab(int idPab);
 
 
     ClassroomDTO getPabByName(String pabName);

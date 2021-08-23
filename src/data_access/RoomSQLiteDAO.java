@@ -18,6 +18,8 @@ public class RoomSQLiteDAO extends SQLiteDAO implements ClassroomDAO{
             "from aula a join pabellon p on a.pab = p.id\n" +
             "where p.id=1\n" +
             "order by id;";
+    private static final String removeRoomIdStr = "delete from aula where id=?;";
+    private static final String removePabIdStr = "delete from pabellon where id=?;";
 
     public RoomSQLiteDAO(){
         super();
@@ -74,8 +76,36 @@ public class RoomSQLiteDAO extends SQLiteDAO implements ClassroomDAO{
     }
 
     @Override
-    public ClassroomDTO deleteClassroom(int idRoom) {
-        return null;
+    public int removeClassroom(int idRoom) {
+        establishConnection();
+        int returnCode = ResultCode.UNKNOWN_ERR.resultCode;
+
+        try (PreparedStatement deleteSt = conn.prepareStatement(removeRoomIdStr)) {
+            conn.setAutoCommit(false);
+
+            deleteSt.setInt(1, idRoom);
+
+            deleteSt.executeUpdate();
+            conn.commit();
+            returnCode = ResultCode.SUCCESS.resultCode;
+        }catch (SQLException e) {
+            try {
+                System.err.print("ERROR AL ELIMINAR EL REGISTRO: ");
+                if (conn != null) {
+                    System.err.println(e.getMessage());
+                    System.err.println("INTENTADO HACER ROLLBACK");
+                    conn.rollback();
+                }
+            } catch (SQLException excep) {
+                System.err.print("ERROR AL INTENTAR HACER ROLLBACK");
+                excep.printStackTrace();
+            }finally {
+                closeConnection();
+            }
+        }finally {
+            closeConnection();
+        }
+        return returnCode;
     }
 
     @Override
@@ -139,8 +169,36 @@ public class RoomSQLiteDAO extends SQLiteDAO implements ClassroomDAO{
     }
 
     @Override
-    public ClassroomDTO deletePab(String pabName) {
-        return null;
+    public int removePab(int idPab) {
+        establishConnection();
+        int returnCode = ResultCode.UNKNOWN_ERR.resultCode;
+
+        try (PreparedStatement deleteSt = conn.prepareStatement(removePabIdStr)) {
+            conn.setAutoCommit(false);
+
+            deleteSt.setInt(1, idPab);
+
+            deleteSt.executeUpdate();
+            conn.commit();
+            returnCode = ResultCode.SUCCESS.resultCode;
+        }catch (SQLException e) {
+            try {
+                System.err.print("ERROR AL ELIMINAR EL REGISTRO: ");
+                if (conn != null) {
+                    System.err.println(e.getMessage());
+                    System.err.println("INTENTADO HACER ROLLBACK");
+                    conn.rollback();
+                }
+            } catch (SQLException excep) {
+                System.err.print("ERROR AL INTENTAR HACER ROLLBACK");
+                excep.printStackTrace();
+            }finally {
+                closeConnection();
+            }
+        }finally {
+            closeConnection();
+        }
+        return returnCode;
     }
 
     @Override

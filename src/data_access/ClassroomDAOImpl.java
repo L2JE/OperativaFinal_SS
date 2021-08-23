@@ -107,16 +107,16 @@ public class ClassroomDAOImpl implements ClassroomDAO {
     }
 
     @Override
-    public ClassroomDTO deleteClassroom(int idRoom){
+    public int removeClassroom(int idRoom){
         int cantRooms = cacheRooms.size();
         for (int i = 0; i < cantRooms; i++){
             ClassroomDTO room = cacheRooms.get(i);
             if (room.getIdRoom() == idRoom){
                 cacheRooms.remove(i);
-                return room;
+                return room.getIdRoom();
             }
         }
-        return null;
+        return -1;
     }
 
 
@@ -130,19 +130,19 @@ public class ClassroomDAOImpl implements ClassroomDAO {
     }
 
     @Override
-    public ClassroomDTO deletePab(String pabName) {
-        int pabIndex = cachePabs.indexOf(pabName);
+    public int removePab(int idPab) {
+        int pabIndex = cachePabs.indexOf(idPab);
         if(pabIndex < 0)
-            return null;
+            return -1;
 
         ClassroomDTO removed = new ClassroomDTO(cachePabs.get(pabIndex), null);
         cachePabs.remove(pabIndex);
 
         for (int roomIndex = cacheRooms.size() - 1; roomIndex > -1 ; roomIndex--)
-            if(cacheRooms.get(roomIndex).getPabName().equals(pabName))
+            if(cacheRooms.get(roomIndex).getPabName().equals(idPab))
                 cacheRooms.remove(roomIndex);
 
-        return removed;
+        return removed.getIdPab();
     }
 
     @Override
