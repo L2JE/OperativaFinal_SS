@@ -8,7 +8,7 @@ import java.util.List;
 public interface ClassroomDAO {
     ClassroomDTO getRoomById(int idRoom);
     ClassroomDTO getRoomByName(String pabName, String roomName);
-    ArrayList<ClassroomDTO> getRoomsOnPab(String location);
+    List<ClassroomDTO> getRoomsOnPab(int idPab);
 
     ArrayList<ClassroomDTO> getAllRooms();
     List<ClassroomDTO> getAllPabs();

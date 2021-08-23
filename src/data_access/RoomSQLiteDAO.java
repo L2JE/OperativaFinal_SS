@@ -1,7 +1,6 @@
 package data_access;
 
 import data_transfer.ClassroomDTO;
-import data_transfer.SubjectDTO;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,6 +14,10 @@ public class RoomSQLiteDAO extends SQLiteDAO implements ClassroomDAO{
 
     private static final String createPabStr = "insert into pabellon (pab_name) values (?);";
     private static final String createRoomStr = "insert into aula (pab, room) values (?,?);";
+    private static final String readRoomsInPabStr = "select a.id id, a.room name\n" +
+            "from aula a join pabellon p on a.pab = p.id\n" +
+            "where p.id=1\n" +
+            "order by id;";
 
     public RoomSQLiteDAO(){
         super();
@@ -166,8 +169,32 @@ public class RoomSQLiteDAO extends SQLiteDAO implements ClassroomDAO{
     }
 
     @Override
-    public ArrayList<ClassroomDTO> getRoomsOnPab(String location) {
-        return null;
+    public List<ClassroomDTO> getRoomsOnPab(int idPab) {
+        List<ClassroomDTO> allPabsList = new LinkedList<>();
+
+        establishConnection();
+
+        try (PreparedStatement readSt = conn.prepareStatement(readRoomsInPabStr)) {
+            ResultSet res = readSt.executeQuery();
+
+            if (res != null)
+                while (res.next()){
+                    ClassroomDTO dto = new ClassroomDTO();
+                    dto.setIdPab(idPab);
+                    dto.setIdRoom(res.getInt("id"));
+                    dto.setRoomName(capitalizeWords(res.getString("name")));
+                    allPabsList.add(dto);
+                }
+
+        } catch (SQLException exception) {
+            System.err.println("ERROR AL EJECUTAR LA CONSULTA A LA BASE DE DATOS");
+            exception.printStackTrace();
+            allPabsList = null;
+        } finally {
+            closeConnection();
+        }
+
+        return allPabsList;
     }
 
     @Override

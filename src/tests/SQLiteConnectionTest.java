@@ -1,5 +1,6 @@
 package tests;
 
+import com.sun.scenario.effect.impl.prism.PrImage;
 import data_access.*;
 import data_transfer.*;
 import javafx.util.Pair;
@@ -41,7 +42,7 @@ public class SQLiteConnectionTest {
         should_create_a_new_pab_and_return_with_id();
         should_create_a_new_classroom_and_return_with_id();
         should_return_all_pabs_consistant_with_external_script();
-
+        should_return_ROOMS_GIVEN_PAB_consistant_with_external_script();
 
 
     }
@@ -60,7 +61,7 @@ public class SQLiteConnectionTest {
                 : "\n[NO SE RECUPERO EL PABELLON - LOS DATOS NO COINCIDEN] \n" +
                 "Valor de retorno: " + returned + " idPab: " +returned.getIdPab() +" idRoom: " + returned.getIdRoom();
 
-        System.out.println("TEST PASSED: SQLiteClassroomDAO::should_create_a_new_pab_and_return_with_id");
+        System.out.println("TEST PASSED: SQLiteRoomDAO::should_create_a_new_pab_and_return_with_id");
     }
 
     private static void should_create_a_new_classroom_and_return_with_id() {
@@ -84,7 +85,7 @@ public class SQLiteConnectionTest {
                 : "\n[NO SE RECUPERO EL PABELLON - LOS DATOS NO COINCIDEN] \n" +
                 "Valor de retorno: " + returned + " idPab: " +returned.getIdPab() +" idRoom: " + returned.getIdRoom();
 
-        System.out.println("TEST PASSED: SQLiteClassroomDAO::should_create_a_new_classroom_and_return_with_id");
+        System.out.println("TEST PASSED: SQLiteRoomDAO::should_create_a_new_classroom_and_return_with_id");
     }
 
     private static void should_return_all_pabs_consistant_with_external_script(){
@@ -114,7 +115,54 @@ public class SQLiteConnectionTest {
                 "-----------------------------------------------\n"+
                 printList(expectedList);
 
-        System.out.println("TEST PASSED: SQLiteCareerSubjectDAO::should_return_all_pabs_consistant_with_external_script");
+        System.out.println("TEST PASSED: SQLiteRoomDAO::should_return_all_pabs_consistant_with_external_script");
+    }
+
+    private static void should_return_ROOMS_GIVEN_PAB_consistant_with_external_script(){
+        restartDB();
+        execQueryDB("insert into pabellon (id, pab_name)\n" +
+                "values (1, 'Pab 1'),\n" +
+                "       (2, 'Pab 2'),\n" +
+                "       (3, 'Pab 3'),\n" +
+                "       (4, 'Pab 4'),\n" +
+                "       (5, 'Pab 5');");
+        execQueryDB("insert into aula (id, pab, room)\n" +
+                "values (1, 1, 'Aula 1'),\n" +
+                "       (2, 2, 'Aula 12'),\n" +
+                "       (3, 1, 'Aula 13'),\n" +
+                "       (4, 4, 'Aula 14'),\n" +
+                "       (5, 5, 'Aula 15'),\n" +
+                "       (6, 1, 'Aula 16'),\n" +
+                "       (7, 2, 'Aula 17'),\n" +
+                "       (8, 3, 'Aula 18');");
+
+        List<ClassroomDTO> expectedList = new LinkedList<>();
+        {//insertion
+            ClassroomDTO dto = new ClassroomDTO();
+            dto.setIdPab(1);
+            dto.setIdRoom(1);
+            dto.setRoomName("Aula 1");
+            expectedList.add(dto);
+            dto.setIdPab(1);
+            dto.setIdRoom(3);
+            dto.setRoomName("Aula 13");
+            expectedList.add(dto);
+            dto.setIdPab(1);
+            dto.setIdRoom(6);
+            dto.setRoomName("Aula 16");
+            expectedList.add(dto);
+        }
+
+        ClassroomDAO dao = new RoomSQLiteDAO(urlToDB);
+        List<ClassroomDTO> returned = dao.getRoomsOnPab(1);
+
+        assert returned != null &&
+                returned.containsAll(expectedList)
+                :"\n[NO SE RECUPERARON CORRECTAMENTE - LOS DATOS NO COINCIDEN] \n" +
+                "Valor de retorno:\n" + printList(returned) +
+                "-----------------------------------------------\n"+
+                printList(expectedList);
+        System.out.println("TEST PASSED: SQLiteCareerSubjectDAO::should_return_ROOMS_GIVEN_PAB_consistant_with_external_script");
     }
 
     private static String printList(List<ClassroomDTO> dtos){

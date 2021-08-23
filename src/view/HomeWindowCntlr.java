@@ -205,7 +205,7 @@ public class HomeWindowCntlr {
             itemsRoomsForPab.clear();
 
             if(newValue!=null){
-                ArrayList<ClassroomDTO> rooms = ClassroomDAOImpl.getInstance().getRoomsOnPab(((ClassroomDTO)newValue).getPabName());
+                List<ClassroomDTO> rooms = ClassroomDAOImpl.getInstance().getRoomsOnPab(((ClassroomDTO)newValue).getIdPab());
 
                 if(rooms != null)
                     itemsRoomsForPab.addAll(rooms);
@@ -242,7 +242,7 @@ public class HomeWindowCntlr {
 
                         Showable selected = viewPabs.getSelectionModel().getSelectedItem();
                         if(selected != null) {
-                            itemsRoomsForPab.addAll(dao.getRoomsOnPab(((ClassroomDTO) selected).getPabName()));
+                            itemsRoomsForPab.addAll(dao.getRoomsOnPab(((ClassroomDTO) selected).getIdPab()));
                         }
 
 

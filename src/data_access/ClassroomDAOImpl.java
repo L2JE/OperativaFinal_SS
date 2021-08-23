@@ -54,7 +54,7 @@ public class ClassroomDAOImpl implements ClassroomDAO {
     }
 
     @Override
-    public ArrayList<ClassroomDTO> getRoomsOnPab(String pabName) {
+    public List<ClassroomDTO> getRoomsOnPab(int pabName) {
         //Assumes Pab exists
         ArrayList<ClassroomDTO> dtos = new ArrayList<>();
         for (ClassroomDTO dto : cacheRooms)

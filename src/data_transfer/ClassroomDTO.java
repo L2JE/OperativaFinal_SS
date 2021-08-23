@@ -86,7 +86,7 @@ public class ClassroomDTO extends Showable {
         if(obj instanceof ClassroomDTO){
             boolean equals = ((ClassroomDTO)obj).idPab == idPab && ((ClassroomDTO)obj).idRoom == idRoom;
 
-            if (idPab > -1)
+            if (idPab > -1 && ((ClassroomDTO)obj).pabName != null)
                 equals = equals && ((ClassroomDTO)obj).pabName.equals(pabName);
 
             if (idRoom > -1)
