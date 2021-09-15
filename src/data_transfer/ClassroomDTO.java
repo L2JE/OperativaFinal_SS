@@ -16,12 +16,18 @@ public class ClassroomDTO extends Showable {
         this.pabName = pabName;
     }
 
+    public ClassroomDTO(int idPab){
+        this.idPab = idPab;
+    }
+
+    @Deprecated
     public ClassroomDTO(String pabName, String roomName) {
         super();
         this.pabName = pabName;
         this.roomName = roomName;
     }
 
+    @Deprecated
     public ClassroomDTO(int idRoom, String pabName, String roomName) {
         super();
         this.idRoom = idRoom;

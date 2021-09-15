@@ -109,8 +109,32 @@ public class RoomSQLiteDAO extends SQLiteDAO implements ClassroomDAO{
     }
 
     @Override
-    public ArrayList<ClassroomDTO> getAllRooms() {
-        return null;
+    public List<ClassroomDTO> getAllRooms() {
+        final String readAllRoomsStr = "select id,pab,room from aula order by pab";
+        List<ClassroomDTO> allRoomsList = new LinkedList<>();
+
+        establishConnection();
+
+        try (PreparedStatement readSt = conn.prepareStatement(readAllRoomsStr)) {
+            ResultSet res = readSt.executeQuery();
+
+            if (res != null)
+                while (res.next()){
+                    ClassroomDTO dto = new ClassroomDTO(res.getInt("pab"));
+                    dto.setIdRoom(res.getInt("id"));
+                    dto.setRoomName(capitalizeWords(res.getString("room")));
+                    allRoomsList.add(dto);
+                }
+
+        } catch (SQLException exception) {
+            System.err.println("ERROR AL EJECUTAR LA CONSULTA A LA BASE DE DATOS");
+            exception.printStackTrace();
+            allRoomsList = null;
+        } finally {
+            closeConnection();
+        }
+
+        return allRoomsList;
     }
 
     @Override

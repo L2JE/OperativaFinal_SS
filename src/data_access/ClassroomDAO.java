@@ -2,7 +2,6 @@ package data_access;
 
 import data_transfer.ClassroomDTO;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface ClassroomDAO {
@@ -10,7 +9,7 @@ public interface ClassroomDAO {
     ClassroomDTO getRoomByName(String pabName, String roomName);
     List<ClassroomDTO> getRoomsOnPab(int idPab);
 
-    ArrayList<ClassroomDTO> getAllRooms();
+    List<ClassroomDTO> getAllRooms();
     List<ClassroomDTO> getAllPabs();
 
     ClassroomDTO createClassroom(ClassroomDTO classroom);

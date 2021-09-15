@@ -43,7 +43,83 @@ public class SQLiteConnectionTest {
         should_return_ROOMS_GIVEN_PAB_consistant_with_external_script();
         should_delete_room_given_id();
         should_delete_pab_given_id();
+        should_return_all_rooms_consistant_with_external_script();
 
+    }
+
+    private static void should_return_all_rooms_consistant_with_external_script() {
+        restartDB();
+        execQueryDB("insert into pabellon (id, pab_name)\n" +
+                "values (1, 'Pab 1'),\n" +
+                "       (2, 'Pab 2'),\n" +
+                "       (3, 'Pab 3'),\n" +
+                "       (4, 'Pab 4'),\n" +
+                "       (5, 'Pab 5');");
+        execQueryDB("insert into aula (id, pab, room)\n" +
+                "values (1, 1, 'Aula 1'),\n" +
+                "       (2, 2, 'Aula 12'),\n" +
+                "       (3, 1, 'Aula 13'),\n" +
+                "       (4, 4, 'Aula 14'),\n" +
+                "       (5, 5, 'Aula 15'),\n" +
+                "       (6, 1, 'Aula 16'),\n" +
+                "       (7, 2, 'Aula 17'),\n" +
+                "       (8, 3, 'Aula 18');");
+        List<ClassroomDTO> expectedList = new LinkedList<>();
+        {
+            ClassroomDTO dto = new ClassroomDTO(1);
+            dto.setIdRoom(1);
+            dto.setRoomName("Aula 1");
+            expectedList.add(dto);
+
+            dto = new ClassroomDTO(1);
+            dto.setIdRoom(3);
+            dto.setRoomName("Aula 13");
+            expectedList.add(dto);
+
+            dto = new ClassroomDTO(1);
+            dto.setIdRoom(6);
+            dto.setRoomName("Aula 16");
+            expectedList.add(dto);
+
+            dto = new ClassroomDTO(2);
+            dto.setIdRoom(2);
+            dto.setRoomName("Aula 12");
+            expectedList.add(dto);
+
+            dto = new ClassroomDTO(2);
+            dto.setIdRoom(7);
+            dto.setRoomName("Aula 17");
+            expectedList.add(dto);
+
+            dto = new ClassroomDTO(3);
+            dto.setIdRoom(8);
+            dto.setRoomName("Aula 18");
+            expectedList.add(dto);
+
+            dto = new ClassroomDTO(4);
+            dto.setIdRoom(4);
+            dto.setRoomName("Aula 14");
+            expectedList.add(dto);
+
+            dto = new ClassroomDTO(5);
+            dto.setIdRoom(5);
+            dto.setRoomName("Aula 15");
+            expectedList.add(dto);
+        }
+
+        ClassroomDAO dao = new RoomSQLiteDAO(urlToDB);
+        List<ClassroomDTO> returned = dao.getAllRooms();
+
+        assert returned != null &&
+                returned.size() == expectedList.size() &&
+                returned.containsAll(expectedList)
+                :"\n[NO SE RECUPERARON CORRECTAMENTE - LOS DATOS NO COINCIDEN] \n" +
+                "Retorno:\n" + printList(returned) +
+                "-----------------------------------------------\n"+
+                "Esperado:\n"+
+                printList(expectedList);
+
+        System.out.println("TEST PASSED: SQLiteRoomDAO::should_return_all_rooms_consistant_with_external_script");
     }
 
     private static void should_create_a_new_pab_and_return_with_id() {

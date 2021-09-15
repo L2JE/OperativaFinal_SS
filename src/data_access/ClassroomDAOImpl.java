@@ -70,7 +70,7 @@ public class ClassroomDAOImpl implements ClassroomDAO {
     }
 
     @Override
-    public ArrayList<ClassroomDTO> getAllRooms() {
+    public List<ClassroomDTO> getAllRooms() {
         return (ArrayList<ClassroomDTO>) this.cacheRooms.clone();
     }
 
