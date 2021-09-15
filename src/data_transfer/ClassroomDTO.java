@@ -76,10 +76,10 @@ public class ClassroomDTO extends Showable {
     @Override
     public String toString() {
         if (roomName == null)
-            return pabName;
+            return pabName + " (id: "+ idPab +")";
         else
             if(pabName == null)
-                return roomName;
+                return roomName + " (id: "+ idRoom +")";
 
         return "Pabellon: " + pabName + " Aula: "+ roomName + " (id: "+ idRoom +")";
     }

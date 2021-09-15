@@ -48,7 +48,7 @@ public class MateriaFixLesson extends SendableFilling {
     private final int maxTime = 21;
 
     public void initialize(){
-        ClassroomDAO dao = ClassroomDAOImpl.getInstance();
+        ClassroomDAO dao = new RoomSQLiteDAO();
 
         pabCB.getItems().addAll(dao.getAllPabs());
         pabCB.getItems().add(new Showable() {

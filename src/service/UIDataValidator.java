@@ -56,29 +56,30 @@ public class UIDataValidator {
     public static ClassroomDTO roomValidator(TextField newRoomField, Showable selectedPab) {
         String desiredRoomName = newRoomField.getText();
 
-        if(newRoomField.getText().equals("") || selectedPab == null)
+        if(desiredRoomName.equals("") || selectedPab == null)
             return null;
 
-        String pabName = ((ClassroomDTO)selectedPab).getPabName();
+        ClassroomDTO newRoomCandidate = new ClassroomDTO(((ClassroomDTO)selectedPab).getIdPab());
 
-        if(ClassroomDAOImpl.getInstance().getRoomByName(pabName,desiredRoomName) != null)
-            return null;
+        newRoomCandidate.setRoomName(desiredRoomName);
 
-        return new ClassroomDTO(pabName, desiredRoomName);
+        return newRoomCandidate;
     }
 
-    public static ClassroomDTO pabValidator(TextField pab){
+    public static boolean isValidPabName(TextField pab){
+        //TODO: Use regex to validate pabname
         String desiredPabName = pab.getText();
-        if(desiredPabName.equals(""))
-            return null;
+        boolean isValid = true;
+
+        if(desiredPabName == null || desiredPabName.equals(""))
+            isValid = false;
+
         desiredPabName = desiredPabName.substring(0,1).toUpperCase() +
                          desiredPabName.substring(1);
 
-        ClassroomDAOImpl dao = ClassroomDAOImpl.getInstance();
-        if (dao.getPabByName(desiredPabName) != null)
-            return null;
+        pab.setText(desiredPabName);
 
-        return new ClassroomDTO(desiredPabName, null);
+        return isValid;
 
     }
 

@@ -16,7 +16,7 @@ public class RoomSQLiteDAO extends SQLiteDAO implements ClassroomDAO{
     private static final String createRoomStr = "insert into aula (pab, room) values (?,?);";
     private static final String readRoomsInPabStr = "select a.id id, a.room name\n" +
             "from aula a join pabellon p on a.pab = p.id\n" +
-            "where p.id=1\n" +
+            "where p.id=?\n" +
             "order by id;";
     private static final String removeRoomIdStr = "delete from aula where id=?;";
     private static final String removePabIdStr = "delete from pabellon where id=?;";
@@ -138,16 +138,6 @@ public class RoomSQLiteDAO extends SQLiteDAO implements ClassroomDAO{
     }
 
     @Override
-    public ClassroomDTO getRoomById(int idRoom) {
-        return null;
-    }
-
-    @Override
-    public ClassroomDTO getRoomByName(String pabName, String roomName) {
-        return null;
-    }
-
-    @Override
     public ClassroomDTO createPab(String pabName) {
         establishConnection();
 
@@ -257,6 +247,7 @@ public class RoomSQLiteDAO extends SQLiteDAO implements ClassroomDAO{
         establishConnection();
 
         try (PreparedStatement readSt = conn.prepareStatement(readRoomsInPabStr)) {
+            readSt.setInt(1, idPab);
             ResultSet res = readSt.executeQuery();
 
             if (res != null)
@@ -277,10 +268,5 @@ public class RoomSQLiteDAO extends SQLiteDAO implements ClassroomDAO{
         }
 
         return allPabsList;
-    }
-
-    @Override
-    public ClassroomDTO getPabByName(String pabName) {
-        return null;
     }
 }

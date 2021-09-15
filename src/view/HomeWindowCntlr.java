@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.layout.Border;
 import javafx.stage.Modality;
 import service.UIDataValidator;
 import javafx.event.ActionEvent;
@@ -189,6 +190,9 @@ public class HomeWindowCntlr {
     }
 
     private void initClassroom() {
+        //Declare datasource
+        ClassroomDAO dao = new RoomSQLiteDAO();
+
         //Inicialize custom item View
         viewPabs.setCellFactory(new ItemViewFactory());
         viewRoomsForPab.setCellFactory(new ItemViewFactory());
@@ -196,17 +200,23 @@ public class HomeWindowCntlr {
         ObservableList<Showable> itemsPabs = viewPabs.getItems();
         ReadOnlyProperty<Showable> selectedItemPab = viewPabs.getSelectionModel().selectedItemProperty();
 
+        itemsPabs.addAll(dao.getAllPabs());
+        viewAllClassrooms.getItems().addAll(dao.getAllRooms());
+
         selectedItemPab.addListener((observable, oldValue, newValue) -> {
-            //System.out.println("Se ha seleccionado el item: "+ oldValue + "newValue: "+newValue);
+            System.out.println("Se ha seleccionado el item: "+ oldValue + "newValue: "+newValue);
 
             ObservableList<Showable> itemsRoomsForPab = viewRoomsForPab.getItems();
             itemsRoomsForPab.clear();
 
             if(newValue!=null){
-                List<ClassroomDTO> rooms = ClassroomDAOImpl.getInstance().getRoomsOnPab(((ClassroomDTO)newValue).getIdPab());
+                System.out.println("Solicitando aulas del id: "+ ((ClassroomDTO)newValue).getIdPab());
+                List<ClassroomDTO> rooms = dao.getRoomsOnPab(((ClassroomDTO)newValue).getIdPab());
 
-                if(rooms != null)
+                if(rooms != null){
+                    System.out.println("Elementos en la lista: "+ rooms.size());
                     itemsRoomsForPab.addAll(rooms);
+                }
 
                 System.gc();
             }
@@ -229,7 +239,6 @@ public class HomeWindowCntlr {
 
                         System.out.println("El Elemento: " + dto + "\n Ha sido eliminado de la lista");
 
-                        ClassroomDAOImpl dao = ClassroomDAOImpl.getInstance();
                         dao.removePab(dto.getIdPab());
 
                         //Pab is removed from views and viewAllClassrooms get refresh
@@ -269,7 +278,6 @@ public class HomeWindowCntlr {
                     }
 
                     if(dto != null && dto.isDeleted().get()){
-                        ClassroomDAOImpl dao = ClassroomDAOImpl.getInstance();
 
                         //Si esta seleccionado el pabellon al que pertenece el aula eliminada
                         //Se elimina el aula de la lista de aulas
@@ -303,7 +311,6 @@ public class HomeWindowCntlr {
                     }
 
                     if(dto != null && dto.isDeleted().get()){
-                        ClassroomDAOImpl dao = ClassroomDAOImpl.getInstance();
 
                         final ClassroomDTO classroomToRemove = dto;
 
@@ -436,12 +443,14 @@ public class HomeWindowCntlr {
     }
 
     public void addPab(ActionEvent actionEvent) {
-        ClassroomDTO newPab = UIDataValidator.pabValidator(newPabField);
-        if(newPab != null){
 
-            ClassroomDAOImpl.getInstance().createPab(newPab.getPabName());
+        if(UIDataValidator.isValidPabName(newPabField)){
+            ClassroomDAO dao = new RoomSQLiteDAO();
 
-            viewPabs.getItems().add(newPab);
+            ClassroomDTO newPab = dao.createPab(newPabField.getText());
+
+            if(newPab != null)
+                viewPabs.getItems().add(newPab);
             //System.out.println("Pabellon Agregado!");
         }else
             System.err.println("Datos Invalidos: No es posible agregar el Pabellon por un error en los datos ingresados.");
@@ -451,13 +460,18 @@ public class HomeWindowCntlr {
         ClassroomDTO newRoom = UIDataValidator.roomValidator(newRoomField,viewPabs.getSelectionModel().getSelectedItem());
         if(newRoom != null){
 
-            ClassroomDAOImpl.getInstance().createClassroom(newRoom);
+            ClassroomDAO dao = new RoomSQLiteDAO();
 
-            viewRoomsForPab.getItems().add(newRoom);
-            viewAllClassrooms.getItems().add(newRoom);
+            newRoom = dao.createClassroom(newRoom);
+
+            if(newRoom != null){
+                viewRoomsForPab.getItems().add(newRoom);
+                viewAllClassrooms.getItems().add(newRoom);
+            }
             //System.out.println("Aula Agregada!");
-        }else
+        }else{
             System.err.println("Datos Invalidos: No es posible agregar el Aula por un error en los datos ingresados.");
+        }
     }
 
     public void tabMateriaSelected(Event event) {
