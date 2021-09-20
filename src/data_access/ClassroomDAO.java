@@ -2,22 +2,17 @@ package data_access;
 
 import data_transfer.ClassroomDTO;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface ClassroomDAO {
-    public abstract ClassroomDTO getRoomById(int idRoom);
-    public abstract ClassroomDTO getRoomByName(String pabName, String roomName);
-    public abstract ArrayList<ClassroomDTO> getRoomsOnPab(String location);
+    ClassroomDTO createPab(String pabName);
+    ClassroomDTO createClassroom(ClassroomDTO classroom);
 
-    public abstract ArrayList<ClassroomDTO> getAllRooms();
-    public abstract ArrayList<ClassroomDTO> getAllPabs();
+    List<ClassroomDTO> getAllRooms();
+    List<ClassroomDTO> getAllPabs();
 
-    public abstract ClassroomDTO createClassroom(ClassroomDTO classroom);
-    public ClassroomDTO deleteClassroom(int idRoom);
+    List<ClassroomDTO> getRoomsOnPab(int idPab);
 
-    public ClassroomDTO createPab(String pabName);
-    public ClassroomDTO deletePab(String pabName);
-
-
-    ClassroomDTO getPabByName(String pabName);
+    int removeClassroom(int idRoom);
+    int removePab(int idPab);
 }

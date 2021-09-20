@@ -86,12 +86,26 @@ CREATE TABLE "clase_fija_parcial"(
                 ON UPDATE CASCADE
 );
 
+CREATE TABLE "pabellon"(
+    "id" INTEGER NOT NULL,
+    "pab_name" TEXT NOT NULL,
+
+    UNIQUE ("pab_name")
+    PRIMARY KEY ("id" AUTOINCREMENT)
+);
+
 CREATE TABLE "aula" (
 	"id"	INTEGER NOT NULL,
-	"pab"	TEXT NOT NULL,
+	"pab"	INTEGER NOT NULL,
 	"room"	TEXT NOT NULL,
-	UNIQUE ("pab","room"),
-	PRIMARY KEY("id" AUTOINCREMENT)
+
+	UNIQUE ("pab","id"),
+	PRIMARY KEY("id" AUTOINCREMENT),
+
+	FOREIGN KEY("pab")
+            REFERENCES "pabellon"("id")
+                ON DELETE CASCADE
+                ON UPDATE CASCADE
 );
 
 CREATE TABLE "ocupation" (

@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import service.Showable;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MateriaFixLesson extends SendableFilling {
     @FXML
@@ -47,7 +48,7 @@ public class MateriaFixLesson extends SendableFilling {
     private final int maxTime = 21;
 
     public void initialize(){
-        ClassroomDAO dao = ClassroomDAOImpl.getInstance();
+        ClassroomDAO dao = new RoomSQLiteDAO();
 
         pabCB.getItems().addAll(dao.getAllPabs());
         pabCB.getItems().add(new Showable() {
@@ -64,7 +65,7 @@ public class MateriaFixLesson extends SendableFilling {
 
             if(newValue != null && !newValue.toString().isEmpty()){
 
-                ArrayList<ClassroomDTO> rooms = dao.getRoomsOnPab(((ClassroomDTO)newValue).getPabName());
+                List<ClassroomDTO> rooms = dao.getRoomsOnPab(((ClassroomDTO)newValue).getIdPab());
                 if(rooms != null && rooms.size() > 0)
                 items.addAll(rooms);
 
