@@ -10,4 +10,4 @@ drop trigger if exists "valid_years_comp_carrera_updt_tg";
 drop trigger if exists "valid_years_comp_carrera_insrt_tg";
 
 --delete from "sqlite_master" where 1=1;
-delete from  "sqlite_sequence" where 1=1;
+--delete from  "sqlite_sequence" where 1=1;
