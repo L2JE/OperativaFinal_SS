@@ -2,6 +2,9 @@ package tests;
 
 import data_access.*;
 import data_transfer.*;
+import org.junit.Before;
+import org.junit.Test;
+
 import org.sqlite.SQLiteConfig;
 
 import java.sql.Connection;
@@ -11,44 +14,19 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ *         ////////CAREERS
+ *         //////SUBJECT
+ *         ///////LECTURES
+ *         ///////CAREERS ON SUBJECT
+ *         //////Classrooms
+ */
 public class SQLiteConnectionTest {
 
     private static final String urlToDB = "jdbc:sqlite:.data.dt";
 
-    public static void main(String[] args) {
-        ////////CAREERS
-        should_create_a_new_career_and_return_with_id();
-        should_delete_career_by_given_id();
-        should_return_careers_list_consistant_with_external_script();
-
-        //////SUBJECT
-        should_create_a_new_subject_and_return_with_id();
-        should_return_subject_list_consistant_with_external_script();
-        should_return_subject_given_name();
-
-        ///////LECTURES
-        should_create_a_new_lecture_and_return_with_id();
-        should_return_lecture_list_consistant_with_external_script();
-        should_delete_lecture_by_given_id();
-
-        ///////CAREERS ON SUBJECT
-        should_return_correct_resultCode_when_add_careerInstances();
-        should_return_careerInstance_list_consistant_with_external_script();
-        should_delete_careerInstance_by_given_id();
-
-        //////Classrooms
-        should_create_a_new_pab_and_return_with_id();
-        should_create_a_new_classroom_and_return_with_id();
-        should_return_all_pabs_consistant_with_external_script();
-        should_return_ROOMS_GIVEN_PAB_consistant_with_external_script();
-        should_delete_room_given_id();
-        should_delete_pab_given_id();
-        should_return_all_rooms_consistant_with_external_script();
-
-    }
-
-    private static void should_return_all_rooms_consistant_with_external_script() {
-        restartDB();
+    @Test
+    public void should_return_all_rooms_consistant_with_external_script() {
         execQueryDB("insert into pabellon (id, pab_name)\n" +
                 "values (1, 'Pab 1'),\n" +
                 "       (2, 'Pab 2'),\n" +
@@ -119,11 +97,13 @@ public class SQLiteConnectionTest {
                 "Esperado:\n"+
                 printList(expectedList);
 
+
+
         System.out.println("TEST PASSED: SQLiteRoomDAO::should_return_all_rooms_consistant_with_external_script");
     }
 
-    private static void should_create_a_new_pab_and_return_with_id() {
-        restartDB();
+    @Test
+    public void should_create_a_new_pab_and_return_with_id() {
         String desiredPabName = "Pab Name Example";
 
         ClassroomDAO dao = new RoomSQLiteDAO(urlToDB);
@@ -139,8 +119,8 @@ public class SQLiteConnectionTest {
         System.out.println("TEST PASSED: SQLiteRoomDAO::should_create_a_new_pab_and_return_with_id");
     }
 
-    private static void should_create_a_new_classroom_and_return_with_id() {
-        restartDB();
+    @Test
+    public void should_create_a_new_classroom_and_return_with_id() {
         int desiredPabId = 585;
         execQueryDB("insert into pabellon (id, pab_name)\n" +
                     "values ("+desiredPabId+", 'Pab Ex')");
@@ -163,8 +143,8 @@ public class SQLiteConnectionTest {
         System.out.println("TEST PASSED: SQLiteRoomDAO::should_create_a_new_classroom_and_return_with_id");
     }
 
-    private static void should_return_all_pabs_consistant_with_external_script(){
-        restartDB();
+    @Test
+    public void should_return_all_pabs_consistant_with_external_script(){
 
         List<ClassroomDTO> expectedList = new LinkedList<>();
         expectedList.add(new ClassroomDTO(123,"Lsldksdn Lsdjfnsd"));
@@ -193,8 +173,8 @@ public class SQLiteConnectionTest {
         System.out.println("TEST PASSED: SQLiteRoomDAO::should_return_all_pabs_consistant_with_external_script");
     }
 
-    private static void should_return_ROOMS_GIVEN_PAB_consistant_with_external_script(){
-        restartDB();
+    @Test
+    public void should_return_ROOMS_GIVEN_PAB_consistant_with_external_script(){
         execQueryDB("insert into pabellon (id, pab_name)\n" +
                 "values (1, 'Pab 1'),\n" +
                 "       (2, 'Pab 2'),\n" +
@@ -240,8 +220,8 @@ public class SQLiteConnectionTest {
         System.out.println("TEST PASSED: SQLiteCareerSubjectDAO::should_return_ROOMS_GIVEN_PAB_consistant_with_external_script");
     }
 
-    private static void should_delete_room_given_id(){
-        restartDB();
+    @Test
+    public void should_delete_room_given_id(){
 
         execQueryDB("insert into pabellon (id, pab_name)\n" +
                 "values (1, 'Pab 1'),\n" +
@@ -271,9 +251,10 @@ public class SQLiteConnectionTest {
                 : "\n[NO SE ELIMINO CORRECTAMENTE - LOS DATOS NO COINCIDEN] \n" +
                 "Valor de retorno del DELETE: " + resultCode;
     }
-    private static void should_delete_pab_given_id(){
+
+    @Test
+    public void should_delete_pab_given_id(){
         //Deberia comprobar que registros estan al principio y cuales quedan al final
-        restartDB();
 
         execQueryDB("insert into pabellon (id, pab_name)\n" +
                 "values (1, 'Pab 1'),\n" +
@@ -314,8 +295,8 @@ public class SQLiteConnectionTest {
     }
 
 
-    private static void should_delete_careerInstance_by_given_id() {
-        restartDB();
+    @Test
+    public void should_delete_careerInstance_by_given_id() {
         final int idSubjectToDeleteFrom = 485;
 
         execQueryDB("insert into carrera (id, name, duration, h_inic, h_fin)\n" +
@@ -353,8 +334,8 @@ public class SQLiteConnectionTest {
         System.out.println("TEST PASSED: SQLiteCareerSubjectDAO::should_delete_careerInstance_by_given_id");
     }
 
-    private static void should_return_careerInstance_list_consistant_with_external_script() {
-        restartDB();
+    @Test
+    public void should_return_careerInstance_list_consistant_with_external_script() {
         final int desiredSubjectId = 654;
 
         execQueryDB("insert into carrera (id, name, duration, h_inic, h_fin)\n" +
@@ -398,8 +379,8 @@ public class SQLiteConnectionTest {
         System.out.println("TEST PASSED: SQLiteCareerSubjectDAO::should_return_careerInstance_list_consistant_with_external_script");
     }
 
-    private static void should_return_correct_resultCode_when_add_careerInstances() {
-        restartDB();
+    @Test
+    public void should_return_correct_resultCode_when_add_careerInstances() {
         final int idSubject = 958;
         final int idCareer = 321;
         final int careerDuration = 5;
@@ -428,8 +409,8 @@ public class SQLiteConnectionTest {
         System.out.println("TEST PASSED: SQLiteCareerSubjectDAO::should_return_correct_resultCode_when_add_careerInstances");
     }
 
-    private static void should_delete_lecture_by_given_id() {
-        restartDB();
+    @Test
+    public void should_delete_lecture_by_given_id() {
         final int lectureIdToBeDeleted = 485;
         execQueryDB("insert into asignatura (id, name) values (2,'Mat2');");
         execQueryDB("insert into clase (id_asignatura, id_clase, p_asigned) values (2,"+lectureIdToBeDeleted+",0);"); //full asignada
@@ -444,8 +425,8 @@ public class SQLiteConnectionTest {
         System.out.println("TEST PASSED: SQLiteSubjectDAO::should_delete_lecture_by_given_id");
     }
 
-    private static void should_return_lecture_list_consistant_with_external_script() {
-        restartDB();
+    @Test
+    public void should_return_lecture_list_consistant_with_external_script() {
         final int idRequiredSubject = 985;
         execQueryDB("insert into profesor (name)\n" +
                     "values ('jose')," +
@@ -505,11 +486,11 @@ public class SQLiteConnectionTest {
         System.out.println("TEST PASSED: SQLiteSubjectDAO::should_return_lecture_list_consistant_with_external_script");
     }
 
-    private static void should_create_a_new_lecture_and_return_with_id() {
+    @Test
+    public void should_create_a_new_lecture_and_return_with_id() {
         final int idSubject = 321;
         final String teacher = "Jose";
 
-        restartDB();
         execQueryDB("insert into asignatura (id,name) values ("+idSubject+",'AsignaturaEjemplo')");
         execQueryDB("insert into profesor (name) values ('"+teacher+"')");
         SubjectDAO dao = new SubjectSQLiteDAO(urlToDB);
@@ -532,8 +513,8 @@ public class SQLiteConnectionTest {
         System.out.println("TEST PASSED: SQLiteSubjectDAO::should_create_a_new_lecture_and_return_with_id");
     }
 
-    private static void should_return_subject_given_name() {
-        restartDB();
+    @Test
+    public void should_return_subject_given_name() {
         execQueryDB("insert into asignatura (id, name)\n" +
                 "values (959, 'Asignatura Te123st Subj 1');");
         SubjectDAO dao = new SubjectSQLiteDAO(urlToDB);
@@ -550,8 +531,8 @@ public class SQLiteConnectionTest {
         System.out.println("TEST PASSED: SQLiteSubjectDAO::should_return_subject_given_name");
     }
 
-    private static void should_return_subject_list_consistant_with_external_script() {
-        restartDB();
+    @Test
+    public void should_return_subject_list_consistant_with_external_script() {
         execQueryDB("insert into asignatura (id, name)\n" +
                 "values (200, 'Asignatura Test Subj 1'),\n" +
                 "       (300, 'Asignatura Test Subj 2'),\n" +
@@ -574,8 +555,8 @@ public class SQLiteConnectionTest {
         System.out.println("TEST PASSED: SQLiteSubjectDAO::should_return_subject_list_consistant_with_external_script");
     }
 
-    private static void should_create_a_new_subject_and_return_with_id() {
-        restartDB();
+    @Test
+    public void should_create_a_new_subject_and_return_with_id() {
         SubjectDAO dao = new SubjectSQLiteDAO(urlToDB);
 
         SubjectDTO beforeInsertion = new SubjectDTO("Asignatura Test Subj 1");
@@ -592,8 +573,8 @@ public class SQLiteConnectionTest {
 
     }
 
-    private static void should_return_careers_list_consistant_with_external_script() {
-        restartDB();
+    @Test
+    public void should_return_careers_list_consistant_with_external_script() {
         execQueryDB("insert into carrera (id, name, duration, h_inic, h_fin)\n" +
                 "values (2, 'Carrera 1', 5, 8, 13),\n" +
                 "       (4, 'Carrera 2', 5, 8, 13),\n" +
@@ -625,8 +606,8 @@ public class SQLiteConnectionTest {
         System.out.println("TEST PASSED: SQLiteCareerDAO::should_return_careers_list_consistant_with_external_script");
     }
 
-    private static void should_delete_career_by_given_id() {
-        restartDB();
+    @Test
+    public void should_delete_career_by_given_id() {
         execQueryDB("insert into carrera (id, name, duration, h_inic, h_fin)\n" +
                 "values (256, 'Introduccion a la Joda', 5, 8, 12);");
         final int idToBeDeleted = 256;
@@ -641,8 +622,8 @@ public class SQLiteConnectionTest {
 
     }
 
-    private static void should_create_a_new_career_and_return_with_id(){
-        restartDB();
+    @Test
+    public void should_create_a_new_career_and_return_with_id(){
         CareerDAO dao = new CareerSQLiteDAO(urlToDB);
 
         CareerDTO beforeInsertion = new CareerDTO("Carrera Prueba", 5, 8, 12);
@@ -678,7 +659,8 @@ public class SQLiteConnectionTest {
         }
     }
 
-    private static void restartDB(){
+    @Before
+    public void restartDB(){
         Connection conn;
 
         try {
