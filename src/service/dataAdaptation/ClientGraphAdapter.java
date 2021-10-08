@@ -4,7 +4,7 @@ import data_transfer.CareerDTO;
 import data_transfer.ClassroomDTO;
 import data_transfer.LectureDTO;
 import data_transfer.OccupationDTO;
-import service.ScheduleStrategy;
+import service.schedule.ScheduleStrategy;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

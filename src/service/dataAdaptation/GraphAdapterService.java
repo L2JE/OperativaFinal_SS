@@ -2,7 +2,7 @@ package service.dataAdaptation;
 
 import data_transfer.OccupationDTO;
 import javafx.beans.value.ChangeListener;
-import service.ScheduleStrategy;
+import service.schedule.ScheduleStrategy;
 
 import java.util.LinkedList;
 

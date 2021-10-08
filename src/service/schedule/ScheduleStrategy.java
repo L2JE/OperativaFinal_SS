@@ -1,4 +1,4 @@
-package service;
+package service.schedule;
 
 import view.observableLogic.ObservableProgressProperty;
 
